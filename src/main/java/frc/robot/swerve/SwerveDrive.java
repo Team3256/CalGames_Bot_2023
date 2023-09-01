@@ -242,6 +242,10 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
     return (kInvertGyroYaw) ? Rotation2d.fromDegrees(360 - ypr[0]) : Rotation2d.fromDegrees(ypr[0]);
   }
 
+  public double getYawDegrees() {
+    return getYaw().getDegrees();
+  }
+
   public Rotation2d getPitch() {
     double[] ypr = new double[3];
     gyro.getYawPitchRoll(ypr);
@@ -366,7 +370,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   @Override
   public void logInit() {
     getLayout(kDriverTabName).add(this);
-    getLayout(kDriverTabName).add("gyro", new DoubleSendable(gyro::getYaw, "Gyro"));
+    getLayout(kDriverTabName).add("gyro", new DoubleSendable(this::getYawDegrees, "Gyro"));
     for (int i = 0; i < swerveModules.length; i++) {
       getLayout(kDriverTabName).add("Encoder " + i, swerveModules[i].getAngleEncoder());
     }
@@ -421,6 +425,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
     return MathUtil.clamp(distance, kSwervePoseEstimatorMinValue, kSwervePoseEstimatorMaxValue);
   }
 
+  // --GYRO
   public boolean isTiltedForward() {
     return getPitch().getDegrees() > kAutoBalanceMaxError.getDegrees();
   }
