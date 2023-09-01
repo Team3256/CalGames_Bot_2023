@@ -129,7 +129,7 @@ public class PPTrajectoryFollowCommand extends DebugCommandBase {
     this.startPose = new Pose2d(translation, rotation);
 
     if (kAutoDebug) {
-      swerveSubsystem.setTrajectory(trajectory);
+      swerveSubsystem.visualizeTrajectory(trajectory);
       autoVisualization.getObject("traj").setTrajectory(trajectory);
       PathPlannerServer.sendActivePath(trajectory.getStates());
     }

@@ -10,3 +10,7 @@ Helpful Links:
 FAQ:
 * Q: What is the CODEOWNERS file?
 * A: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+Misc:
+* Driver is port 0 joystick
+* Operator is port 1 joystick
