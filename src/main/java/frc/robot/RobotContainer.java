@@ -54,6 +54,7 @@ import java.util.ArrayList;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer implements CANTestable, Loggable {
+  boolean dbg = true;
   public enum GamePiece {
     CUBE,
     CONE
@@ -138,7 +139,7 @@ public class RobotContainer implements CANTestable, Loggable {
       PathPlannerServer.startServer(5811);
     }
 
-    if (Constants.kDebugEnabled && FeatureFlags.kShuffleboardLayoutEnabled) {
+    if (FeatureFlags.kShuffleboardLayoutEnabled) {
       for (Loggable loggable : loggables) {
         loggable.logInit();
       }
@@ -286,7 +287,8 @@ public class RobotContainer implements CANTestable, Loggable {
     new Trigger(intakeSubsystem::isCurrentSpiking)
         .onTrue(new LatchGamePiece(intakeSubsystem, this::isCurrentPieceCone));
 
-    operator.rightTrigger()
+    operator
+        .rightTrigger()
         .whileTrue(
             new ConditionalCommand(
                 new OuttakeCone(intakeSubsystem),
@@ -296,7 +298,8 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureElevator() {
     if (kArmEnabled) {
-      operator.leftTrigger()
+      operator
+          .leftTrigger()
           .onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone));
     }
   }
@@ -348,13 +351,7 @@ public class RobotContainer implements CANTestable, Loggable {
     }
   }
 
-  @Override
-  public void logInit() {
-    SmartDashboard.putData("trajectoryViewer", trajectoryViewer);
-    SmartDashboard.putData("waypointViewer", waypointViewer);
-    SmartDashboard.putData("swerveViewer", swerveViewer);
-  }
-
+  // --FCT
   public boolean isMovingJoystick(CommandXboxController controller) {
     return Math.abs(controller.getLeftX()) > kStickCancelDeadband
         || Math.abs(controller.getLeftY()) > kStickCancelDeadband
@@ -375,9 +372,17 @@ public class RobotContainer implements CANTestable, Loggable {
     }
   }
 
+  // --LOG
   @Override
   public ShuffleboardLayout getLayout(String tab) {
     return null;
+  }
+
+  @Override
+  public void logInit() {
+    SmartDashboard.putData("trajectoryViewer", trajectoryViewer);
+    SmartDashboard.putData("waypointViewer", waypointViewer);
+    SmartDashboard.putData("swerveViewer", swerveViewer);
   }
 
   @Override
@@ -389,16 +394,14 @@ public class RobotContainer implements CANTestable, Loggable {
     return result;
   }
 
+  // --UTIL
   public void startPitRoutine() {
     PitTestRoutine pitSubsystemRoutine =
         new PitTestRoutine(elevatorSubsystem, intakeSubsystem, swerveSubsystem, armSubsystem);
     pitSubsystemRoutine.runPitRoutine();
   }
 
-  public boolean isCurrentPieceCone() {
-    return GamePiece.CONE.equals(currentPiece);
-  }
-
+  // --GAME PIECE
   public void setPieceToCone() {
     currentPiece = GamePiece.CONE;
   }
@@ -411,6 +414,11 @@ public class RobotContainer implements CANTestable, Loggable {
     return currentPiece;
   }
 
+  public boolean isCurrentPieceCone() {
+    return GamePiece.CONE.equals(currentPiece);
+  }
+
+  // --SUBSTATION
   public void toggleSubstationLocation() {
     if (doubleSubstationLocation == SubstationLocation.LEFT_SIDE) {
       doubleSubstationLocation = SubstationLocation.RIGHT_SIDE;
@@ -422,11 +430,12 @@ public class RobotContainer implements CANTestable, Loggable {
         "Current Double Substation Location", doubleSubstationLocation.toString());
   }
 
-  public void updateSimulation() {
-    robotSimulation.updateSubsystemPositions();
-  }
-
   public SubstationLocation getSubstationLocation() {
     return this.doubleSubstationLocation;
+  }
+
+  // --SIM
+  RobotSimulation getRobotSimulation() {
+    return robotSimulation;
   }
 }

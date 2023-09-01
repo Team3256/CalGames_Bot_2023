@@ -129,29 +129,6 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     SmartDashboard.putNumber("Elevator Current Draw", elevatorMotor.getSupplyCurrent());
   }
 
-  public void logInit() {
-    getLayout(kDriverTabName).add(this);
-    getLayout(kDriverTabName).add(new ZeroElevator(this));
-    getLayout(kDriverTabName).add("Position", new DoubleSendable(this::getElevatorPosition));
-    getLayout(kDriverTabName).add(elevatorMotor);
-  }
-
-  @Override
-  public ShuffleboardLayout getLayout(String tab) {
-    return Shuffleboard.getTab(tab)
-        .getLayout(kElevatorLayoutName, BuiltInLayouts.kList)
-        .withSize(2, 4);
-  }
-
-  @Override
-  public boolean CANTest() {
-    System.out.println("Testing Elevator CAN:");
-    boolean result = CANDeviceTester.testTalonFX(elevatorMotor);
-    System.out.println("Elevator CAN connected: " + result);
-    getLayout(kElectricalTabName).add("Elevator CAN connected", result);
-    return result;
-  }
-
   public double getElevatorSetpoint(Elevator.ElevatorPreset setpoint) {
     if (FeatureFlags.kUsePrefs) {
       return Preferences.getDouble(
@@ -217,6 +194,29 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
 
   public MechanismLigament2d getLigament() {
     return elevatorLigament;
+  }
+
+  public void logInit() {
+    getLayout(kDriverTabName).add(this);
+    getLayout(kDriverTabName).add(new ZeroElevator(this));
+    getLayout(kDriverTabName).add("Position", new DoubleSendable(this::getElevatorPosition));
+    getLayout(kDriverTabName).add(elevatorMotor);
+  }
+
+  @Override
+  public ShuffleboardLayout getLayout(String tab) {
+    return Shuffleboard.getTab(tab)
+        .getLayout(kElevatorLayoutName, BuiltInLayouts.kList)
+        .withSize(2, 4);
+  }
+
+  @Override
+  public boolean CANTest() {
+    System.out.println("Testing Elevator CAN:");
+    boolean result = CANDeviceTester.testTalonFX(elevatorMotor);
+    System.out.println("Elevator CAN connected: " + result);
+    getLayout(kElectricalTabName).add("Elevator CAN connected", result);
+    return result;
   }
 
   @Override

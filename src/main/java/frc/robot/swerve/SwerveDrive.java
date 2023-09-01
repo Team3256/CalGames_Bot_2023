@@ -18,13 +18,11 @@ import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -33,7 +31,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeatureFlags;
-import frc.robot.auto.helpers.SwerveDriveController;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
 import frc.robot.helpers.StatisticsHelper;
@@ -54,9 +51,8 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   private final SwerveModule backLeftModule = new SwerveModule(2, BackLeft.constants);
   private final SwerveModule backRightModule = new SwerveModule(3, BackRight.constants);
   private final SwerveDrivePoseEstimator poseEstimator;
-
-  ChassisSpeeds swerveSimTwist;
-  Pose2d swerveSimPose;
+  ChassisSpeeds swerveSimTwist = new ChassisSpeeds();
+  Pose2d swerveSimPose = new Pose2d();
 
   private final Field2d field = new Field2d();
   private final Field2d limelightLocalizationField = new Field2d();
@@ -122,7 +118,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
 
     if (kDebugEnabled) {
       SmartDashboard.putData("Limelight Localization Field", limelightLocalizationField);
-      SmartDashboard.putData("Field",field);
+      SmartDashboard.putData("Field", field);
     }
     /*
      * By pausing init for a second before setting module offsets, we avoid a bug
@@ -207,7 +203,12 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   }
 
   public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
+    Pose2d ret;
+    if (RobotBase.isReal()) ret = poseEstimator.getEstimatedPosition();
+    else ret = swerveSimPose;
+    //    System.out.println(ret);
+    //    System.out.println(swerveSimTwist);
+    return ret;
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -307,25 +308,11 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   @Override
   public void periodic() {
     poseEstimator.update(getYaw(), getModulePositions());
-    SmartDashboard.putNumber("Gyro Angle", getYaw().getDegrees());
-    SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
-    SmartDashboard.putNumber("Pose X", poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Pose Y", poseEstimator.getEstimatedPosition().getY());
-    field.setRobotPose(poseEstimator.getEstimatedPosition());
-    Logger.getInstance().recordOutput("Odometry", getPose());
+    genericPeriodicLogging();
 
     this.localize(FrontConstants.kLimelightNetworkTablesName);
     this.localize(SideConstants.kLimelightNetworkTablesName);
     this.localize(BackConstants.kLimelightNetworkTablesName);
-
-    if (kDebugEnabled) {
-      for (SwerveModule mod : swerveModules) {
-        SmartDashboard.putNumber(
-            "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-        SmartDashboard.putNumber(
-            "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-      }
-    }
 
     // * 100 % 20 <= 2 is so it doesnt run every loop
     if (FeatureFlags.kLocalizationDataCollectionMode && Timer.getFPGATimestamp() * 100 % 20 <= 2) {
@@ -339,39 +326,33 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
       SmartDashboard.putNumber("Std Data points", poseYData.size());
     }
   }
+
   @Override
-  public void simulatePeriodic() {
-    poseEstimator.update(getYaw(), getModulePositions());
+  public void simulationPeriodic() {
+    swerveSimPose.transformBy(
+        new Transform2d(
+            new Translation2d(
+                swerveSimTwist.vxMetersPerSecond * kPeriodicDeltaTime,
+                swerveSimTwist.vyMetersPerSecond * kPeriodicDeltaTime),
+            new Rotation2d(swerveSimTwist.omegaRadiansPerSecond * kPeriodicDeltaTime)));
+    genericPeriodicLogging();
+  }
+
+  public void genericPeriodicLogging() {
     SmartDashboard.putNumber("Gyro Angle", getYaw().getDegrees());
     SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
-    SmartDashboard.putNumber("Pose X", poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Pose Y", poseEstimator.getEstimatedPosition().getY());
-    field.setRobotPose(poseEstimator.getEstimatedPosition());
+    SmartDashboard.putNumber("Pose X", getPose().getX());
+    SmartDashboard.putNumber("Pose Y", getPose().getY());
+    field.setRobotPose(getPose());
     Logger.getInstance().recordOutput("Odometry", getPose());
-
-    this.localize(FrontConstants.kLimelightNetworkTablesName);
-    this.localize(SideConstants.kLimelightNetworkTablesName);
-    this.localize(BackConstants.kLimelightNetworkTablesName);
 
     if (kDebugEnabled) {
       for (SwerveModule mod : swerveModules) {
         SmartDashboard.putNumber(
-                "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+            "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
         SmartDashboard.putNumber(
-                "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+            "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
       }
-    }
-
-    // * 100 % 20 <= 2 is so it doesnt run every loop
-    if (FeatureFlags.kLocalizationDataCollectionMode && Timer.getFPGATimestamp() * 100 % 20 <= 2) {
-      SmartDashboard.putNumber("Distance data mean", StatisticsHelper.calculateMean(distanceData));
-      SmartDashboard.putNumber(
-              "Pose X std", StatisticsHelper.calculateStandardDeviation(poseXData));
-      SmartDashboard.putNumber(
-              "Pose Y std", StatisticsHelper.calculateStandardDeviation(poseYData));
-      SmartDashboard.putNumber(
-              "Pose theta std", StatisticsHelper.calculateStandardDeviation(poseThetaData));
-      SmartDashboard.putNumber("Std Data points", poseYData.size());
     }
   }
 
