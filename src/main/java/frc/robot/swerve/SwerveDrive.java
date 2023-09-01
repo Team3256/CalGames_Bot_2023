@@ -51,7 +51,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   private final SwerveModule backLeftModule = new SwerveModule(2, BackLeft.constants);
   private final SwerveModule backRightModule = new SwerveModule(3, BackRight.constants);
   private final SwerveDrivePoseEstimator poseEstimator;
-  ChassisSpeeds swerveSimTwist = new ChassisSpeeds();
+  Twist2d swerveSimTwist = new Twist2d();
   Pose2d swerveSimPose = new Pose2d();
 
   private final Field2d field = new Field2d();
@@ -146,7 +146,9 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   }
 
   public void drive(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
-    swerveSimTwist = chassisSpeeds;
+    swerveSimTwist.dx = chassisSpeeds.vxMetersPerSecond;
+    swerveSimTwist.dy = chassisSpeeds.vyMetersPerSecond;
+    swerveSimTwist.dtheta = chassisSpeeds.omegaRadiansPerSecond;
     if (FeatureFlags.kSwerveAccelerationLimitingEnabled) {
       chassisSpeeds.vxMetersPerSecond =
           adaptiveXRateLimiter.calculate(chassisSpeeds.vxMetersPerSecond);
@@ -206,8 +208,6 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
     Pose2d ret;
     if (RobotBase.isReal()) ret = poseEstimator.getEstimatedPosition();
     else ret = swerveSimPose;
-    //    System.out.println(ret);
-    //    System.out.println(swerveSimTwist);
     return ret;
   }
 
@@ -329,12 +329,12 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
 
   @Override
   public void simulationPeriodic() {
-    swerveSimPose.transformBy(
-        new Transform2d(
-            new Translation2d(
-                swerveSimTwist.vxMetersPerSecond * kPeriodicDeltaTime,
-                swerveSimTwist.vyMetersPerSecond * kPeriodicDeltaTime),
-            new Rotation2d(swerveSimTwist.omegaRadiansPerSecond * kPeriodicDeltaTime)));
+    swerveSimPose =
+        swerveSimPose.transformBy(
+            new Transform2d(
+                new Translation2d(
+                    swerveSimTwist.dx * kPeriodicDeltaTime, swerveSimTwist.dy * kPeriodicDeltaTime),
+                new Rotation2d(swerveSimTwist.dtheta * kPeriodicDeltaTime)));
     genericPeriodicLogging();
   }
 

@@ -55,6 +55,7 @@ import java.util.ArrayList;
  */
 public class RobotContainer implements CANTestable, Loggable {
   boolean dbg = true;
+
   public enum GamePiece {
     CUBE,
     CONE
