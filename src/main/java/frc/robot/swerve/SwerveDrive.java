@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeatureFlags;
+import frc.robot.Robot;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
 import frc.robot.helpers.StatisticsHelper;
@@ -138,6 +139,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   public void stop() {
     SwerveModuleState[] swerveModuleStates =
         kSwerveKinematics.toSwerveModuleStates(new ChassisSpeeds());
+    swerveSimTwist = new Twist2d();
 
     for (SwerveModule mod : swerveModules) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], true);
@@ -234,6 +236,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   }
 
   public Rotation2d getYaw() {
+    if (!Robot.isReal()) return swerveSimPose.getRotation();
     double[] ypr = new double[3];
     gyro.getYawPitchRoll(ypr);
     return (kInvertGyroYaw) ? Rotation2d.fromDegrees(360 - ypr[0]) : Rotation2d.fromDegrees(ypr[0]);
