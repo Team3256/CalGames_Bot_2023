@@ -8,12 +8,15 @@
 package frc.robot;
 
 import static frc.robot.Constants.*;
+import static frc.robot.Constants.ShuffleboardConstants.*;
 import static frc.robot.led.LEDConstants.*;
 import static frc.robot.swerve.SwerveConstants.*;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmConstants;
-import frc.robot.arm.commands.KeepArmAtPosition;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
@@ -54,7 +56,6 @@ import java.util.ArrayList;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer implements CANTestable, Loggable {
-  boolean dbg = true;
 
   public enum GamePiece {
     CUBE,
@@ -152,6 +153,9 @@ public class RobotContainer implements CANTestable, Loggable {
       robotSimulation.initializeRobot();
       robotSimulation.addDoubleSubstation(GamePiece.CONE);
     }
+
+    verboseButtons(driver);
+    verboseButtons(operator);
   }
 
   private void configureSwerve() {
@@ -237,6 +241,7 @@ public class RobotContainer implements CANTestable, Loggable {
                 .andThen(() -> LED.LEDSegment.MainStrip.setColor(kLockSwerve))
                 .until(() -> isMovingJoystick(driver)));
 
+    //auto score (NO LOW) + auto intake
     if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
       driver
           .leftTrigger()
@@ -299,6 +304,7 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureElevator() {
     if (kArmEnabled) {
+      // stow
       operator
           .leftTrigger()
           .onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone));
@@ -306,7 +312,8 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   private void configureArm() {
-    armSubsystem.setDefaultCommand(new KeepArmAtPosition(armSubsystem));
+    // armSubsystem.setDefaultCommand(new KeepArmAtPosition(armSubsystem));
+    // manual arm up and down
     if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
       operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));
       operator
@@ -352,6 +359,21 @@ public class RobotContainer implements CANTestable, Loggable {
     }
   }
 
+  public void verboseButtons(CommandXboxController controller) {
+    controller.a().onTrue(new PrintCommand("BUTTON A PRESSED"));
+    controller.b().onTrue(new PrintCommand("BUTTON B PRESSED"));
+    controller.x().onTrue(new PrintCommand("BUTTON X PRESSED"));
+    controller.y().onTrue(new PrintCommand("BUTTON Y PRESSED"));
+    controller.leftBumper().onTrue(new PrintCommand("LEFT BUMPER PRESSED"));
+    controller.rightBumper().onTrue(new PrintCommand("RIGHT BUMPER PRESSED"));
+    controller.povLeft().onTrue(new PrintCommand("POV LEFT PRESSED"));
+    controller.povUp().onTrue(new PrintCommand("POV UP PRESSED"));
+    controller.povRight().onTrue(new PrintCommand("POV RIGHT PRESSED"));
+    controller.povDown().onTrue(new PrintCommand("POV DOWN PRESSED"));
+    controller.leftTrigger().onTrue(new PrintCommand("LEFT TRIGGER PRESSED"));
+    controller.rightTrigger().onTrue(new PrintCommand("RIGHT TRIGGER PRESSED"));
+  }
+
   // --FCT
   public boolean isMovingJoystick(CommandXboxController controller) {
     return Math.abs(controller.getLeftX()) > kStickCancelDeadband
@@ -376,7 +398,9 @@ public class RobotContainer implements CANTestable, Loggable {
   // --LOG
   @Override
   public ShuffleboardLayout getLayout(String tab) {
-    return null;
+    return Shuffleboard.getTab(tab)
+        .getLayout(kContainerLayoutName, BuiltInLayouts.kList)
+        .withSize(2, 4);
   }
 
   @Override
