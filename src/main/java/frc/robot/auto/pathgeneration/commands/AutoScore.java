@@ -8,6 +8,7 @@
 package frc.robot.auto.pathgeneration.commands;
 
 import static frc.robot.Constants.FeatureFlags.kAutoOuttakeEnabled;
+import static frc.robot.Constants.FeatureFlags.kDynamicPathGenEnabled;
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
 import static frc.robot.led.LEDConstants.*;
 
@@ -127,32 +128,33 @@ public class AutoScore extends ParentCommand {
     Pose2d start = swerveSubsystem.getPose();
 
     // Get scoring location id from SD
-    int locationId = (int) SmartDashboard.getNumber("guiColumn", -1);
+    int guiColumn = (int) SmartDashboard.getNumber("guiColumn", -1);
     if (DriverStation.getAlliance() == Alliance.Blue) {
-      locationId = 8 - locationId;
+      guiColumn = 8 - guiColumn;
     }
-    if (0 > locationId || locationId > 8) {
-      System.out.println("locationId was invalid (" + locationId + ")");
+    if (0 > guiColumn || guiColumn > 8) {
+      System.out.println("guiColumn was invalid (" + guiColumn + ")");
       new SetAllBlink(ledSubsystem, kError).withTimeout(6).schedule();
       return;
     }
 
     // Move to scoring waypoint
-    Pose2d scoringWaypoint = kBlueScoreWaypointPoses[locationId];
-    GamePiece scoringGamePiece = kScoringLocationPiece[locationId];
+    Pose2d scoringWaypoint = kBlueScoreWaypointPoses[guiColumn];
+    GamePiece scoringGamePiece = kScoringLocationPiece[guiColumn];
 
-    System.out.println("Running: Go to grid (id: " + locationId + ") from " + start);
+    System.out.println("Running: Go to grid (id: " + guiColumn + ") from " + start);
     if (DriverStation.getAlliance() == Alliance.Red) {
       scoringWaypoint = PathUtil.flip(scoringWaypoint);
     }
     Command moveToScoringWaypoint;
-    if (kDynamicPathGenerationEnabled) {
+    if (kDynamicPathGenEnabled) {
       DynamicPathGenerator gen = new DynamicPathGenerator(start, scoringWaypoint, swerveSubsystem);
       moveToScoringWaypoint = gen.getCommand();
-    } else
+    } else {
       moveToScoringWaypoint =
           PathGeneration.createDynamicAbsolutePath(
               start, scoringWaypoint, swerveSubsystem, kWaypointPathConstraints);
+    }
 
     BooleanSupplier isCurrentPieceCone = () -> scoringGamePiece.equals(GamePiece.CONE);
     Command runOuttake =
@@ -167,7 +169,7 @@ public class AutoScore extends ParentCommand {
 
     switch (gridScoreHeight) {
       case HIGH:
-        scoringLocation = kHighBlueScoringPoses[locationId];
+        scoringLocation = kHighBlueScoringPoses[guiColumn];
         moveArmElevatorToPreset =
             new ConditionalCommand(
                 new SetEndEffectorState(
@@ -181,7 +183,7 @@ public class AutoScore extends ParentCommand {
                 isCurrentPieceCone);
         break;
       case MID:
-        scoringLocation = kMidBlueScoringPoses[locationId];
+        scoringLocation = kMidBlueScoringPoses[guiColumn];
         moveArmElevatorToPreset =
             new ConditionalCommand(
                 new SetEndEffectorState(
@@ -196,7 +198,7 @@ public class AutoScore extends ParentCommand {
         break;
       case LOW:
       default:
-        scoringLocation = kBottomBlueScoringPoses[locationId];
+        scoringLocation = kBottomBlueScoringPoses[guiColumn];
         moveArmElevatorToPreset =
             new SetEndEffectorState(
                 elevatorSubsystem,
