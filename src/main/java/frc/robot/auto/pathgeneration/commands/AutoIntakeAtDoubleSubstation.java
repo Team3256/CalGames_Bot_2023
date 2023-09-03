@@ -177,15 +177,7 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
             ? Commands.deadline(runIntake.withTimeout(8), moveToSubstation, moveArmElevatorToPreset)
             : Commands.deadline(moveToSubstation, moveArmElevatorToPreset);
     // Automatically intake at the double substation
-    Command autoIntakeCommand =
-        Commands.sequence(moveToWaypoint, process, stowArmElevator)
-            .deadlineWith(runningLEDs.asProxy())
-            .until(cancelCommand)
-            .finallyDo(
-                (interrupted) -> {
-                  if (!interrupted) successLEDs.schedule();
-                })
-            .handleInterrupt(() -> errorLEDs.schedule());
+    Command autoIntakeCommand = Commands.sequence(moveToWaypoint, process, stowArmElevator);
 
     addChildCommands(autoIntakeCommand);
     super.initialize();
