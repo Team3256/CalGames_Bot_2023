@@ -20,7 +20,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -107,7 +106,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     armMotor.setSelectedSensorPosition(0);
   }
 
-
   public double getStatorCurrent() {
     return armMotor.getStatorCurrent();
   }
@@ -129,8 +127,9 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   public double getArmPositionGroundRelative() {
     double encoderOffset = 9043;
-    if (RobotBase.isReal()) return (armMotor.getSelectedSensorPosition() - encoderOffset)/4096.0*2*Math.PI;
-     else return armSim.getAngleRads();
+    if (RobotBase.isReal())
+      return (armMotor.getSelectedSensorPosition() - encoderOffset) / 4096.0 * 2 * Math.PI;
+    else return armSim.getAngleRads();
   }
 
   public double getArmPositionElevatorRelative() {
@@ -146,7 +145,8 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     if (Constants.kDebugEnabled) {
       SmartDashboard.putNumber(
           "Arm Raw Relative Encoder value", armMotor.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Arm Raw Absolute Encoder value", armMotor.getSelectedSensorPosition());
+      SmartDashboard.putNumber(
+          "Arm Raw Absolute Encoder value", armMotor.getSelectedSensorPosition());
       SmartDashboard.putNumber("Arm angle ground relative rad", getArmPositionGroundRelative());
       SmartDashboard.putNumber("Arm angle elevator relative rad", getArmPositionElevatorRelative());
       SmartDashboard.putNumber("Current Draw", armSim.getCurrentDrawAmps());
