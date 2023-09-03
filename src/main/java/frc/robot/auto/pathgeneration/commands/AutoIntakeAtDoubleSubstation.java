@@ -179,7 +179,14 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
 
     // Automatically intake at the double substation
     Command autoIntakeCommand =
-        Commands.sequence(moveToWaypoint, process, stowArmElevator).until(cancelCommand);
+        Commands.sequence(moveToWaypoint, process, stowArmElevator)
+            .deadlineWith(runningLEDs.asProxy())
+            .until(cancelCommand)
+            .finallyDo(
+                (interrupted) -> {
+                  if (!interrupted) successLEDs.schedule();
+                })
+            .handleInterrupt(() -> errorLEDs.schedule());
 
     setChildCommand(autoIntakeCommand);
     super.initialize();
