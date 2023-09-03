@@ -62,7 +62,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   private WPI_TalonFX armMotor;
   private final ArmFeedforward armFeedforward = new ArmFeedforward(kArmS, kArmG, kArmV, kArmA);
-  private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(kArmEncoderDIOPort);
 
   public Arm() {
     if (RobotBase.isReal()) {
@@ -78,7 +77,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   private void configureRealHardware() {
     armMotor = TalonFXFactory.createDefaultTalon(kArmCANDevice);
     armMotor.setInverted(true);
-    armEncoder.setDistancePerRotation(kArmRadiansPerAbsoluteEncoderRotation);
 
     armMotor.setNeutralMode(NeutralMode.Coast);
     armMotor.setSelectedSensorPosition(0);
@@ -109,9 +107,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     armMotor.setSelectedSensorPosition(0);
   }
 
-  public void zeroThroughboreEncoder() {
-    armEncoder.reset();
-  }
 
   public double getStatorCurrent() {
     return armMotor.getStatorCurrent();
@@ -133,17 +128,9 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   }
 
   public double getArmPositionGroundRelative() {
-    if (RobotBase.isReal()) {
-      double absoluteEncoderDistance =
-          armEncoder.getDistance()
-              + Preferences.getDouble(
-                  ArmPreferencesKeys.kAbsoluteEncoderOffsetKey, kAbsoluteEncoderOffsetRadians);
-      if (absoluteEncoderDistance < kArmAngleMinConstraint.getRadians()) {
-        return absoluteEncoderDistance + Math.PI * 2;
-      } else {
-        return absoluteEncoderDistance;
-      }
-    } else return armSim.getAngleRads();
+    double encoderOffset = 9043;
+    if (RobotBase.isReal()) return (armMotor.getSelectedSensorPosition() - encoderOffset)/4096.0*2*Math.PI;
+     else return armSim.getAngleRads();
   }
 
   public double getArmPositionElevatorRelative() {
@@ -159,13 +146,12 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     if (Constants.kDebugEnabled) {
       SmartDashboard.putNumber(
           "Arm Raw Relative Encoder value", armMotor.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Arm Raw Absolute Encoder value", armEncoder.getDistance());
+      SmartDashboard.putNumber("Arm Raw Absolute Encoder value", armMotor.getSelectedSensorPosition());
       SmartDashboard.putNumber("Arm angle ground relative rad", getArmPositionGroundRelative());
       SmartDashboard.putNumber("Arm angle elevator relative rad", getArmPositionElevatorRelative());
       SmartDashboard.putNumber("Current Draw", armSim.getCurrentDrawAmps());
       SmartDashboard.putNumber(
           "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
-      SmartDashboard.putBoolean("Arm encoder connected", armEncoder.isConnected());
       SmartDashboard.putNumber(
           "Arm angle position ground relative",
           Units.radiansToDegrees(getArmPositionGroundRelative()));
