@@ -26,7 +26,6 @@ public final class Constants {
   public static final boolean kArmEnabled = true;
   public static final boolean kLedStripEnabled = true;
 
-  public static final boolean kAdvantageKitReplayEnabled = false;
   public static final boolean kCompetitionModeEnabled = true;
   public static final RobotType kRobotType = RobotType.ALPHA;
   public static final RobotMode kCurrentMode = RobotMode.SIM;
@@ -45,7 +44,7 @@ public final class Constants {
     public static final boolean kAutoScoreEnabled = true;
     public static final boolean kAutoOuttakeEnabled = true;
 
-    public static final boolean kOperatorManualArmControlEnabled = false;
+    public static final boolean kOperatorManualArmControlEnabled = true;
     public static final boolean kSwerveAccelerationLimitingEnabled = true;
     public static final boolean kLocalizationStdDistanceBased = true;
 
@@ -54,7 +53,7 @@ public final class Constants {
     public static final boolean kShuffleboardLayoutEnabled = true;
     public static final boolean kGamePieceDetection = false;
     public static final boolean kUsePrefs = true;
-    public static final boolean kDynamicPathGenEnabled = false;
+    public static final boolean kDynamicPathGenEnabled = true;
     public static final boolean kPitRoutineEnabled = false;
     public static final boolean kCanTestEnabled = false;
   }
@@ -68,6 +67,7 @@ public final class Constants {
     public static final String kArmLayoutName = "Arm";
     public static final String kElevatorLayoutName = "Elevator";
     public static final String kLEDLayoutName = "LED_Old";
+    public static final String kContainerLayoutName = "Misc";
   }
 
   public enum RobotMode {
