@@ -13,12 +13,10 @@ import static frc.robot.elevator.ElevatorConstants.kElevatorAngleOffset;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.arm.Arm;
 import frc.robot.arm.Arm.ArmPreset;
-import frc.robot.auto.AutoConstants;
 
 public class SetArmAngle extends ProfiledPIDCommand {
   private Arm armSubsystem;
@@ -78,33 +76,33 @@ public class SetArmAngle extends ProfiledPIDCommand {
       getController().setGoal(angleRotation + kElevatorAngleOffset);
     }
 
-    if (AutoConstants.kAutoDebug) {
-      System.out.println(
-          this.getName()
-              + " started (preset: "
-              + armPreset
-              + ", setpoint rotation elevator relative: "
-              + Units.radiansToDegrees(angleRotation)
-              + " deg)"
-              + ", current arm rotation elevator relative: "
-              + Units.radiansToDegrees(armSubsystem.getArmPositionElevatorRelative())
-              + " deg)");
-    }
+    //    if (AutoConstants.kAutoDebug) {
+    //      System.out.println(
+    //          this.getName()
+    //              + " started (preset: "
+    //              + armPreset
+    //              + ", setpoint rotation elevator relative: "
+    //              + Units.radiansToDegrees(angleRotation)
+    //              + " deg)"
+    //              + ", current arm rotation elevator relative: "
+    //              + Units.radiansToDegrees(armSubsystem.getArmPositionElevatorRelative())
+    //              + " deg)");
+    //    }
   }
 
   @Override
   public void end(boolean interrupted) {
     super.end(interrupted);
     armSubsystem.off();
-    if (AutoConstants.kAutoDebug) {
-      System.out.println(
-          this.getName()
-              + " ended (preset: "
-              + armPreset
-              + ", rotation: "
-              + Units.radiansToDegrees(angleRotation)
-              + " deg)");
-    }
+    //    if (AutoConstants.kAutoDebug) {
+    //      System.out.println(
+    //          this.getName()
+    //              + " ended (preset: "
+    //              + armPreset
+    //              + ", rotation: "
+    //              + Units.radiansToDegrees(angleRotation)
+    //              + " deg)");
+    //    }
   }
 
   @Override
