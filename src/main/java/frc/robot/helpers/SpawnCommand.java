@@ -8,9 +8,10 @@
 package frc.robot.helpers;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 public class SpawnCommand extends DebugCommandBase {
-  private Command childCommand;
+  private Command childCommand = new PrintCommand("NO CHILD COMMAND SELECTED!");
 
   protected void setChildCommand(Command command) {
     childCommand = command;
