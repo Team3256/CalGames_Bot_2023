@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.Robot;
 import frc.robot.arm.Arm;
 import frc.robot.auto.dynamicpathgeneration.helpers.PathUtil;
 import frc.robot.auto.pathgeneration.PathGeneration;
@@ -170,13 +171,14 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
     Command successLEDs = new SetAllBlink(ledSubsystem, kSuccess);
     Command errorLEDs = new SetAllBlink(ledSubsystem, kError);
 
+    // in simulation, runIntake never ends because there is no cone/cube to currentLimit on
+    Command process =
+        Robot.isReal()
+            ? Commands.deadline(runIntake.withTimeout(8), moveToSubstation, moveArmElevatorToPreset)
+            : Commands.deadline(moveToSubstation, moveArmElevatorToPreset);
     // Automatically intake at the double substation
     Command autoIntakeCommand =
-        Commands.sequence(
-                moveToWaypoint,
-                Commands.deadline(
-                    runIntake.withTimeout(8), moveArmElevatorToPreset, moveToSubstation),
-                stowArmElevator)
+        Commands.sequence(moveToWaypoint, process, stowArmElevator)
             .deadlineWith(runningLEDs.asProxy())
             .until(cancelCommand)
             .finallyDo(
