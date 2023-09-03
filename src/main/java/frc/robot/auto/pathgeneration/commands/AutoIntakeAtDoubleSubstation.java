@@ -65,6 +65,7 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
       BooleanSupplier isAutoScoreMode,
       BooleanSupplier isCurrentPieceCone) {
 
+    super();
     this.swerveSubsystem = swerveDrive;
     this.intakeSubsystem = intakeSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
@@ -74,8 +75,6 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
     this.isAutoScoreMode = isAutoScoreMode;
     this.cancelCommand = cancelCommand;
     this.isCurrentPieceCone = isCurrentPieceCone;
-
-    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
   }
 
   @Override

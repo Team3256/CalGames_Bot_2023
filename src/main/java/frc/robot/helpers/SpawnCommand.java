@@ -8,30 +8,46 @@
 package frc.robot.helpers;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 public class SpawnCommand extends DebugCommandBase {
-  private Command childCommand = new PrintCommand("NO CHILD COMMAND SELECTED!");
+  private Command childCommand;
+  private int m_currentCommandIndex = -1;
+
+  public SpawnCommand() {
+    setChildCommand(new PrintCommand("NO COMMAND SELECTED!"));
+  }
 
   protected void setChildCommand(Command command) {
-    childCommand.cancel();
+    if (m_currentCommandIndex != -1) {
+      throw new IllegalStateException(
+          "Commands cannot be added to a composition while it's running");
+    }
+
+    CommandScheduler.getInstance().registerComposedCommands(command);
+
     childCommand = command;
-    m_requirements.clear();
     m_requirements.addAll(childCommand.getRequirements());
   }
 
   @Override
   public void initialize() {
-    childCommand.schedule();
+    m_currentCommandIndex = 0;
+    childCommand.initialize();
     super.initialize();
   }
 
   @Override
+  public void execute() {
+    childCommand.execute();
+  }
+
+  @Override
   public void end(boolean interrupted) {
+    if (interrupted) childCommand.end(true);
+    m_currentCommandIndex = -1;
     super.end(interrupted);
-    System.out.println("Parent command cancelling child command " + childCommand.getName());
-    if (!childCommand.isFinished()) childCommand.cancel();
-    childCommand = new PrintCommand("NO CHILD COMMAND SELECTED!");
   }
 
   @Override

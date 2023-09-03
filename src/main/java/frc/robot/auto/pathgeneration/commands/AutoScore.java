@@ -67,6 +67,7 @@ public class AutoScore extends SpawnCommand {
       BooleanSupplier isAutoScoreMode,
       BooleanSupplier cancelCommand) {
 
+    super();
     this.swerveSubsystem = swerveDrive;
     this.intakeSubsystem = intakeSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
@@ -76,8 +77,6 @@ public class AutoScore extends SpawnCommand {
     this.isAutoScoreMode = isAutoScoreMode;
     this.isCurrentLEDPieceCone = isCurrentLEDPieceCone;
     this.cancelCommand = cancelCommand;
-
-    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
   }
 
   @Override

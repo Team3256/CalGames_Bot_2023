@@ -325,14 +325,14 @@ public class RobotContainer implements CANTestable, Loggable {
       operator
           .povDown()
           .whileTrue(new SetArmVoltage(armSubsystem, -ArmConstants.kManualArmVoltage));
-      operator
-          .povUp()
-          .or(operator.povDown())
-          .whileTrue(
-              new ConditionalCommand(
-                  new IntakeCone(intakeSubsystem),
-                  new IntakeCube(intakeSubsystem),
-                  this::isCurrentPieceCone));
+      //      operator
+      //          .povUp()
+      //          .or(operator.povDown())
+      //          .whileTrue(
+      //              new ConditionalCommand(
+      //                  new IntakeCone(intakeSubsystem),
+      //                  new IntakeCube(intakeSubsystem),
+      //                  this::isCurrentPieceCone));
     }
   }
 
