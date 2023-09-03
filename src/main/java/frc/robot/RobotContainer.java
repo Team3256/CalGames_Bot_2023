@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmConstants;
+import frc.robot.arm.commands.KeepArmAtPosition;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
@@ -33,6 +34,7 @@ import frc.robot.auto.pathgeneration.commands.*;
 import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.commands.SetElevatorVolts;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
@@ -241,7 +243,7 @@ public class RobotContainer implements CANTestable, Loggable {
                 .andThen(() -> LED.LEDSegment.MainStrip.setColor(kLockSwerve))
                 .until(() -> isMovingJoystick(driver)));
 
-    //auto score (NO LOW) + auto intake
+    // auto score (NO LOW) + auto intake
     if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
       driver
           .leftTrigger()
@@ -304,15 +306,19 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureElevator() {
     if (kArmEnabled) {
-      // stow
+      // manual stow
       operator
           .leftTrigger()
           .onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone));
+
+      // manual elevator up and down
+      operator.povLeft().whileTrue(new SetElevatorVolts(elevatorSubsystem, 2.5));
+      operator.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, -2.5));
     }
   }
 
   private void configureArm() {
-    // armSubsystem.setDefaultCommand(new KeepArmAtPosition(armSubsystem));
+    armSubsystem.setDefaultCommand(new KeepArmAtPosition(armSubsystem));
     // manual arm up and down
     if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
       operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));
