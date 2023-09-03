@@ -29,7 +29,7 @@ import frc.robot.auto.pathgeneration.PathGeneration;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
-import frc.robot.helpers.ParentCommand;
+import frc.robot.helpers.SpawnCommand;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.OuttakeCone;
 import frc.robot.intake.commands.OuttakeCube;
@@ -39,7 +39,7 @@ import frc.robot.led.commands.SetAllColor;
 import frc.robot.swerve.SwerveDrive;
 import java.util.function.BooleanSupplier;
 
-public class AutoScore extends ParentCommand {
+public class AutoScore extends SpawnCommand {
   public enum GridScoreHeight {
     HIGH,
     MID,
@@ -249,7 +249,7 @@ public class AutoScore extends ParentCommand {
             .until(cancelCommand)
             .handleInterrupt(errorLEDs::schedule);
 
-    addChildCommands(autoScore);
+    setChildCommand(autoScore);
     super.initialize();
   }
 }

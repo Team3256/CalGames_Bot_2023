@@ -14,3 +14,6 @@ FAQ:
 Misc:
 * Driver is port 0 joystick
 * Operator is port 1 joystick
+
+Driver Choice:
+* Toggle target substation (btn) and go (btn) VS go left (btn) and go right (btn)
