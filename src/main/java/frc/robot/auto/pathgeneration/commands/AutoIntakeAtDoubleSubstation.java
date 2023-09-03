@@ -24,7 +24,7 @@ import frc.robot.auto.pathgeneration.PathGeneration;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
-import frc.robot.helpers.ParentCommand;
+import frc.robot.helpers.SpawnCommand;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeCone;
 import frc.robot.intake.commands.IntakeCube;
@@ -35,7 +35,7 @@ import frc.robot.swerve.SwerveDrive;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public class AutoIntakeAtDoubleSubstation extends ParentCommand {
+public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
   public enum SubstationLocation {
     // From driver's POV
     RIGHT_SIDE,
@@ -176,10 +176,12 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
         Robot.isReal()
             ? Commands.deadline(runIntake.withTimeout(8), moveToSubstation, moveArmElevatorToPreset)
             : Commands.deadline(moveToSubstation, moveArmElevatorToPreset);
-    // Automatically intake at the double substation
-    Command autoIntakeCommand = Commands.sequence(moveToWaypoint, process, stowArmElevator);
 
-    addChildCommands(autoIntakeCommand);
+    // Automatically intake at the double substation
+    Command autoIntakeCommand =
+        Commands.sequence(moveToWaypoint, process, stowArmElevator).until(cancelCommand);
+
+    setChildCommand(autoIntakeCommand);
     super.initialize();
   }
 }
