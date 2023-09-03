@@ -68,7 +68,7 @@ public class RobotSimulation {
               kMinElevatorExtension,
               Units.radiansToDegrees(kElevatorAngleOffset),
               kElevatorLineWidth,
-              new Color8Bit(Color.kRed)));
+              new Color8Bit(Color.kPurple)));
       elevatorRoot.append(elevatorSubsystem.getLigament());
 
       elevatorSubsystem
