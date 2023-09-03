@@ -14,6 +14,7 @@ public class SpawnCommand extends DebugCommandBase {
   private Command childCommand = new PrintCommand("NO CHILD COMMAND SELECTED!");
 
   protected void setChildCommand(Command command) {
+    childCommand.cancel();
     childCommand = command;
   }
 
@@ -26,8 +27,9 @@ public class SpawnCommand extends DebugCommandBase {
   @Override
   public void end(boolean interrupted) {
     super.end(interrupted);
-    System.out.println("Parent killing child " + childCommand.getName());
-    childCommand.cancel();
+    System.out.println("Parent command cancelling child command " + childCommand.getName());
+    if (!childCommand.isFinished()) childCommand.cancel();
+    childCommand = new PrintCommand("NO CHILD COMMAND SELECTED!");
   }
 
   @Override

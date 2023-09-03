@@ -74,6 +74,8 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
     this.isAutoScoreMode = isAutoScoreMode;
     this.cancelCommand = cancelCommand;
     this.isCurrentPieceCone = isCurrentPieceCone;
+
+    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
   }
 
   @Override

@@ -76,10 +76,13 @@ public class AutoScore extends SpawnCommand {
     this.isAutoScoreMode = isAutoScoreMode;
     this.isCurrentLEDPieceCone = isCurrentLEDPieceCone;
     this.cancelCommand = cancelCommand;
+
+    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
   }
 
   @Override
   public void initialize() {
+    System.out.println("AutoScore Initialized");
     System.out.println(
         "Is running auto score instead of presets: " + isAutoScoreMode.getAsBoolean());
     if (!isAutoScoreMode.getAsBoolean()) {
@@ -132,6 +135,8 @@ public class AutoScore extends SpawnCommand {
     if (DriverStation.getAlliance() == Alliance.Blue) {
       guiColumn = 8 - guiColumn;
     }
+
+    // Handle invalid guiColumn
     if (0 > guiColumn || guiColumn > 8) {
       System.out.println("guiColumn was invalid (" + guiColumn + ")");
       new SetAllBlink(ledSubsystem, kError).withTimeout(6).schedule();
@@ -251,5 +256,15 @@ public class AutoScore extends SpawnCommand {
 
     setChildCommand(autoScore);
     super.initialize();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return super.isFinished();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    super.end(interrupted);
   }
 }
