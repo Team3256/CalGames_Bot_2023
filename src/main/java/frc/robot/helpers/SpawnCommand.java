@@ -16,6 +16,8 @@ public class SpawnCommand extends DebugCommandBase {
   protected void setChildCommand(Command command) {
     childCommand.cancel();
     childCommand = command;
+    m_requirements.clear();
+    m_requirements.addAll(childCommand.getRequirements());
   }
 
   @Override
