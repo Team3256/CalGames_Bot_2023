@@ -7,6 +7,7 @@
 
 package frc.robot.auto.pathgeneration.commands;
 
+import static frc.robot.Constants.FeatureFlags.kDynamicPathGenEnabled;
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
 import static frc.robot.led.LEDConstants.*;
 
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Robot;
 import frc.robot.arm.Arm;
+import frc.robot.auto.dynamicpathgeneration.DynamicPathGenerator;
 import frc.robot.auto.dynamicpathgeneration.helpers.PathUtil;
 import frc.robot.auto.pathgeneration.PathGeneration;
 import frc.robot.elevator.Elevator;
@@ -131,12 +133,19 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
     }
 
     // commands that will be run sequentially
-    Command moveToWaypoint =
-        PathGeneration.createDynamicAbsolutePath(
-            swerveSubsystem.getPose(),
-            substationWaypoint,
-            swerveSubsystem,
-            kWaypointPathConstraints);
+    Command moveToSubstationWaypoint;
+    if (kDynamicPathGenEnabled) {
+      DynamicPathGenerator dpg =
+          new DynamicPathGenerator(swerveSubsystem.getPose(), substationWaypoint, swerveSubsystem);
+      moveToSubstationWaypoint = dpg.getCommand();
+    } else {
+      moveToSubstationWaypoint =
+          PathGeneration.createDynamicAbsolutePath(
+              swerveSubsystem.getPose(),
+              substationWaypoint,
+              swerveSubsystem,
+              kWaypointPathConstraints);
+    }
 
     Command moveArmElevatorToPreset =
         new ParallelCommandGroup(
@@ -179,7 +188,7 @@ public class AutoIntakeAtDoubleSubstation extends SpawnCommand {
 
     // Automatically intake at the double substation
     Command autoIntakeCommand =
-        Commands.sequence(moveToWaypoint, process, stowArmElevator)
+        Commands.sequence(moveToSubstationWaypoint, process, stowArmElevator)
             .deadlineWith(runningLEDs.asProxy())
             .until(cancelCommand)
             .finallyDo(
