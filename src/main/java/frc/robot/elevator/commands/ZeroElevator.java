@@ -15,10 +15,14 @@ import frc.robot.helpers.TimedBoolean;
 
 public class ZeroElevator extends DebugCommandBase {
   Elevator elevatorSubsystem;
-  private TimedBoolean isCurrentSpiking; 
+  private TimedBoolean isCurrentSpiking;
+
   public ZeroElevator(Elevator elevatorSubsystem) {
     this.elevatorSubsystem = elevatorSubsystem;
-    this.isCurrentSpiking = new TimedBoolean(elevatorSubsystem::isMotorCurrentSpikingZeroElev, kElevatorZeroCurrentSpikeTimeThreshold);
+    this.isCurrentSpiking =
+        new TimedBoolean(
+            elevatorSubsystem::isMotorCurrentSpikingZeroElev,
+            kElevatorZeroCurrentSpikeTimeThreshold);
     addRequirements(elevatorSubsystem);
   }
 
