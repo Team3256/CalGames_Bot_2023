@@ -11,12 +11,14 @@ import static frc.robot.elevator.ElevatorConstants.*;
 
 import frc.robot.elevator.Elevator;
 import frc.robot.helpers.DebugCommandBase;
+import frc.robot.helpers.TimedBoolean;
 
 public class ZeroElevator extends DebugCommandBase {
   Elevator elevatorSubsystem;
-
+  private TimedBoolean isCurrentSpiking; 
   public ZeroElevator(Elevator elevatorSubsystem) {
     this.elevatorSubsystem = elevatorSubsystem;
+    this.isCurrentSpiking = new TimedBoolean(elevatorSubsystem::isMotorCurrentSpikingZeroElev, kElevatorZeroCurrentSpikeTimeThreshold);
     addRequirements(elevatorSubsystem);
   }
 
@@ -35,6 +37,7 @@ public class ZeroElevator extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.isMotorCurrentSpikingZeroElev();
+    isCurrentSpiking.update();
+    return isCurrentSpiking.hasBeenTrueForThreshold();
   }
 }

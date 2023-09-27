@@ -51,6 +51,7 @@ public final class ElevatorConstants {
   public static final double kDownSpeedVolts = -3;
   public static final double kElevatorCurrentThreshold = 64; // amps
   public static final double kElevatorZeroCurrentThreshold = 64; // amps
+  public static final double kElevatorZeroCurrentSpikeTimeThreshold = 0.5; // seconds
   public static final double kDrumRadius = Units.inchesToMeters(0.94);
   public static final double kMinExtension = Units.inchesToMeters(0);
   public static final double kMaxExtension = Units.inchesToMeters(59);
