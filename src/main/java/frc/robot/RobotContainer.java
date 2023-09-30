@@ -31,6 +31,7 @@ import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.Subst
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.commands.SetElevatorVolts;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
@@ -289,6 +290,8 @@ public class RobotContainer implements CANTestable, Loggable {
         .onFalse(
             new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
                 .asProxy());
+    operator.a().onTrue(new IntakeCone(intakeSubsystem));
+    operator.y().onTrue(new OuttakeCone(intakeSubsystem));
 
     if (kArmEnabled && kElevatorEnabled) {
       //      driver
@@ -314,6 +317,8 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   public void configureElevator() {
+    operator.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 5));
+    operator.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -5));
     if (kArmEnabled) {
       operator
           .leftTrigger()
@@ -323,6 +328,8 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
+    operator.povLeft().onTrue(new SetArmVoltage(armSubsystem, 5));
+    operator.povRight().onTrue(new SetArmVoltage(armSubsystem, -5));
 
     if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
       operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));

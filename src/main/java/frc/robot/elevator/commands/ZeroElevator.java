@@ -30,11 +30,11 @@ public class ZeroElevator extends DebugCommandBase {
   public void end(boolean interrupted) {
     super.end(interrupted);
     elevatorSubsystem.off();
-    if (!interrupted) elevatorSubsystem.zeroElevator();
+    if (!interrupted) elevatorSubsystem.zeroElevatorSensor();
   }
 
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.isZeroLimitSwitchTriggered();
+    return elevatorSubsystem.isMotorCurrentSpiking(-1);
   }
 }

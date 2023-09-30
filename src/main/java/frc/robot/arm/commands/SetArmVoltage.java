@@ -37,6 +37,6 @@ public class SetArmVoltage extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return armSubsystem.isMotorCurrentSpiking();
   }
 }

@@ -15,13 +15,11 @@ import static frc.robot.swerve.helpers.Conversions.falconToMeters;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -68,7 +66,6 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
   private WPI_TalonFX elevatorFollowerMotor;
   private final ElevatorFeedforward elevatorFeedforward =
       new ElevatorFeedforward(kElevatorS, kElevatorG, kElevatorV, kElevatorA);
-  private DigitalInput zeroLimitSwitch;
 
   public Elevator() {
     if (RobotBase.isReal()) {
@@ -83,33 +80,33 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
 
   private void configureRealHardware() {
     elevatorMotor = TalonFXFactory.createDefaultTalon(kElevatorCANDevice);
-    elevatorMotor.setInverted(true);
+    elevatorMotor.setInverted(false);
     if (FeatureFlags.kCalibrationMode) {
       elevatorMotor.setNeutralMode(NeutralMode.Coast);
     } else {
       elevatorMotor.setNeutralMode(NeutralMode.Brake);
     }
 
-    elevatorMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.2));
-
+    //    elevatorMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20,
+    // 0.2));
     elevatorFollowerMotor =
         TalonFXFactory.createPermanentFollowerTalon(kElevatorFollowerCANDevice, kElevatorCANDevice);
-    elevatorFollowerMotor.setInverted(InvertType.FollowMaster);
+    elevatorFollowerMotor.setInverted(InvertType.OpposeMaster);
     elevatorFollowerMotor.setNeutralMode(NeutralMode.Brake);
-    zeroElevator();
-    zeroLimitSwitch = new DigitalInput(kElevatorLimitSwitchDIO);
   }
 
-  public boolean isMotorCurrentSpiking() {
+  public boolean isMotorCurrentSpiking(int dir) {
     if (RobotBase.isReal()) {
-      return elevatorMotor.getSupplyCurrent() >= kElevatorCurrentThreshold;
+      if (dir == -1) {
+        return elevatorMotor.getSupplyCurrent() >= kElevatorDownCurrentThreshold;
+      } else if (dir == 1) {
+        return elevatorMotor.getSupplyCurrent() >= kElevatorUpCurrentThreshold;
+      } else {
+        return elevatorMotor.getSupplyCurrent() >= kElevatorCurrentThreshold;
+      }
     } else {
       return elevatorSim.getCurrentDrawAmps() >= kElevatorCurrentThreshold;
     }
-  }
-
-  public boolean isZeroLimitSwitchTriggered() {
-    return !zeroLimitSwitch.get();
   }
 
   public double calculateFeedForward(double velocity) {
@@ -128,11 +125,15 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     } else return elevatorSim.getPositionMeters();
   }
 
+  public double getElevatorRaw() {
+    return elevatorMotor.getSelectedSensorPosition();
+  }
+
   public void setCoast() {
     elevatorMotor.setNeutralMode(NeutralMode.Coast);
   }
 
-  public void zeroElevator() {
+  public void zeroElevatorSensor() {
     elevatorMotor.setSelectedSensorPosition(0);
   }
 
@@ -150,31 +151,16 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     SmartDashboard.putNumber(
         "Elevator position inches", Units.metersToInches(getElevatorPosition()));
     SmartDashboard.putNumber("Elevator Current Draw", elevatorMotor.getSupplyCurrent());
-    SmartDashboard.putBoolean("Elevator limit switch (closed is false)", zeroLimitSwitch.get());
   }
 
   public void logInit() {
     getLayout(kDriverTabName).add(this);
-    getLayout(kDriverTabName).add(new ZeroElevator(this));
     getLayout(kDriverTabName).add("Position", new DoubleSendable(this::getElevatorPosition));
-    getLayout(kDriverTabName).add(elevatorMotor);
-    getLayout(kDriverTabName).add(new SetElevatorExtension(this, 0));
-  }
+    getLayout(kDriverTabName).add("Encoder", new DoubleSendable(this::getElevatorRaw));
+    getLayout(kDriverTabName).add(new ZeroElevator(this));
+    getLayout(kDriverTabName).add(new SetElevatorExtension(this, 1));
+    // getLayout(kDriverTabName).add(new SetElevatorExtension(this, 0));
 
-  @Override
-  public ShuffleboardLayout getLayout(String tab) {
-    return Shuffleboard.getTab(tab)
-        .getLayout(kElevatorLayoutName, BuiltInLayouts.kList)
-        .withSize(2, 4);
-  }
-
-  @Override
-  public boolean CANTest() {
-    System.out.println("Testing Elevator CAN:");
-    boolean result = CANDeviceTester.testTalonFX(elevatorMotor);
-    System.out.println("Elevator CAN connected: " + result);
-    getLayout(kElectricalTabName).add("Elevator CAN connected", result);
-    return result;
   }
 
   public double getElevatorSetpoint(Elevator.ElevatorPreset setpoint) {
@@ -218,7 +204,24 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
         kElevatorPositionKeys.get(Elevator.ElevatorPreset.DOUBLE_SUBSTATION_CONE),
         kConeDoubleSubstationPosition);
   }
+  // --CONST LOG
+  @Override
+  public ShuffleboardLayout getLayout(String tab) {
+    return Shuffleboard.getTab(tab)
+        .getLayout(kElevatorLayoutName, BuiltInLayouts.kList)
+        .withSize(2, 4);
+  }
 
+  @Override
+  public boolean CANTest() {
+    System.out.println("Testing Elevator CAN:");
+    boolean result = CANDeviceTester.testTalonFX(elevatorMotor);
+    System.out.println("Elevator CAN connected: " + result);
+    getLayout(kElectricalTabName).add("Elevator CAN connected", result);
+    return result;
+  }
+
+  // --SIM ALONE
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
           DCMotor.getFalcon500(kNumElevatorMotors),
@@ -234,7 +237,6 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     elevatorMotor = new WPI_TalonFX(kElevatorMasterID);
     elevatorMotor.setInverted(true);
     elevatorMotor.setNeutralMode(NeutralMode.Brake);
-    zeroLimitSwitch = new DigitalInput(kElevatorLimitSwitchDIO);
 
     elevatorLigament =
         new MechanismLigament2d(

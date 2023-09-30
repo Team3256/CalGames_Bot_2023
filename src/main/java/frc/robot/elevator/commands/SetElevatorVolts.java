@@ -11,8 +11,8 @@ import frc.robot.elevator.Elevator;
 import frc.robot.helpers.DebugCommandBase;
 
 public class SetElevatorVolts extends DebugCommandBase {
-  private Elevator elevatorSubsystem;
-  private double volts = 0;
+  private final Elevator elevatorSubsystem;
+  private final double volts;
 
   public SetElevatorVolts(Elevator elevatorSubsystem, double volts) {
     this.elevatorSubsystem = elevatorSubsystem;
@@ -34,6 +34,6 @@ public class SetElevatorVolts extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.isMotorCurrentSpiking(-1);
   }
 }

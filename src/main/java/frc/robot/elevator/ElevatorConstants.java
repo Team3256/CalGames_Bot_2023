@@ -48,13 +48,15 @@ public final class ElevatorConstants {
   public static final TrapezoidProfile.Constraints kElevatorConstraints =
       new TrapezoidProfile.Constraints(3.5, 2.00);
 
-  public static final double kDownSpeedVolts = -3;
-  public static final double kElevatorCurrentThreshold = 64; // amps
+  public static final double kDownSpeedVolts = -5;
+  public static final double kElevatorCurrentThreshold = 20; // amps
+  public static final double kElevatorDownCurrentThreshold = 20; // amps
+  public static final double kElevatorUpCurrentThreshold = 40; // amps
 
   public static final double kDrumRadius = Units.inchesToMeters(0.94);
   public static final double kMinExtension = Units.inchesToMeters(0);
   public static final double kMaxExtension = Units.inchesToMeters(59);
-  public static final double kElevatorGearing = 527 / 45;
+  public static final double kElevatorGearing = 25 * 4 / 9;
   public static final double kCarriageMass = 9; // kg
   public static final double kTolerancePosition = Units.inchesToMeters(2.5);
   public static final double kToleranceVelocity = Units.inchesToMeters(2.5);
