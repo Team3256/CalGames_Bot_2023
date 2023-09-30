@@ -46,7 +46,10 @@ public final class ElevatorConstants {
   public static final double kElevatorD = 0;
 
   public static final TrapezoidProfile.Constraints kElevatorConstraints =
-      new TrapezoidProfile.Constraints(3.5, 2.00);
+      new TrapezoidProfile.Constraints(0.5, 1.5);
+
+  // Comp: 3.5, 2
+  // Tests: 2, 1.5
 
   public static final double kDownSpeedVolts = -5;
   public static final double kElevatorCurrentThreshold = 20; // amps
