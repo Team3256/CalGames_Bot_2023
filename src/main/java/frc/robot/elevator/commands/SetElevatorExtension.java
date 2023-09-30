@@ -125,6 +125,6 @@ public class SetElevatorExtension extends ProfiledPIDCommand {
 
   @Override
   public boolean isFinished() {
-    return getController().atGoal() || elevatorSubsystem.isMotorCurrentSpiking(1);
+    return getController().atGoal();
   }
 }
