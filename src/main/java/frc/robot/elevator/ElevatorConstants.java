@@ -37,16 +37,16 @@ public final class ElevatorConstants {
   public static final double kSafeForArmMinPosition =
       kAnyPieceLowFrontPosition - Units.inchesToMeters(7);
 
-  public static final double kElevatorS = 0.45;
-  public static final double kElevatorV = 7.30;
-  public static final double kElevatorA = 0.01;
-  public static final double kElevatorG = 0.00;
-  public static final double kElevatorP = 30;
+  public static final double kElevatorS = -0.84907;
+  public static final double kElevatorV = 8.869;
+  public static final double kElevatorA = 21.64;
+  public static final double kElevatorG = -0.13231;
+  public static final double kElevatorP = 11.399;
   public static final double kElevatorI = 0;
   public static final double kElevatorD = 0;
 
   public static final TrapezoidProfile.Constraints kElevatorConstraints =
-      new TrapezoidProfile.Constraints(0.5, 1.5);
+      new TrapezoidProfile.Constraints(1, 1.5);
 
   // Comp: 3.5, 2
   // Tests: 2, 1.5
@@ -56,10 +56,10 @@ public final class ElevatorConstants {
   public static final double kElevatorDownCurrentThreshold = 20; // amps
   public static final double kElevatorUpCurrentThreshold = 40; // amps
 
-  public static final double kDrumRadius = Units.inchesToMeters(0.94);
+  public static final double kDrumRadius = Units.inchesToMeters(0.75);
   public static final double kMinExtension = Units.inchesToMeters(0);
   public static final double kMaxExtension = Units.inchesToMeters(59);
-  public static final double kElevatorGearing = 25 * 4 / 9;
+  public static final double kElevatorGearing = 25.0 / 3;
   public static final double kCarriageMass = 9; // kg
   public static final double kTolerancePosition = Units.inchesToMeters(2.5);
   public static final double kToleranceVelocity = Units.inchesToMeters(2.5);
