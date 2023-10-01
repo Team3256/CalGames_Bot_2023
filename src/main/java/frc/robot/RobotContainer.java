@@ -33,6 +33,7 @@ import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.Subst
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.commands.SetElevatorExtension;
 import frc.robot.elevator.commands.SetElevatorVolts;
 import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
@@ -68,6 +69,7 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandXboxController sicko = new CommandXboxController(2);
   private SwerveDrive swerveSubsystem;
   private Intake intakeSubsystem;
   private Elevator elevatorSubsystem;
@@ -344,6 +346,8 @@ public class RobotContainer implements CANTestable, Loggable {
                     armSubsystem,
                     SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
                 new OuttakeCube(intakeSubsystem)));
+
+    sicko.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
 
     if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
       operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));
