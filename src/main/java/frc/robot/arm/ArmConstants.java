@@ -9,6 +9,7 @@ package frc.robot.arm;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import frc.robot.drivers.CanDeviceId;
 import java.util.Map;
 
@@ -17,7 +18,8 @@ public final class ArmConstants {
   public static final String kArmCanBus = "rio";
   public static final CanDeviceId kArmCANDevice = new CanDeviceId(kArmMotorID, kArmCanBus);
   public static final int kArmSimulationID = 16;
-  public static final int kArmEncoderDIOPort = 8;
+
+  public static final double kArmAngleInit = Units.degreesToRadians(-37);
 
   public static final double kArmEncoderGearRatio = 2 / 1;
   public static final double kArmRadiansPerAbsoluteEncoderRotation =
@@ -52,7 +54,7 @@ public final class ArmConstants {
 
   public static final Rotation2d kDoubleSubstationRotationCube = new Rotation2d(0);
   public static final Rotation2d kDoubleSubstationRotationCone = new Rotation2d(0);
-  public static final Rotation2d kCubeMidRotation = new Rotation2d(0);
+  public static final Rotation2d kCubeMidRotation = new Rotation2d(157.7);
   public static final Rotation2d kConeMidRotation = new Rotation2d(0);
   public static final Rotation2d kCubeHighRotation = new Rotation2d(0);
   public static final Rotation2d kConeHighRotation = new Rotation2d(0);
@@ -107,6 +109,5 @@ public final class ArmConstants {
   }
 
   // Zero Arm
-  public static final double kZeroArmVoltage = -6.0;
-  public static final double kZeroArmCurrentThreshold = 20.0;
+  public static final double kArmCurrentThreshold = 20.0;
 }

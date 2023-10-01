@@ -12,6 +12,7 @@ import static frc.robot.led.LEDConstants.*;
 import static frc.robot.swerve.SwerveConstants.*;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.ArmConstants;
+import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.arm.commands.ZeroArm;
 import frc.robot.auto.AutoConstants;
@@ -32,6 +34,7 @@ import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetElevatorVolts;
+import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
@@ -317,8 +320,8 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   public void configureElevator() {
-    operator.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 5));
-    operator.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -5));
+    operator.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 2));
+    operator.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -2));
     if (kArmEnabled) {
       operator
           .leftTrigger()
@@ -328,8 +331,19 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
-    operator.povLeft().onTrue(new SetArmVoltage(armSubsystem, 5));
-    operator.povRight().onTrue(new SetArmVoltage(armSubsystem, -5));
+    operator.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
+    operator.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
+    operator.x().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
+    operator.b().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
+    operator
+        .rightTrigger()
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetEndEffectorState(
+                    elevatorSubsystem,
+                    armSubsystem,
+                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
+                new OuttakeCube(intakeSubsystem)));
 
     if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
       operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));

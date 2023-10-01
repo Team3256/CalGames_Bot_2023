@@ -133,14 +133,13 @@ public class RobotSimulation {
     if (kArmEnabled) {
       armSubsystem
           .getLigament()
-          .setAngle(Units.radiansToDegrees(armSubsystem.getArmPositionElevatorRelative()) - 90);
+          .setAngle(Units.radiansToDegrees(armSubsystem.getArmAngleElevatorRelative()) - 90);
     }
     if (kIntakeEnabled) {
       intakeSubsystem
           .getWrist()
           .setAngle(
-              Units.radiansToDegrees(armSubsystem.getArmPositionGroundRelative())
-                      * kIntakeWristRatio
+              Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()) * kIntakeWristRatio
                   - 90);
     }
   }

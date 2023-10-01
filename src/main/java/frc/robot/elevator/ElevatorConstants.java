@@ -30,7 +30,7 @@ public final class ElevatorConstants {
   public static final double kConeDoubleSubstationPosition = Units.inchesToMeters(46);
   public static final double kCubeHighPosition = Units.inchesToMeters(57);
   public static final double kConeHighPosition = Units.inchesToMeters(57);
-  public static final double kAnyPieceMidPosition = Units.inchesToMeters(37);
+  public static final double kAnyPieceMidPosition = 0.86;
   public static final double kAnyPieceLowBackPosition = Units.inchesToMeters(0);
   public static final double kAnyPieceLowFrontPosition = Units.inchesToMeters(15);
   public static final double kGroundIntakePosition = Units.inchesToMeters(0);

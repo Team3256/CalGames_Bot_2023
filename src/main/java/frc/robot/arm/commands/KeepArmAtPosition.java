@@ -28,8 +28,8 @@ public class KeepArmAtPosition extends ProfiledPIDCommand {
   public KeepArmAtPosition(Arm armSubsystem) {
     super(
         new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
-        armSubsystem::getArmPositionElevatorRelative,
-        armSubsystem.getArmPositionElevatorRelative(),
+        armSubsystem::getArmAngleElevatorRelative,
+        armSubsystem.getArmAngleElevatorRelative(),
         (output, setpoint) ->
             armSubsystem.setInputVoltage(
                 output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
@@ -40,7 +40,7 @@ public class KeepArmAtPosition extends ProfiledPIDCommand {
   @Override
   public void initialize() {
     super.initialize();
-    armPosition = armSubsystem.getArmPositionElevatorRelative();
+    armPosition = armSubsystem.getArmAngleElevatorRelative();
     getController().setGoal(armPosition);
 
     if (Constants.kDebugEnabled) {

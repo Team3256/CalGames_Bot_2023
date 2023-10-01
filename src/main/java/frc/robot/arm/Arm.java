@@ -22,7 +22,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -71,7 +70,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   private WPI_TalonFX armMotor;
   private final ArmFeedforward armFeedforward = new ArmFeedforward(kArmS, kArmG, kArmV, kArmA);
-  private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(kArmEncoderDIOPort);
 
   public Arm() {
     if (RobotBase.isReal()) {
@@ -81,17 +79,12 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     }
 
     System.out.println("Arm initialized");
-    zeroArmEncoderElevatorRelative();
-    off();
-
-    getLayout(kDriverTabName).add(new ZeroArm(this));
+    setNeutral();
   }
 
   private void configureRealHardware() {
     armMotor = TalonFXFactory.createDefaultTalon(kArmCANDevice);
-    armMotor.setInverted(TalonFXInvertType.CounterClockwise);
-    armEncoder.setDistancePerRotation(kArmRadiansPerAbsoluteEncoderRotation);
-    armEncoder.reset();
+    armMotor.setInverted(TalonFXInvertType.Clockwise);
 
     if (FeatureFlags.kCalibrationMode) {
       armMotor.setNeutralMode(NeutralMode.Coast);
@@ -99,14 +92,14 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
       armMotor.setNeutralMode(NeutralMode.Brake);
     }
 
-    if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
-      double absoluteEncoderRadians =
-          getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
-      armMotor.setSelectedSensorPosition(
-          Conversions.radiansToFalcon(absoluteEncoderRadians, kArmGearing));
-    } else {
-      armMotor.setSelectedSensorPosition(0);
-    }
+    //    if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
+    //      double absoluteEncoderRadians =
+    //          getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
+    //      armMotor.setSelectedSensorPosition(
+    //          Conversions.radiansToFalcon(absoluteEncoderRadians, kArmGearing));
+    //    } else {
+    //      armMotor.setSelectedSensorPosition(0);
+    //    }
   }
 
   public double calculateFeedForward(double angleRadians, double velocity) {
@@ -118,68 +111,46 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   }
 
   public boolean isSafeFromElevator() {
-    return (Units.radiansToDegrees(getArmPositionElevatorRelative()) <= kMaxSafeRotation
-        && Units.radiansToDegrees(getArmPositionElevatorRelative()) >= kMinSafeRotation);
+    return (Units.radiansToDegrees(getArmAngleElevatorRelative()) <= kMaxSafeRotation
+        && Units.radiansToDegrees(getArmAngleElevatorRelative()) >= kMinSafeRotation);
   }
 
-  public void zeroArmEncoderElevatorRelative() {
-    armMotor.setSelectedSensorPosition(
-        Conversions.radiansToFalcon(kElevatorAngleOffset, kArmGearing));
-  }
-
-  public double getAbsoluteEncoderDistanceRad() {
-    if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
-      return armEncoder.getAbsolutePosition() * kArmRadiansPerAbsoluteEncoderRotation;
-    } else {
-      return armEncoder.getDistance();
-    }
+  public void zeroArmEncoderGroundRelative() {
+    armMotor.setSelectedSensorPosition(Conversions.radiansToFalcon(kArmAngleInit, kArmGearing));
   }
 
   public Rotation2d getClosestSafePosition(double elevatorPosition) {
     if (elevatorPosition > ElevatorConstants.kSafeForArmMinPosition) {
       return Rotation2d.fromDegrees(
           MathUtil.clamp(
-              Units.radiansToDegrees(getArmPositionElevatorRelative()),
+              Units.radiansToDegrees(getArmAngleElevatorRelative()),
               kArmAngleMinConstraint.getDegrees(),
               kArmAngleMaxConstraint.getDegrees()));
     } else {
       return Rotation2d.fromDegrees(
           MathUtil.clamp(
-              Units.radiansToDegrees(getArmPositionElevatorRelative()),
+              Units.radiansToDegrees(getArmAngleElevatorRelative()),
               kMinSafeRotation,
               kMaxSafeRotation));
     }
   }
 
-  public double getArmPositionGroundRelative() {
+  public double getArmAngleGroundRelative() {
     if (RobotBase.isReal()) {
-      if (FeatureFlags.kUseRelativeArmEncoder) {
-        return Conversions.falconToRadians(armMotor.getSelectedSensorPosition(), kArmGearing);
-      } else {
-        double absoluteEncoderDistance;
-        if (kUsePrefs) {
-          absoluteEncoderDistance =
-              getAbsoluteEncoderDistanceRad()
-                  + Preferences.getDouble(
-                      ArmPreferencesKeys.kAbsoluteEncoderOffsetKey, kAbsoluteEncoderOffsetRadians);
-        } else {
-          absoluteEncoderDistance = getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
-        }
-        return absoluteEncoderDistance;
-      }
+      return Conversions.falconToRadians(armMotor.getSelectedSensorPosition(), kArmGearing);
     } else return armSim.getAngleRads();
   }
 
-  public double getArmPositionElevatorRelative() {
-    return getArmPositionGroundRelative() - kElevatorAngleOffset;
-  }
-
-  public void zeroThroughboreEncoder() {
-    armEncoder.reset();
+  public double getArmAngleElevatorRelative() {
+    return getArmAngleGroundRelative() - kElevatorAngleOffset;
   }
 
   public boolean isMotorCurrentSpiking() {
-    return armMotor.getSupplyCurrent() > kZeroArmCurrentThreshold;
+    return armMotor.getSupplyCurrent() > kArmCurrentThreshold;
+  }
+
+  public void setNeutral() {
+    armMotor.neutralOutput();
   }
 
   public void off() {
@@ -195,18 +166,19 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
       // armEncoder.getAbsolutePosition());
       // SmartDashboard.putNumber(
       // "Arm Raw Absolute Encoder distance", getAbsoluteEncoderDistanceRad());
-      SmartDashboard.putNumber("Arm angle ground relative rad", getArmPositionGroundRelative());
-      SmartDashboard.putNumber("Arm angle elevator relative rad", getArmPositionElevatorRelative());
-      SmartDashboard.putNumber("Arm Current Draw", armMotor.getSupplyCurrent());
-      SmartDashboard.putNumber(
-          "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
-      SmartDashboard.putBoolean("Arm encoder connected", armEncoder.isConnected());
-      SmartDashboard.putNumber(
-          "Arm angle position ground relative",
-          Units.radiansToDegrees(getArmPositionGroundRelative()));
-      SmartDashboard.putNumber(
-          "Arm angle position elevator relative",
-          Units.radiansToDegrees(getArmPositionElevatorRelative()));
+      //      SmartDashboard.putNumber("Arm angle ground relative rad",
+      // getArmPositionGroundRelative());
+      //      SmartDashboard.putNumber("Arm angle elevator relative rad",
+      // getArmPositionElevatorRelative());
+      //      SmartDashboard.putNumber("Arm Current Draw", armMotor.getSupplyCurrent());
+      //      SmartDashboard.putNumber(
+      //          "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
+      //      SmartDashboard.putNumber(
+      //          "Arm angle position ground relative",
+      //          Units.radiansToDegrees(getArmPositionGroundRelative()));
+      //      SmartDashboard.putNumber(
+      //          "Arm angle position elevator relative",
+      //          Units.radiansToDegrees(getArmPositionElevatorRelative()));
     }
   }
 
@@ -222,10 +194,10 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   @Override
   public void logInit() {
     getLayout(kDriverTabName).add(this);
+    getLayout(kDriverTabName).add(new ZeroArm(this));
     getLayout(kDriverTabName)
         .add(
-            "Angle",
-            new DoubleSendable(() -> Math.toDegrees(getArmPositionGroundRelative()), "Gyro"));
+            "Angle", new DoubleSendable(() -> Math.toDegrees(getArmAngleGroundRelative()), "Gyro"));
     getLayout(kDriverTabName).add(armMotor);
     getLayout(kDriverTabName).add(new SetArmAngle(this, ArmPreset.STANDING_CONE_GROUND_INTAKE));
   }
@@ -287,6 +259,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
         kDoubleSubstationRotationCube.getRadians());
   }
 
+  // --SIM--
   private final SingleJointedArmSim armSim =
       new SingleJointedArmSim(
           DCMotor.getFalcon500(kNumArmMotors),
@@ -314,7 +287,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
         new MechanismLigament2d(
             "Arm",
             kArmLength,
-            Units.radiansToDegrees(getArmPositionElevatorRelative()) - 90,
+            Units.radiansToDegrees(getArmAngleElevatorRelative()) - 90,
             10,
             new Color8Bit(Color.kBlue));
   }
@@ -330,11 +303,10 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   private void simulationOutputToDashboard() {
     SmartDashboard.putNumber(
-        "Arm angle position ground relative",
-        Units.radiansToDegrees(getArmPositionGroundRelative()));
+        "Arm angle position ground relative", Units.radiansToDegrees(getArmAngleGroundRelative()));
     SmartDashboard.putNumber(
         "Arm angle position elevator relative",
-        Units.radiansToDegrees(getArmPositionElevatorRelative()));
+        Units.radiansToDegrees(getArmAngleElevatorRelative()));
     SmartDashboard.putNumber("Current Draw", armSim.getCurrentDrawAmps());
     SmartDashboard.putNumber("Arm Sim Voltage", armMotor.getMotorOutputPercent() * 12);
   }

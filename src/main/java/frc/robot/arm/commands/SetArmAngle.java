@@ -8,7 +8,6 @@
 package frc.robot.arm.commands;
 
 import static frc.robot.arm.ArmConstants.*;
-import static frc.robot.elevator.ElevatorConstants.kElevatorAngleOffset;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -35,11 +34,11 @@ public class SetArmAngle extends ProfiledPIDCommand {
   public SetArmAngle(Arm armSubsystem, Rotation2d angleRotation2d) {
     super(
         new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
-        armSubsystem::getArmPositionGroundRelative,
+        armSubsystem::getArmAngleGroundRelative,
         MathUtil.clamp(
-            angleRotation2d.getRadians() + kElevatorAngleOffset,
-            kArmAngleMinConstraint.getRadians() + kElevatorAngleOffset,
-            kArmAngleMaxConstraint.getRadians() + kElevatorAngleOffset),
+            angleRotation2d.getRadians(),
+            kArmAngleMinConstraint.getRadians(),
+            kArmAngleMaxConstraint.getRadians()),
         (output, setpoint) ->
             armSubsystem.setInputVoltage(
                 output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)),
@@ -71,7 +70,7 @@ public class SetArmAngle extends ProfiledPIDCommand {
     // update at runtime in case robot prefs changed
     if (armPreset != null) {
       angleRotation = armSubsystem.getArmSetpoint(armPreset).getRadians();
-      getController().setGoal(angleRotation + kElevatorAngleOffset);
+      getController().setGoal(angleRotation);
     }
 
     if (Constants.kDebugEnabled) {
@@ -83,7 +82,7 @@ public class SetArmAngle extends ProfiledPIDCommand {
               + Units.radiansToDegrees(angleRotation)
               + " deg)"
               + ", current arm rotation elevator relative: "
-              + Units.radiansToDegrees(armSubsystem.getArmPositionElevatorRelative())
+              + Units.radiansToDegrees(armSubsystem.getArmAngleElevatorRelative())
               + " deg)");
     }
   }
@@ -94,7 +93,7 @@ public class SetArmAngle extends ProfiledPIDCommand {
     SmartDashboard.putNumber(
         "Arm setpoint", Units.radiansToDegrees(getController().getSetpoint().position));
     SmartDashboard.putNumber(
-        "Arm position", Units.radiansToDegrees(armSubsystem.getArmPositionGroundRelative()));
+        "Arm position", Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()));
   }
 
   @Override
@@ -107,7 +106,7 @@ public class SetArmAngle extends ProfiledPIDCommand {
               + " ended (preset: "
               + armPreset
               + ", current arm rotation elevator relative: "
-              + Units.radiansToDegrees(armSubsystem.getArmPositionElevatorRelative())
+              + Units.radiansToDegrees(armSubsystem.getArmAngleElevatorRelative())
               + " deg, "
               + ", rotation: "
               + Units.radiansToDegrees(angleRotation)

@@ -7,11 +7,6 @@
 
 package frc.robot.arm.commands;
 
-import static frc.robot.arm.ArmConstants.kZeroArmVoltage;
-
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.helpers.DebugCommandBase;
 
@@ -26,26 +21,16 @@ public class ZeroArm extends DebugCommandBase {
   @Override
   public void initialize() {
     super.initialize();
-    armSubsystem.setInputVoltage(kZeroArmVoltage);
+    armSubsystem.zeroArmEncoderGroundRelative();
   }
 
   @Override
   public void end(boolean interrupted) {
     super.end(interrupted);
-    armSubsystem.off();
-    if (!interrupted) {
-      if (FeatureFlags.kUseRelativeArmEncoder) {
-        new WaitCommand(0.05)
-            .andThen(new InstantCommand(armSubsystem::zeroArmEncoderElevatorRelative))
-            .schedule();
-      } else {
-        armSubsystem.zeroThroughboreEncoder();
-      }
-    }
   }
 
   @Override
   public boolean isFinished() {
-    return armSubsystem.isMotorCurrentSpiking();
+    return true;
   }
 }
