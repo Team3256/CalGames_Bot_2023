@@ -18,7 +18,7 @@ import java.util.Map;
 public final class Constants {
   public static final boolean kDebugEnabled = true;
   public static final boolean kCommandDebugLogEnabled = true;
-  public static final boolean kSwerveEnabled = false;
+  public static final boolean kSwerveEnabled = true;
   public static final boolean kIntakeEnabled = true;
   public static final boolean kElevatorEnabled = true;
   public static final boolean kArmEnabled = true;
@@ -51,7 +51,7 @@ public final class Constants {
     public static final boolean kLocalizationStdDistanceBased = true;
     public static final boolean kLocalizationDataCollectionMode = false;
     public static final boolean kLocalizeDuringAuto = true;
-    public static final boolean kDynamicPathGenEnabled = true;
+    public static final boolean kDynamicPathGenEnabled = false;
 
     public static final boolean kShuffleboardLayoutEnabled = true;
     public static final boolean kSwerveAccelerationLimitingEnabled = false;
