@@ -12,7 +12,6 @@ import static frc.robot.led.LEDConstants.*;
 import static frc.robot.swerve.SwerveConstants.*;
 
 import com.pathplanner.lib.server.PathPlannerServer;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
-import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
@@ -30,12 +28,13 @@ import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.Subst
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
-import frc.robot.elevator.commands.SetElevatorExtension;
 import frc.robot.elevator.commands.SetElevatorVolts;
+import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
 import frc.robot.led.LED;
+import frc.robot.led.commands.ColorFlowPattern;
 import frc.robot.led.commands.SetAllColor;
 import frc.robot.logging.Loggable;
 import frc.robot.simulation.RobotSimulation;
@@ -270,10 +269,11 @@ public class RobotContainer implements CANTestable, Loggable {
     //    operator.a().toggleOnTrue(new InstantCommand(this::toggleSubstationLocation));
   }
 
+  // Checks if Button Board sent an intake command
   private boolean intakeTriggered() {
     return SmartDashboard.getBoolean("intakeTriggered", false);
   }
-
+  // Checks if Button Board sent a score command
   private boolean scoreTriggered() {
     return SmartDashboard.getBoolean("scoreTriggered", false);
   }
@@ -324,32 +324,29 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     // operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
-    tester.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 3));
-    tester.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -3));
-    tester.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
-    tester.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
-    tester.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
-    tester.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
-    tester.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
-    tester.rightTrigger().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
-    driver.leftBumper().onTrue(new IntakeCone(intakeSubsystem));
-    driver.leftTrigger().onTrue(new OuttakeCone(intakeSubsystem));
-    driver.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
-    driver.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
-    tester.y().onTrue(new AutoMove(swerveSubsystem, 4));
-    tester.b().onTrue(new AutoMove(swerveSubsystem, 5));
-    tester.a().onTrue(new AutoMove(swerveSubsystem, 6));
-    tester.x().onTrue(new AutoMove(swerveSubsystem, 7));
+    tester.povUp().whileTrue(new SetElevatorVolts(elevatorSubsystem, 3));
 
-    //    operator
-    //        .rightTrigger()
-    //        .onTrue(
-    //            new SequentialCommandGroup(
-    //                new SetEndEffectorState(
-    //                    elevatorSubsystem,
-    //                    armSubsystem,
-    //                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
-    //                new OuttakeCube(intakeSubsystem)));
+    tester.povDown().whileTrue(new SetElevatorVolts(elevatorSubsystem, -3));
+    tester.povLeft().whileTrue(new SetArmVoltage(armSubsystem, 3));
+    tester.povRight().whileTrue(new SetArmVoltage(armSubsystem, -2));
+    //    tester.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
+    //    tester.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
+    //    tester.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
+    //    tester.rightTrigger().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
+    tester.leftBumper().onTrue(new IntakeCone(intakeSubsystem));
+    tester.leftTrigger().onTrue(new OuttakeCone(intakeSubsystem));
+    tester.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
+    tester.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
+    tester.a().onTrue(new AutoAlign(swerveSubsystem, 5));
+    tester
+        .y()
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetEndEffectorState(
+                    elevatorSubsystem,
+                    armSubsystem,
+                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
+                new OuttakeCube(intakeSubsystem)));
 
     //    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
     //      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem,
@@ -369,11 +366,10 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   public void configureLEDStrip() {
-    //    ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
-    //
+    ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
     //    operator.leftBumper().onTrue(new InstantCommand(this::toggleGamePiece));
   }
-
+  // --MISC--
   public Command getAutonomousCommand() {
     Command autoPath = autoPaths.getSelectedPath();
     if (kElevatorEnabled && kArmEnabled) {
@@ -391,32 +387,11 @@ public class RobotContainer implements CANTestable, Loggable {
     }
   }
 
-  @Override
-  public void logInit() {
-    SmartDashboard.putData("trajectoryViewer", trajectoryViewer);
-    SmartDashboard.putData("waypointViewer", waypointViewer);
-    SmartDashboard.putData("swerveViewer", swerveViewer);
-  }
-
   public boolean isMovingJoystick(CommandXboxController controller) {
     return Math.abs(controller.getLeftX()) > kStickCancelDeadband
         || Math.abs(controller.getLeftY()) > kStickCancelDeadband
         || Math.abs(controller.getRightX()) > kStickCancelDeadband
         || Math.abs(controller.getRightY()) > kStickCancelDeadband;
-  }
-
-  @Override
-  public ShuffleboardLayout getLayout(String tab) {
-    return null;
-  }
-
-  @Override
-  public boolean CANTest() {
-    System.out.println("Testing CAN connections:");
-    boolean result = true;
-    for (CANTestable subsystem : canBusTestables) result &= subsystem.CANTest();
-    System.out.println("CAN fully connected: " + result);
-    return result;
   }
 
   public void startPitRoutine() {
@@ -425,14 +400,15 @@ public class RobotContainer implements CANTestable, Loggable {
     pitSubsystemRoutine.runPitRoutine();
   }
 
+  // --TOGGLE STATE--
+  // NOTICE: ONLY FOR AUTO TO CHANGE LATCH
+  public void setGamePiece(GamePiece piece) {
+    currentPiece = piece;
+  }
+
   public boolean isCurrentPieceCone() {
     //    return GamePiece.CONE.equals(currentPiece);
     return true;
-  }
-
-  // only for auto to change latch
-  public void setGamePiece(GamePiece piece) {
-    currentPiece = piece;
   }
 
   public void toggleGamePiece() {
@@ -466,11 +442,33 @@ public class RobotContainer implements CANTestable, Loggable {
     SmartDashboard.putString("Current Scoring Preset", currentScoringPreset.toString());
   }
 
+  public SubstationLocation getSubstationLocation() {
+    return this.doubleSubstationLocation;
+  }
+
+  // --LOG N SIM
   public void updateSimulation() {
     robotSimulation.updateSubsystemPositions();
   }
 
-  public SubstationLocation getSubstationLocation() {
-    return this.doubleSubstationLocation;
+  @Override
+  public ShuffleboardLayout getLayout(String tab) {
+    return null;
+  }
+
+  @Override
+  public boolean CANTest() {
+    System.out.println("Testing CAN connections:");
+    boolean result = true;
+    for (CANTestable subsystem : canBusTestables) result &= subsystem.CANTest();
+    System.out.println("CAN fully connected: " + result);
+    return result;
+  }
+
+  @Override
+  public void logInit() {
+    SmartDashboard.putData("trajectoryViewer", trajectoryViewer);
+    SmartDashboard.putData("waypointViewer", waypointViewer);
+    SmartDashboard.putData("swerveViewer", swerveViewer);
   }
 }
