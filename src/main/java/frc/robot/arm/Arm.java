@@ -107,6 +107,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   }
 
   public void setInputVoltage(double voltage) {
+    SmartDashboard.putNumber("Arm Voltage", voltage);
     armMotor.setVoltage(MathUtil.clamp(voltage, -12, 12));
   }
 
