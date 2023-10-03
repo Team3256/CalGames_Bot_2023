@@ -62,7 +62,7 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
-  private final CommandXboxController sicko = new CommandXboxController(2);
+  private final CommandXboxController tester = new CommandXboxController(2);
   private SwerveDrive swerveSubsystem;
   private Intake intakeSubsystem;
   private Elevator elevatorSubsystem;
@@ -324,22 +324,22 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     // operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
-    sicko.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 3));
-    sicko.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -3));
-    sicko.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
-    sicko.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
-    sicko.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
-    sicko.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
-    sicko.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
-    sicko.rightTrigger().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
+    tester.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 3));
+    tester.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -3));
+    tester.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
+    tester.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
+    tester.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
+    tester.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
+    tester.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
+    tester.rightTrigger().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
     driver.leftBumper().onTrue(new IntakeCone(intakeSubsystem));
     driver.leftTrigger().onTrue(new OuttakeCone(intakeSubsystem));
     driver.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
     driver.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
-    sicko.y().onTrue(new AutoMove(swerveSubsystem, 4));
-    sicko.b().onTrue(new AutoMove(swerveSubsystem, 5));
-    sicko.a().onTrue(new AutoMove(swerveSubsystem, 6));
-    sicko.x().onTrue(new AutoMove(swerveSubsystem, 7));
+    tester.y().onTrue(new AutoMove(swerveSubsystem, 4));
+    tester.b().onTrue(new AutoMove(swerveSubsystem, 5));
+    tester.a().onTrue(new AutoMove(swerveSubsystem, 6));
+    tester.x().onTrue(new AutoMove(swerveSubsystem, 7));
 
     //    operator
     //        .rightTrigger()
