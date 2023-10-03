@@ -19,13 +19,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
-import frc.robot.arm.ArmConstants;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.arm.commands.SetArmVoltage;
-import frc.robot.arm.commands.ZeroArm;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
 import frc.robot.auto.pathgeneration.commands.*;
@@ -35,14 +32,10 @@ import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetElevatorExtension;
 import frc.robot.elevator.commands.SetElevatorVolts;
-import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
-import frc.robot.intake.commands.GroundIntake.ConeOrientation;
 import frc.robot.led.LED;
-import frc.robot.led.commands.ColorFlowPattern;
-import frc.robot.led.commands.LimitedSwervePattern;
 import frc.robot.led.commands.SetAllColor;
 import frc.robot.logging.Loggable;
 import frc.robot.simulation.RobotSimulation;
@@ -225,55 +218,56 @@ public class RobotContainer implements CANTestable, Loggable {
                 () -> isMovingJoystick(driver),
                 kFieldRelative,
                 kOpenLoop));
-
     driver.a().onTrue(new InstantCommand(swerveSubsystem::zeroGyroYaw));
 
-    driver
-        .leftBumper()
-        .toggleOnTrue(
-            new TeleopSwerveLimited(
-                    swerveSubsystem,
-                    driver::getLeftY,
-                    driver::getLeftX,
-                    driver::getRightX,
-                    kFieldRelative,
-                    kOpenLoop)
-                .deadlineWith(new LimitedSwervePattern(ledSubsystem, this::isCurrentPieceCone)));
-
-    driver
-        .x()
-        .onTrue(
-            new LockSwerveX(swerveSubsystem)
-                .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
-                .until(() -> isMovingJoystick(driver)));
-
-    if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
-      new Trigger(this::scoreTriggered)
-          .onTrue(
-              new AutoScore(
-                  swerveSubsystem,
-                  intakeSubsystem,
-                  elevatorSubsystem,
-                  armSubsystem,
-                  ledSubsystem,
-                  this::isCurrentPieceCone,
-                  () -> true,
-                  () -> isMovingJoystick(driver),
-                  true));
-      new Trigger(this::intakeTriggered)
-          .onTrue(
-              new AutoIntakeAtDoubleSubstation(
-                  swerveSubsystem,
-                  intakeSubsystem,
-                  elevatorSubsystem,
-                  armSubsystem,
-                  ledSubsystem,
-                  () -> isMovingJoystick(driver),
-                  () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
-                  this::isCurrentPieceCone));
-    }
-
-    operator.a().toggleOnTrue(new InstantCommand(this::toggleSubstationLocation));
+    //
+    //    driver
+    //        .leftBumper()
+    //        .toggleOnTrue(
+    //            new TeleopSwerveLimited(
+    //                    swerveSubsystem,
+    //                    driver::getLeftY,
+    //                    driver::getLeftX,
+    //                    driver::getRightX,
+    //                    kFieldRelative,
+    //                    kOpenLoop)
+    //                .deadlineWith(new LimitedSwervePattern(ledSubsystem,
+    // this::isCurrentPieceCone)));
+    //
+    //    driver
+    //        .x()
+    //        .onTrue(
+    //            new LockSwerveX(swerveSubsystem)
+    //                .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
+    //                .until(() -> isMovingJoystick(driver)));
+    //
+    //    if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
+    //      new Trigger(this::scoreTriggered)
+    //          .onTrue(
+    //              new AutoScore(
+    //                  swerveSubsystem,
+    //                  intakeSubsystem,
+    //                  elevatorSubsystem,
+    //                  armSubsystem,
+    //                  ledSubsystem,
+    //                  this::isCurrentPieceCone,
+    //                  () -> true,
+    //                  () -> isMovingJoystick(driver),
+    //                  true));
+    //      new Trigger(this::intakeTriggered)
+    //          .onTrue(
+    //              new AutoIntakeAtDoubleSubstation(
+    //                  swerveSubsystem,
+    //                  intakeSubsystem,
+    //                  elevatorSubsystem,
+    //                  armSubsystem,
+    //                  ledSubsystem,
+    //                  () -> isMovingJoystick(driver),
+    //                  () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
+    //                  this::isCurrentPieceCone));
+    //    }
+    //
+    //    operator.a().toggleOnTrue(new InstantCommand(this::toggleSubstationLocation));
   }
 
   private boolean intakeTriggered() {
@@ -285,18 +279,16 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   private void configureIntake() {
-    operator
-        .rightTrigger()
-        .whileTrue(
-            new ConditionalCommand(
-                new OuttakeCone(intakeSubsystem),
-                new OuttakeCube(intakeSubsystem),
-                this::isCurrentPieceCone))
-        .onFalse(
-            new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
-                .asProxy());
-    operator.a().onTrue(new IntakeCone(intakeSubsystem));
-    operator.y().onTrue(new OuttakeCone(intakeSubsystem));
+    //    operator
+    //        .rightTrigger()
+    //        .whileTrue(
+    //            new ConditionalCommand(
+    //                new OuttakeCone(intakeSubsystem),
+    //                new OuttakeCube(intakeSubsystem),
+    //                this::isCurrentPieceCone))
+    //        .onFalse(
+    //            new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
+    //                .asProxy());
 
     if (kArmEnabled && kElevatorEnabled) {
       //      driver
@@ -309,66 +301,77 @@ public class RobotContainer implements CANTestable, Loggable {
       //                  ConeOrientation.STANDING_CONE,
       //                  this::isCurrentPieceCone));
 
-      driver
-          .rightBumper()
-          .onTrue(
-              new GroundIntake(
-                  elevatorSubsystem,
-                  armSubsystem,
-                  intakeSubsystem,
-                  ConeOrientation.SITTING_CONE,
-                  this::isCurrentPieceCone));
+      //      driver
+      //          .rightBumper()
+      //          .onTrue(
+      //              new GroundIntake(
+      //                  elevatorSubsystem,
+      //                  armSubsystem,
+      //                  intakeSubsystem,
+      //                  ConeOrientation.SITTING_CONE,
+      //                  this::isCurrentPieceCone));
     }
   }
 
   public void configureElevator() {
-    operator.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 2));
-    operator.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -2));
-    if (kArmEnabled) {
-      operator
-          .leftTrigger()
-          .onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone));
-    }
+    //    if (kArmEnabled) {
+    //      operator
+    //          .leftTrigger()
+    //          .onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem,
+    // this::isCurrentPieceCone));
+    //    }
   }
 
   private void configureArm() {
-    operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
-    operator.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
-    operator.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
-    operator.x().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
-    operator.b().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
-    operator
-        .rightTrigger()
-        .onTrue(
-            new SequentialCommandGroup(
-                new SetEndEffectorState(
-                    elevatorSubsystem,
-                    armSubsystem,
-                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
-                new OuttakeCube(intakeSubsystem)));
-
+    // operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
+    sicko.povUp().onTrue(new SetElevatorVolts(elevatorSubsystem, 3));
+    sicko.povDown().onTrue(new SetElevatorVolts(elevatorSubsystem, -3));
+    sicko.povLeft().onTrue(new SetArmVoltage(armSubsystem, 2));
+    sicko.povRight().onTrue(new SetArmVoltage(armSubsystem, -2));
+    sicko.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
     sicko.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
+    sicko.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
+    sicko.rightTrigger().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(90)));
+    driver.leftBumper().onTrue(new IntakeCone(intakeSubsystem));
+    driver.leftTrigger().onTrue(new OuttakeCone(intakeSubsystem));
+    driver.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
+    driver.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
+    sicko.y().onTrue(new AutoMove(swerveSubsystem, 4));
+    sicko.b().onTrue(new AutoMove(swerveSubsystem, 5));
+    sicko.a().onTrue(new AutoMove(swerveSubsystem, 6));
+    sicko.x().onTrue(new AutoMove(swerveSubsystem, 7));
 
-    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
-      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem, ArmConstants.kManualArmVoltage));
-      operator
-          .povDown()
-          .whileTrue(new SetArmVoltage(armSubsystem, -ArmConstants.kManualArmVoltage));
-      operator
-          .povUp()
-          .or(operator.povDown())
-          .whileTrue(
-              new ConditionalCommand(
-                  new IntakeCone(intakeSubsystem),
-                  new IntakeCube(intakeSubsystem),
-                  this::isCurrentPieceCone));
-    }
+    //    operator
+    //        .rightTrigger()
+    //        .onTrue(
+    //            new SequentialCommandGroup(
+    //                new SetEndEffectorState(
+    //                    elevatorSubsystem,
+    //                    armSubsystem,
+    //                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
+    //                new OuttakeCube(intakeSubsystem)));
+
+    //    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
+    //      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem,
+    // ArmConstants.kManualArmVoltage));
+    //      operator
+    //          .povDown()
+    //          .whileTrue(new SetArmVoltage(armSubsystem, -ArmConstants.kManualArmVoltage));
+    //      operator
+    //          .povUp()
+    //          .or(operator.povDown())
+    //          .whileTrue(
+    //              new ConditionalCommand(
+    //                  new IntakeCone(intakeSubsystem),
+    //                  new IntakeCube(intakeSubsystem),
+    //                  this::isCurrentPieceCone));
+    //    }
   }
 
   public void configureLEDStrip() {
-    ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
-
-    operator.leftBumper().onTrue(new InstantCommand(this::toggleGamePiece));
+    //    ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
+    //
+    //    operator.leftBumper().onTrue(new InstantCommand(this::toggleGamePiece));
   }
 
   public Command getAutonomousCommand() {
