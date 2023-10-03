@@ -21,16 +21,18 @@ public class ZeroArm extends DebugCommandBase {
   @Override
   public void initialize() {
     super.initialize();
-    armSubsystem.zeroArmEncoderGroundRelative();
+    armSubsystem.setInputVoltage(-4);
   }
 
   @Override
   public void end(boolean interrupted) {
     super.end(interrupted);
+    armSubsystem.off();
+    if (!interrupted) armSubsystem.zeroArmEncoderGroundRelative();
   }
 
   @Override
   public boolean isFinished() {
-    return true;
+    return armSubsystem.isMotorCurrentSpiking();
   }
 }
