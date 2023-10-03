@@ -32,13 +32,13 @@ public final class ArmConstants {
   public static final double kArmMassKg = 7.5;
   public static final int kNumArmMotors = 1;
 
-  public static final double kArmS = 0.21305;
-  public static final double kArmV = 0.23;
-  public static final double kArmA = 0.011292;
-  public static final double kArmG = 0.72163;
-  public static final double kArmP = 6.5;
+  public static final double kArmS = 1.0785;
+  public static final double kArmV = 0.65977;
+  public static final double kArmA = 0.023807;
+  public static final double kArmG = 0.52783;
+  public static final double kArmP = 3.5;
   public static final double kArmI = 0;
-  public static final double kArmD = 0.25699;
+  public static final double kArmD = 0;
 
   public static final TrapezoidProfile.Constraints kArmProfileContraints =
       new TrapezoidProfile.Constraints(16, 16);
