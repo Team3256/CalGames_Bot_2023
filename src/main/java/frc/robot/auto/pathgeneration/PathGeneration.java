@@ -45,8 +45,7 @@ public class PathGeneration {
 
     // create command that runs trajectory
     AutoBuilder autoBuilder = new AutoBuilder(swerveDrive);
-    Command trajCommand = autoBuilder.createTrajectoryFollowCommand(trajectory, false, false);
-    return trajCommand;
+    return autoBuilder.createTrajectoryFollowCommand(trajectory, false, false);
   }
 
   public static Command createDynamicRelativePath(
