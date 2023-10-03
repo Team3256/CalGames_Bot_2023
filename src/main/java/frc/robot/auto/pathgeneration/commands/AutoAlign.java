@@ -9,7 +9,6 @@ package frc.robot.auto.pathgeneration.commands;
 
 import static frc.robot.Constants.FeatureFlags.kDynamicPathGenEnabled;
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
-import static frc.robot.led.LEDConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,11 +18,11 @@ import frc.robot.auto.pathgeneration.PathGeneration;
 import frc.robot.helpers.ParentCommand;
 import frc.robot.swerve.SwerveDrive;
 
-public class AutoMove extends ParentCommand {
+public class AutoAlign extends ParentCommand {
   private SwerveDrive swerveSubsystem;
   private int guiColumn;
 
-  public AutoMove(SwerveDrive swerveDrive, int guiColumn) {
+  public AutoAlign(SwerveDrive swerveDrive, int guiColumn) {
     this.swerveSubsystem = swerveDrive;
     this.guiColumn = guiColumn;
     addRequirements(swerveDrive);
