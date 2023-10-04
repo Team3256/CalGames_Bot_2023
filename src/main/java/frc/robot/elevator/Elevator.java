@@ -44,8 +44,7 @@ import frc.robot.logging.Loggable;
 
 public class Elevator extends SubsystemBase implements CANTestable, Loggable {
   public enum ElevatorPreset {
-    STOW_CONE(kConeStowPosition),
-    STOW_CUBE(kCubeStowPosition),
+    STOW(kStowPosition),
     CUBE_HIGH(kCubeHighPosition),
     CONE_HIGH(kConeHighPosition),
     ANY_PIECE_MID(kAnyPieceMidPosition),
@@ -94,7 +93,9 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     elevatorFollowerMotor.setInverted(InvertType.OpposeMaster);
     elevatorFollowerMotor.setNeutralMode(NeutralMode.Brake);
   }
-
+  // slam down == -1 == lower current threshold
+  // middle movement == 0 == very high current threshold
+  // slam up == 1 == medium current threshold
   public boolean isMotorCurrentSpiking(int dir) {
     if (RobotBase.isReal()) {
       if (dir == -1) {
@@ -142,10 +143,6 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     System.out.println("Elevator off");
   }
 
-  public boolean isSafeFromArm() {
-    return getElevatorPosition() > kSafeForArmMinPosition;
-  }
-
   @Override
   public void periodic() {
     SmartDashboard.putNumber(
@@ -180,9 +177,7 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     Preferences.initDouble(ElevatorPreferencesKeys.kIKey, kElevatorI);
     Preferences.initDouble(ElevatorPreferencesKeys.kDKey, kElevatorD);
     // Elevator Preset Preferences
-    Preferences.initDouble(kElevatorPositionKeys.get(ElevatorPreset.STOW_CONE), kConeStowPosition);
-    Preferences.initDouble(
-        kElevatorPositionKeys.get(Elevator.ElevatorPreset.STOW_CUBE), kCubeStowPosition);
+    Preferences.initDouble(kElevatorPositionKeys.get(ElevatorPreset.STOW), kStowPosition);
     Preferences.initDouble(
         kElevatorPositionKeys.get(Elevator.ElevatorPreset.CUBE_HIGH), kCubeHighPosition);
     Preferences.initDouble(

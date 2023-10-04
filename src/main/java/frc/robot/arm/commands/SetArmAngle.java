@@ -78,11 +78,11 @@ public class SetArmAngle extends ProfiledPIDCommand {
           this.getName()
               + " started (preset: "
               + armPreset
-              + ", setpoint rotation elevator relative: "
+              + ", setpoint rotation ground relative: "
               + Units.radiansToDegrees(angleRotation)
               + " deg)"
-              + ", current arm rotation elevator relative: "
-              + Units.radiansToDegrees(armSubsystem.getArmAngleElevatorRelative())
+              + ", current arm rotation ground relative: "
+              + Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative())
               + " deg)");
     }
   }
@@ -105,8 +105,8 @@ public class SetArmAngle extends ProfiledPIDCommand {
           this.getName()
               + " ended (preset: "
               + armPreset
-              + ", current arm rotation elevator relative: "
-              + Units.radiansToDegrees(armSubsystem.getArmAngleElevatorRelative())
+              + ", current arm rotation ground relative: "
+              + Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative())
               + " deg, "
               + ", rotation: "
               + Units.radiansToDegrees(angleRotation)

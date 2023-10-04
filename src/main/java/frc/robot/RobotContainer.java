@@ -23,13 +23,11 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
-import frc.robot.auto.pathgeneration.commands.*;
 import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetElevatorVolts;
-import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
@@ -324,11 +322,10 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     // operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
-    tester.povUp().whileTrue(new SetElevatorVolts(elevatorSubsystem, 3));
-
-    tester.povDown().whileTrue(new SetElevatorVolts(elevatorSubsystem, -3));
+    tester.povUp().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
+    tester.povDown().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
     tester.povLeft().whileTrue(new SetArmVoltage(armSubsystem, 3));
-    tester.povRight().whileTrue(new SetArmVoltage(armSubsystem, -2));
+    tester.povRight().whileTrue(new SetArmVoltage(armSubsystem, -3));
     //    tester.leftBumper().onTrue(new SetElevatorExtension(elevatorSubsystem, 0.5));
     //    tester.leftTrigger().onTrue(new SetElevatorExtension(elevatorSubsystem, 1));
     //    tester.rightBumper().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(0)));
@@ -337,16 +334,25 @@ public class RobotContainer implements CANTestable, Loggable {
     tester.leftTrigger().onTrue(new OuttakeCone(intakeSubsystem));
     tester.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
     tester.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
-    tester.a().onTrue(new AutoAlign(swerveSubsystem, 5));
-    tester
-        .y()
-        .onTrue(
-            new SequentialCommandGroup(
-                new SetEndEffectorState(
-                    elevatorSubsystem,
-                    armSubsystem,
-                    SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID),
-                new OuttakeCube(intakeSubsystem)));
+
+    // tester.a().onTrue(new AutoAlign(swerveSubsystem, 5));
+    //    tester
+    //        .y()
+    //        .onTrue(
+    //            new SequentialCommandGroup(
+    //                new SetEndEffectorState(
+    //                    elevatorSubsystem,
+    //                    armSubsystem,
+    //                    SetEndEffectorState.EndEffectorPreset.SCORE_CONE_MID),
+    //                new OuttakeCube(intakeSubsystem)));
+    tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
+    //    tester
+    //        .b()
+    //        .onTrue(
+    //            new SetEndEffectorState(
+    //                elevatorSubsystem,
+    //                armSubsystem,
+    //                SetEndEffectorState.EndEffectorPreset.CUBE_GROUND_INTAKE));
 
     //    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
     //      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem,
@@ -374,11 +380,10 @@ public class RobotContainer implements CANTestable, Loggable {
     Command autoPath = autoPaths.getSelectedPath();
     if (kElevatorEnabled && kArmEnabled) {
       return Commands.sequence(
-          new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone),
+          new StowEndEffector(elevatorSubsystem, armSubsystem),
           autoPath,
           Commands.parallel(
-              new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
-                  .asProxy(),
+              new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
               new LockSwerveX(swerveSubsystem)
                   .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
                   .until(() -> isMovingJoystick(driver))));

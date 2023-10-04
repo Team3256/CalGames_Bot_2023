@@ -14,9 +14,9 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
-import frc.robot.helpers.ParentCommand;
+import frc.robot.helpers.SpawnCommand;
 
-public class SetEndEffectorState extends ParentCommand {
+public class SetEndEffectorState extends SpawnCommand {
   private Arm armSubsystem;
   private Elevator elevatorSubsystem;
   private Rotation2d armAngle;
@@ -24,27 +24,28 @@ public class SetEndEffectorState extends ParentCommand {
   private boolean moveArmFirst;
 
   public enum EndEffectorPreset {
+    // scoring
     SCORE_CONE_HIGH(Arm.ArmPreset.CONE_HIGH, Elevator.ElevatorPreset.CONE_HIGH),
     SCORE_CONE_MID(Arm.ArmPreset.CONE_MID, Elevator.ElevatorPreset.ANY_PIECE_MID),
+    SCORE_CUBE_HIGH(Arm.ArmPreset.CUBE_HIGH, Elevator.ElevatorPreset.CUBE_HIGH),
+    SCORE_CUBE_MID(Arm.ArmPreset.CUBE_MID, Elevator.ElevatorPreset.ANY_PIECE_MID),
     SCORE_ANY_LOW_BACK(
         Arm.ArmPreset.ANY_PIECE_LOW_BACK, Elevator.ElevatorPreset.ANY_PIECE_LOW_BACK),
     SCORE_ANY_LOW_FRONT(
         Arm.ArmPreset.ANY_PIECE_LOW_FRONT, Elevator.ElevatorPreset.ANY_PIECE_LOW_FRONT),
+    // substation
     DOUBLE_SUBSTATION_CONE(
         Arm.ArmPreset.DOUBLE_SUBSTATION_CONE, Elevator.ElevatorPreset.DOUBLE_SUBSTATION_CONE),
-    STOW_CONE(Arm.ArmPreset.STOW_CONE, Elevator.ElevatorPreset.STOW_CONE),
-    SCORE_CUBE_HIGH(Arm.ArmPreset.CUBE_HIGH, Elevator.ElevatorPreset.CUBE_HIGH),
-    SCORE_CUBE_MID(Arm.ArmPreset.CUBE_MID, Elevator.ElevatorPreset.ANY_PIECE_MID),
     DOUBLE_SUBSTATION_CUBE(
         Arm.ArmPreset.DOUBLE_SUBSTATION_CUBE, Elevator.ElevatorPreset.DOUBLE_SUBSTATION_CUBE),
-    STOW_CUBE(Arm.ArmPreset.STOW_CUBE, Elevator.ElevatorPreset.STOW_CUBE),
+    // ground intake
     CUBE_GROUND_INTAKE(Arm.ArmPreset.CUBE_GROUND_INTAKE, Elevator.ElevatorPreset.GROUND_INTAKE),
-
     SITTING_CONE_GROUND_INTAKE(
         Arm.ArmPreset.SITTING_CONE_GROUND_INTAKE, Elevator.ElevatorPreset.GROUND_INTAKE),
-
     STANDING_CONE_GROUND_INTAKE(
-        Arm.ArmPreset.STANDING_CONE_GROUND_INTAKE, Elevator.ElevatorPreset.GROUND_INTAKE);
+        Arm.ArmPreset.STANDING_CONE_GROUND_INTAKE, Elevator.ElevatorPreset.GROUND_INTAKE),
+    // stow
+    STOW(Arm.ArmPreset.STOW, Elevator.ElevatorPreset.STOW);
 
     public final Arm.ArmPreset armPreset;
     public final Elevator.ElevatorPreset elevatorPreset;
@@ -60,7 +61,7 @@ public class SetEndEffectorState extends ParentCommand {
       Arm armSubsystem,
       EndEffectorPreset endEffectorPreset,
       boolean moveArmFirst) {
-
+    super();
     this.armSubsystem = armSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
     this.elevatorExtension = endEffectorPreset.elevatorPreset.position;
@@ -76,14 +77,14 @@ public class SetEndEffectorState extends ParentCommand {
   @Override
   public void initialize() {
     if (moveArmFirst) {
-      addChildCommands(
+      setChildCommand(
           Commands.sequence(
               new SetArmAngle(armSubsystem, armAngle).asProxy(),
               Commands.parallel(
                   new InstantCommand(() -> new KeepArm(armSubsystem).schedule()),
                   new SetElevatorExtension(elevatorSubsystem, elevatorExtension))));
     } else {
-      addChildCommands(
+      setChildCommand(
           Commands.sequence(
               new SetElevatorExtension(elevatorSubsystem, elevatorExtension),
               new SetArmAngle(armSubsystem, armAngle).asProxy(),

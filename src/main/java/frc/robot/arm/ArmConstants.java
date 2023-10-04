@@ -21,11 +21,6 @@ public final class ArmConstants {
 
   public static final double kArmAngleInit = Units.degreesToRadians(-37);
 
-  public static final double kArmEncoderGearRatio = 2 / 1;
-  public static final double kArmRadiansPerAbsoluteEncoderRotation =
-      -(2 / kArmEncoderGearRatio) * Math.PI;
-  public static final double kAbsoluteEncoderOffsetRadians = 3.6506685;
-
   public static final double kArmGearing = 80;
   public static final double kArmLength = 0.569075;
   public static final double kArmInertia = 0.410;
@@ -46,34 +41,28 @@ public final class ArmConstants {
   public static final Rotation2d kArmToleranceAngle = Rotation2d.fromDegrees(5);
   public static final Rotation2d kArmToleranceAngularVelocity = Rotation2d.fromDegrees(5);
 
-  public static final Rotation2d kArmAngleMinConstraint = Rotation2d.fromDegrees(0);
-  public static final Rotation2d kArmAngleMaxConstraint = Rotation2d.fromDegrees(180);
+  public static final Rotation2d kArmAngleMinConstraint = Rotation2d.fromDegrees(-37);
+  public static final Rotation2d kArmAngleMaxConstraint = Rotation2d.fromDegrees(160);
 
-  public static final Rotation2d kStowRotationCube = Rotation2d.fromDegrees(35);
-  public static final Rotation2d kStowRotationCone = Rotation2d.fromDegrees(35);
+  public static final Rotation2d kStowRotation = Rotation2d.fromDegrees(120);
 
-  public static final Rotation2d kDoubleSubstationRotationCube = new Rotation2d(0);
-  public static final Rotation2d kDoubleSubstationRotationCone = new Rotation2d(0);
+  public static final Rotation2d kDoubleSubstationRotationCube = new Rotation2d(157.7);
+  public static final Rotation2d kDoubleSubstationRotationCone = new Rotation2d(157.7);
   public static final Rotation2d kCubeMidRotation = new Rotation2d(157.7);
-  public static final Rotation2d kConeMidRotation = new Rotation2d(0);
-  public static final Rotation2d kCubeHighRotation = new Rotation2d(0);
-  public static final Rotation2d kConeHighRotation = new Rotation2d(0);
-  public static final Rotation2d kAnyPieceLowBackRotation = Rotation2d.fromDegrees(135);
-  public static final Rotation2d kAnyPieceLowFrontRotation = Rotation2d.fromDegrees(0);
+  public static final Rotation2d kConeMidRotation = new Rotation2d(157.7);
+  public static final Rotation2d kCubeHighRotation = new Rotation2d(157.7);
+  public static final Rotation2d kConeHighRotation = new Rotation2d(157.7);
+  public static final Rotation2d kAnyPieceLowBackRotation = Rotation2d.fromDegrees(0);
+  public static final Rotation2d kAnyPieceLowFrontRotation = Rotation2d.fromDegrees(157.7);
 
-  public static final Rotation2d kStandingConeGroundIntakeRotation =
-      Rotation2d.fromDegrees(142.644);
-  public static final Rotation2d kTippedConeGroundIntakeRotation = Rotation2d.fromDegrees(180);
-  public static final Rotation2d kCubeGroundIntakeRotation = Rotation2d.fromDegrees(180);
-  public static final double kManualArmVoltage = 2.5;
-  public static final double kMinSafeRotation = 15;
-  public static final double kMaxSafeRotation = 130;
+  public static final Rotation2d kStandingConeGroundIntakeRotation = Rotation2d.fromDegrees(7.5);
+  public static final Rotation2d kTippedConeGroundIntakeRotation = Rotation2d.fromDegrees(0);
+  public static final Rotation2d kCubeGroundIntakeRotation = Rotation2d.fromDegrees(-37);
 
   public static class ArmPreferencesKeys {
     public static final Map<Arm.ArmPreset, String> kArmPositionKeys =
         Map.ofEntries(
-            Map.entry(Arm.ArmPreset.STOW_CONE, "kStowRotationCone"),
-            Map.entry(Arm.ArmPreset.STOW_CUBE, "kStowRotationCube"),
+            Map.entry(Arm.ArmPreset.STOW, "kStowRotation"),
             Map.entry(Arm.ArmPreset.ANY_PIECE_LOW_BACK, "kAnyPieceLowBackRotation"),
             Map.entry(Arm.ArmPreset.ANY_PIECE_LOW_FRONT, "kAnyPieceLowFrontRotation"),
             Map.entry(Arm.ArmPreset.CUBE_MID, "kCubeMidRotation"),
@@ -89,8 +78,7 @@ public final class ArmConstants {
 
     public static final Map<Arm.ArmPreset, Rotation2d> kArmPositionDefaults =
         Map.ofEntries(
-            Map.entry(Arm.ArmPreset.STOW_CONE, kStowRotationCone),
-            Map.entry(Arm.ArmPreset.STOW_CUBE, kStowRotationCube),
+            Map.entry(Arm.ArmPreset.STOW, kStowRotation),
             Map.entry(Arm.ArmPreset.ANY_PIECE_LOW_BACK, kAnyPieceLowBackRotation),
             Map.entry(Arm.ArmPreset.CUBE_MID, kCubeMidRotation),
             Map.entry(Arm.ArmPreset.CONE_MID, kConeMidRotation),

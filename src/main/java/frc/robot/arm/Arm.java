@@ -40,15 +40,13 @@ import frc.robot.arm.commands.ZeroArm;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
 import frc.robot.drivers.TalonFXFactory;
-import frc.robot.elevator.ElevatorConstants;
 import frc.robot.logging.DoubleSendable;
 import frc.robot.logging.Loggable;
 import frc.robot.swerve.helpers.Conversions;
 
 public class Arm extends SubsystemBase implements CANTestable, Loggable {
   public enum ArmPreset {
-    STOW_CUBE(kStowRotationCube),
-    STOW_CONE(kStowRotationCone),
+    STOW(kStowRotation),
     ANY_PIECE_LOW_BACK(kAnyPieceLowBackRotation),
     ANY_PIECE_LOW_FRONT(kAnyPieceLowFrontRotation),
     CUBE_MID(kCubeMidRotation),
@@ -111,29 +109,8 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     armMotor.setVoltage(MathUtil.clamp(voltage, -12, 12));
   }
 
-  public boolean isSafeFromElevator() {
-    return (Units.radiansToDegrees(getArmAngleElevatorRelative()) <= kMaxSafeRotation
-        && Units.radiansToDegrees(getArmAngleElevatorRelative()) >= kMinSafeRotation);
-  }
-
   public void zeroArmEncoderGroundRelative() {
     armMotor.setSelectedSensorPosition(Conversions.radiansToFalcon(kArmAngleInit, kArmGearing));
-  }
-
-  public Rotation2d getClosestSafePosition(double elevatorPosition) {
-    if (elevatorPosition > ElevatorConstants.kSafeForArmMinPosition) {
-      return Rotation2d.fromDegrees(
-          MathUtil.clamp(
-              Units.radiansToDegrees(getArmAngleElevatorRelative()),
-              kArmAngleMinConstraint.getDegrees(),
-              kArmAngleMaxConstraint.getDegrees()));
-    } else {
-      return Rotation2d.fromDegrees(
-          MathUtil.clamp(
-              Units.radiansToDegrees(getArmAngleElevatorRelative()),
-              kMinSafeRotation,
-              kMaxSafeRotation));
-    }
   }
 
   public double getArmAngleGroundRelative() {
@@ -227,12 +204,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     Preferences.initDouble(ArmConstants.ArmPreferencesKeys.kDKey, ArmConstants.kArmD);
 
     // Arm Encoder Offset
-    Preferences.initDouble(
-        ArmPreferencesKeys.kAbsoluteEncoderOffsetKey, kAbsoluteEncoderOffsetRadians);
-    Preferences.initDouble(
-        kArmPositionKeys.get(ArmPreset.STOW_CONE), kStowRotationCone.getRadians());
-    Preferences.initDouble(
-        kArmPositionKeys.get(ArmPreset.STOW_CUBE), kStowRotationCube.getRadians());
+    Preferences.initDouble(kArmPositionKeys.get(ArmPreset.STOW), kStowRotation.getRadians());
     Preferences.initDouble(
         kArmPositionKeys.get(ArmPreset.ANY_PIECE_LOW_BACK), kAnyPieceLowBackRotation.getRadians());
     Preferences.initDouble(
