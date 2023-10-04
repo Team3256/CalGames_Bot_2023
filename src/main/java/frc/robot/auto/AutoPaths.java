@@ -160,7 +160,7 @@ public class AutoPaths {
           () ->
               runParallelWithPath(
                   Commands.parallel(
-                          new StowEndEffector(elevatorSubsystem, armSubsystem, isCurrentPieceCone),
+                          new StowEndEffector(elevatorSubsystem, armSubsystem),
                           new IntakeOff(intakeSubsystem))
                       .asProxy()
                       .withName("stow")));
@@ -169,7 +169,7 @@ public class AutoPaths {
           "stow",
           () ->
               Commands.parallel(
-                      new StowEndEffector(elevatorSubsystem, armSubsystem, isCurrentPieceCone),
+                      new StowEndEffector(elevatorSubsystem, armSubsystem),
                       new IntakeOff(intakeSubsystem))
                   .asProxy()
                   .withName("stow"));

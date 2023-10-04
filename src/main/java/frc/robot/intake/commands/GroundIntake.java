@@ -78,8 +78,7 @@ public class GroundIntake extends DebugCommandBase {
                 isCurrentPieceCone)
             .andThen(
                 Commands.deadline(
-                    new StowEndEffector(elevatorSubsystem, armSubsystem, isCurrentPieceCone)
-                        .asProxy(),
+                    new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
                     new ConditionalCommand(
                             new IntakeCone(intakeSubsystem).repeatedly(),
                             new InstantCommand(),

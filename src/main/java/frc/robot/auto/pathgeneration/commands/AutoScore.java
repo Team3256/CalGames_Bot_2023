@@ -239,8 +239,7 @@ public class AutoScore extends ParentCommand {
               new SetAllBlink(ledSubsystem, kCube),
               isSelectedNodeCone);
 
-      Command stowArmElevator =
-          new StowEndEffector(elevatorSubsystem, armSubsystem, isSelectedNodeCone);
+      Command stowArmElevator = new StowEndEffector(elevatorSubsystem, armSubsystem);
 
       Command autoScore =
           Commands.sequence(
