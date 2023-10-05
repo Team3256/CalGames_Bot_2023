@@ -10,11 +10,9 @@ package frc.robot.intake.commands;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.helpers.DebugCommandBase;
 import frc.robot.intake.Intake;
-import frc.robot.led.LED;
 
 public class OuttakeCone extends DebugCommandBase {
   private Intake intakeSubsystem;
-  private LED ledSubsystem;
   private double outtakeTime = 1;
   private Timer timer;
 

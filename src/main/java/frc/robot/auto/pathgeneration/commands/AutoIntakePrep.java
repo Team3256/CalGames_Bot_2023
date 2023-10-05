@@ -29,8 +29,6 @@ import frc.robot.helpers.ParentCommand;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeCone;
 import frc.robot.intake.commands.IntakeCube;
-import frc.robot.led.LED;
-import frc.robot.led.commands.SetAllColor;
 import frc.robot.swerve.SwerveDrive;
 import java.util.function.BooleanSupplier;
 
@@ -39,7 +37,6 @@ public class AutoIntakePrep extends ParentCommand {
   private Intake intakeSubsystem;
   private Elevator elevatorSubsystem;
   private Arm armSubsystem;
-  private LED ledSubsystem;
   private BooleanSupplier isCurrentPieceCone;
   private BooleanSupplier cancelCommand;
 
@@ -48,7 +45,6 @@ public class AutoIntakePrep extends ParentCommand {
       Intake intakeSubsystem,
       Elevator elevatorSubsystem,
       Arm armSubsystem,
-      LED ledSubsystem,
       BooleanSupplier isCurrentPieceCone,
       BooleanSupplier cancelCommand) {
 
@@ -56,11 +52,10 @@ public class AutoIntakePrep extends ParentCommand {
     this.intakeSubsystem = intakeSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
     this.armSubsystem = armSubsystem;
-    this.ledSubsystem = ledSubsystem;
     this.isCurrentPieceCone = isCurrentPieceCone;
     this.cancelCommand = cancelCommand;
 
-    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
+    addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem);
   }
 
   @Override
@@ -69,7 +64,6 @@ public class AutoIntakePrep extends ParentCommand {
     int guiStation = (int) SmartDashboard.getNumber("guiStation", -1);
     if (guiStation < 0 || guiStation > 1) {
       System.out.println("guiStation was invalid (" + guiStation + ")");
-      new SetAllColor(ledSubsystem, kError).withTimeout(2.5).schedule();
       return;
     }
 

@@ -252,7 +252,6 @@ public class RobotContainer implements CANTestable, Loggable {
                   swerveSubsystem,
                   elevatorSubsystem,
                   armSubsystem,
-                  ledSubsystem,
                   this::isCurrentPieceCone,
                   () -> isMovingJoystick(driver)));
 
@@ -263,7 +262,6 @@ public class RobotContainer implements CANTestable, Loggable {
                   intakeSubsystem,
                   elevatorSubsystem,
                   armSubsystem,
-                  ledSubsystem,
                   this::isCurrentPieceCone,
                   () -> isMovingJoystick(driver)));
     }
@@ -280,27 +278,24 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   private void configureIntake() {
-    //    operator
-    //        .rightTrigger()
-    //        .whileTrue(
-    //            new ConditionalCommand(
-    //                new OuttakeCone(intakeSubsystem),
-    //                new OuttakeCube(intakeSubsystem),
-    //                this::isCurrentPieceCone))
-    //        .onFalse(
-    //            new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
-    //                .asProxy());
-
     if (kArmEnabled && kElevatorEnabled) {
-      //      driver
-      //          .rightTrigger()
-      //          .onTrue(
-      //              new GroundIntake(
-      //                  elevatorSubsystem,
-      //                  armSubsystem,
-      //                  intakeSubsystem,
-      //                  ConeOrientation.STANDING_CONE,
-      //                  this::isCurrentPieceCone));
+      operator
+          .rightTrigger()
+          .whileTrue(
+              new ConditionalCommand(
+                  new OuttakeCone(intakeSubsystem),
+                  new OuttakeCube(intakeSubsystem),
+                  this::isCurrentPieceCone))
+          .onFalse(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy());
+      //            operator
+      //                .rightTrigger()
+      //                .onTrue(
+      //                    new GroundIntake(
+      //                        elevatorSubsystem,
+      //                        armSubsystem,
+      //                        intakeSubsystem,
+      //                        ConeOrientation.STANDING_CONE,
+      //                        this::isCurrentPieceCone));
 
       //      driver
       //          .rightBumper()
@@ -397,7 +392,6 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureLEDStrip() {
     ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
-    //    operator.leftBumper().onTrue(new InstantCommand(this::toggleGamePiece));
   }
 
   // --MISC--
@@ -430,25 +424,13 @@ public class RobotContainer implements CANTestable, Loggable {
     pitSubsystemRoutine.runPitRoutine();
   }
 
-  // --TOGGLE STATE--
-  // NOTICE: ONLY FOR AUTO TO CHANGE LATCH
+  // --GamePiece?--
   public void setGamePiece(GamePiece piece) {
     currentPiece = piece;
   }
 
   public boolean isCurrentPieceCone() {
     return GamePiece.CONE.equals(currentPiece);
-  }
-
-  public void toggleGamePiece() {
-    if (currentPiece == GamePiece.CONE) {
-      currentPiece = GamePiece.CUBE;
-      new SetAllColor(ledSubsystem, kCube).schedule();
-    } else {
-      currentPiece = GamePiece.CONE;
-      new SetAllColor(ledSubsystem, kCone).schedule();
-    }
-    System.out.println("Current game piece: " + currentPiece);
   }
 
   // --LOG N SIM--

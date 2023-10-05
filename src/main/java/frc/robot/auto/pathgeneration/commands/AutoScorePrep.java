@@ -9,7 +9,6 @@ package frc.robot.auto.pathgeneration.commands;
 
 import static frc.robot.Constants.FeatureFlags.kDynamicPathGenEnabled;
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
-import static frc.robot.led.LEDConstants.kError;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,8 +23,6 @@ import frc.robot.auto.pathgeneration.PathGeneration;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.helpers.ParentCommand;
-import frc.robot.led.LED;
-import frc.robot.led.commands.SetAllColor;
 import frc.robot.swerve.SwerveDrive;
 import java.util.function.BooleanSupplier;
 
@@ -33,7 +30,6 @@ public class AutoScorePrep extends ParentCommand {
   private SwerveDrive swerveSubsystem;
   private Elevator elevatorSubsystem;
   private Arm armSubsystem;
-  private LED ledSubsystem;
   private BooleanSupplier isOperatorSelectingCone;
   private BooleanSupplier cancelCommand;
 
@@ -41,16 +37,14 @@ public class AutoScorePrep extends ParentCommand {
       SwerveDrive swerveDrive,
       Elevator elevatorSubsystem,
       Arm armSubsystem,
-      LED ledSubsystem,
       BooleanSupplier isOperatorSelectingCone,
       BooleanSupplier cancelCommand) {
     this.swerveSubsystem = swerveDrive;
     this.elevatorSubsystem = elevatorSubsystem;
     this.armSubsystem = armSubsystem;
-    this.ledSubsystem = ledSubsystem;
     this.isOperatorSelectingCone = isOperatorSelectingCone;
     this.cancelCommand = cancelCommand;
-    addRequirements(swerveDrive, elevatorSubsystem, armSubsystem, ledSubsystem);
+    addRequirements(swerveDrive, elevatorSubsystem, armSubsystem);
   }
 
   @Override
@@ -59,7 +53,6 @@ public class AutoScorePrep extends ParentCommand {
     int guiColumn = (int) SmartDashboard.getNumber("guiColumn", -1);
     if (0 > guiColumn || guiColumn > 8) {
       System.out.println("guiColumn was invalid (" + guiColumn + ")");
-      new SetAllColor(ledSubsystem, kError).withTimeout(2.5).schedule();
       return;
     }
     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
@@ -70,7 +63,6 @@ public class AutoScorePrep extends ParentCommand {
     int guiRow = (int) SmartDashboard.getNumber("guiRow", -1);
     if (guiRow < 0 || guiRow > 2) {
       System.out.println("guiRow was invalid (" + guiRow + ")");
-      new SetAllColor(ledSubsystem, kError).withTimeout(2.5).schedule();
       return;
     }
 
