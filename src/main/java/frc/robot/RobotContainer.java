@@ -23,6 +23,7 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
+import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation;
 import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
@@ -150,7 +151,7 @@ public class RobotContainer implements CANTestable, Loggable {
       robotSimulation =
           new RobotSimulation(swerveSubsystem, intakeSubsystem, armSubsystem, elevatorSubsystem);
       robotSimulation.initializeRobot();
-      robotSimulation.addDoubleSubstation(GamePiece.CONE);
+      // robotSimulation.addDoubleSubstation(GamePiece.CONE);
     }
   }
 
@@ -215,6 +216,7 @@ public class RobotContainer implements CANTestable, Loggable {
                 () -> isMovingJoystick(driver),
                 kFieldRelative,
                 kOpenLoop));
+
     driver.a().onTrue(new InstantCommand(swerveSubsystem::zeroGyroYaw));
 
     //
@@ -230,14 +232,14 @@ public class RobotContainer implements CANTestable, Loggable {
     //                    kOpenLoop)
     //                .deadlineWith(new LimitedSwervePattern(ledSubsystem,
     // this::isCurrentPieceCone)));
-    //
-    //    driver
-    //        .x()
-    //        .onTrue(
-    //            new LockSwerveX(swerveSubsystem)
-    //                .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
-    //                .until(() -> isMovingJoystick(driver)));
-    //
+
+    driver
+        .x()
+        .onTrue(
+            new LockSwerveX(swerveSubsystem)
+                .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
+                .until(() -> isMovingJoystick(driver)));
+
     //    if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
     //      new Trigger(this::scoreTriggered)
     //          .onTrue(
@@ -251,6 +253,7 @@ public class RobotContainer implements CANTestable, Loggable {
     //                  () -> true,
     //                  () -> isMovingJoystick(driver),
     //                  true));
+    //
     //      new Trigger(this::intakeTriggered)
     //          .onTrue(
     //              new AutoIntakeAtDoubleSubstation(
@@ -263,14 +266,13 @@ public class RobotContainer implements CANTestable, Loggable {
     //                  () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
     //                  this::isCurrentPieceCone));
     //    }
-    //
-    //    operator.a().toggleOnTrue(new InstantCommand(this::toggleSubstationLocation));
   }
 
   // Checks if Button Board sent an intake command
   private boolean intakeTriggered() {
     return SmartDashboard.getBoolean("intakeTriggered", false);
   }
+
   // Checks if Button Board sent a score command
   private boolean scoreTriggered() {
     return SmartDashboard.getBoolean("scoreTriggered", false);
@@ -335,7 +337,7 @@ public class RobotContainer implements CANTestable, Loggable {
     tester.rightBumper().onTrue(new IntakeCube(intakeSubsystem));
     tester.rightTrigger().onTrue(new OuttakeCube(intakeSubsystem));
 
-    // tester.a().onTrue(new AutoAlign(swerveSubsystem, 5));
+    //    tester.a().onTrue(new AutoAlign(swerveSubsystem, 5));
     //    tester
     //        .y()
     //        .onTrue(
@@ -345,7 +347,14 @@ public class RobotContainer implements CANTestable, Loggable {
     //                    armSubsystem,
     //                    SetEndEffectorState.EndEffectorPreset.SCORE_CONE_MID),
     //                new OuttakeCube(intakeSubsystem)));
-    tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
+    //    tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
+    //    tester
+    //        .y()
+    //        .onTrue(
+    //            new SetEndEffectorState(
+    //                elevatorSubsystem,
+    //                armSubsystem,
+    //                SetEndEffectorState.EndEffectorPreset.SCORE_CONE_HIGH));
     //    tester
     //        .b()
     //        .onTrue(
@@ -353,6 +362,18 @@ public class RobotContainer implements CANTestable, Loggable {
     //                elevatorSubsystem,
     //                armSubsystem,
     //                SetEndEffectorState.EndEffectorPreset.CUBE_GROUND_INTAKE));
+    tester
+        .x()
+        .onTrue(
+            new AutoIntakeAtDoubleSubstation(
+                swerveSubsystem,
+                intakeSubsystem,
+                elevatorSubsystem,
+                armSubsystem,
+                ledSubsystem,
+                () -> isMovingJoystick(driver),
+                () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
+                this::isCurrentPieceCone));
 
     //    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
     //      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem,
@@ -375,6 +396,7 @@ public class RobotContainer implements CANTestable, Loggable {
     ledSubsystem.setDefaultCommand(new ColorFlowPattern(ledSubsystem));
     //    operator.leftBumper().onTrue(new InstantCommand(this::toggleGamePiece));
   }
+
   // --MISC--
   public Command getAutonomousCommand() {
     Command autoPath = autoPaths.getSelectedPath();
@@ -412,46 +434,21 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   public boolean isCurrentPieceCone() {
-    //    return GamePiece.CONE.equals(currentPiece);
-    return true;
+    return GamePiece.CONE.equals(currentPiece);
   }
 
   public void toggleGamePiece() {
-    //    if (currentPiece == GamePiece.CONE) {
-    //      currentPiece = GamePiece.CUBE;
-    //      new SetAllColor(ledSubsystem, kCube).schedule();
-    //    } else {
-    //      currentPiece = GamePiece.CONE;
-    //      new SetAllColor(ledSubsystem, kCone).schedule();
-    //    }
-    currentPiece = GamePiece.CONE;
-    new SetAllColor(ledSubsystem, kCone).schedule();
+    if (currentPiece == GamePiece.CONE) {
+      currentPiece = GamePiece.CUBE;
+      new SetAllColor(ledSubsystem, kCube).schedule();
+    } else {
+      currentPiece = GamePiece.CONE;
+      new SetAllColor(ledSubsystem, kCone).schedule();
+    }
     System.out.println("Current game piece: " + currentPiece);
   }
 
-  public void toggleSubstationLocation() {
-    if (doubleSubstationLocation == SubstationLocation.LEFT_SIDE) {
-      doubleSubstationLocation = SubstationLocation.RIGHT_SIDE;
-    } else {
-      doubleSubstationLocation = SubstationLocation.LEFT_SIDE;
-    }
-
-    System.out.println("Current Double Substation Location: " + doubleSubstationLocation);
-    SmartDashboard.putString(
-        "Current Double Substation Location", doubleSubstationLocation.toString());
-  }
-
-  public void setScoreLocation(GridScoreHeight Preset) {
-    currentScoringPreset = Preset;
-    System.out.println("Switching Scoring Preset to " + currentScoringPreset.toString());
-    SmartDashboard.putString("Current Scoring Preset", currentScoringPreset.toString());
-  }
-
-  public SubstationLocation getSubstationLocation() {
-    return this.doubleSubstationLocation;
-  }
-
-  // --LOG N SIM
+  // --LOG N SIM--
   public void updateSimulation() {
     robotSimulation.updateSubsystemPositions();
   }

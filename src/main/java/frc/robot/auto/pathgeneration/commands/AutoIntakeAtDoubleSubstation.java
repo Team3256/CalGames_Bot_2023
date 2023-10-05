@@ -50,6 +50,7 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
   private BooleanSupplier cancelCommand;
   private BooleanSupplier isAutoScoreMode;
   private BooleanSupplier isCurrentPieceCone;
+  private int guiStation;
 
   public AutoIntakeAtDoubleSubstation(
       SwerveDrive swerveDrive,
@@ -60,6 +61,28 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
       BooleanSupplier cancelCommand,
       BooleanSupplier isAutoScoreMode,
       BooleanSupplier isCurrentPieceCone) {
+    new AutoIntakeAtDoubleSubstation(
+        swerveDrive,
+        intakeSubsystem,
+        elevatorSubsystem,
+        armSubsystem,
+        ledSubsystem,
+        cancelCommand,
+        isAutoScoreMode,
+        isCurrentPieceCone,
+        -1);
+  }
+
+  public AutoIntakeAtDoubleSubstation(
+      SwerveDrive swerveDrive,
+      Intake intakeSubsystem,
+      Elevator elevatorSubsystem,
+      Arm armSubsystem,
+      LED ledSubsystem,
+      BooleanSupplier cancelCommand,
+      BooleanSupplier isAutoScoreMode,
+      BooleanSupplier isCurrentPieceCone,
+      int guiStation) {
 
     this.swerveSubsystem = swerveDrive;
     this.intakeSubsystem = intakeSubsystem;
@@ -69,6 +92,7 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
     this.isAutoScoreMode = isAutoScoreMode;
     this.cancelCommand = cancelCommand;
     this.isCurrentPieceCone = isCurrentPieceCone;
+    this.guiStation = guiStation;
 
     addRequirements(swerveDrive, intakeSubsystem, elevatorSubsystem, armSubsystem, ledSubsystem);
   }

@@ -34,8 +34,8 @@ public final class ElevatorConstants {
   public static final double kAnyPieceLowBackPosition = 0;
   public static final double kAnyPieceLowFrontPosition = 0.39; // needs tuning
   // substation
-  public static final double kCubeDoubleSubstationPosition = Units.inchesToMeters(46);
-  public static final double kConeDoubleSubstationPosition = Units.inchesToMeters(46);
+  public static final double kCubeDoubleSubstationPosition = 1.12;
+  public static final double kConeDoubleSubstationPosition = 1.1;
   // ground intake
   public static final double kGroundIntakePosition = 0;
   // stow
@@ -64,8 +64,9 @@ public final class ElevatorConstants {
   public static final double kMaxExtension = Units.inchesToMeters(59);
   public static final double kElevatorGearing = 25.0 / 3;
   public static final double kCarriageMass = 9; // kg
-  public static final double kTolerancePosition = Units.inchesToMeters(2.5);
-  public static final double kToleranceVelocity = Units.inchesToMeters(2.5);
+
+  public static final double kTolerancePosition = Units.inchesToMeters(2); // used to be 2.5
+  public static final double kToleranceVelocity = Units.inchesToMeters(2); // used to be 2.5
   public static final double kRateLimiting = 0.05;
 
   public static class ElevatorPreferencesKeys {

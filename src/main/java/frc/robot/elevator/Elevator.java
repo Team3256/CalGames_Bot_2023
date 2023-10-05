@@ -230,7 +230,7 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
 
   private void configureSimHardware() {
     elevatorMotor = new WPI_TalonFX(kElevatorMasterID);
-    elevatorMotor.setInverted(true);
+    elevatorMotor.setInverted(false);
     elevatorMotor.setNeutralMode(NeutralMode.Brake);
 
     elevatorLigament =

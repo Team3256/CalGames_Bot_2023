@@ -17,7 +17,7 @@ import frc.robot.arm.Arm;
 
 public class KeepArmAtPosition extends ProfiledPIDCommand {
   private Arm armSubsystem;
-  private double armPosition = 0;
+  private double armPosition;
 
   /**
    * Constructor for setting arm to arbitrary angle in radians. This command is RELATIVE to the

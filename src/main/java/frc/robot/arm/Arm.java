@@ -252,17 +252,9 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   private void configureSimHardware() {
     armMotor = new WPI_TalonFX(kArmSimulationID);
     armMotor.setInverted(true);
-
     armMotor.setNeutralMode(NeutralMode.Brake);
-    armMotor.setSelectedSensorPosition(0);
 
-    armLigament =
-        new MechanismLigament2d(
-            "Arm",
-            kArmLength,
-            Units.radiansToDegrees(getArmAngleElevatorRelative()) - 90,
-            10,
-            new Color8Bit(Color.kBlue));
+    armLigament = new MechanismLigament2d("Arm", kArmLength, 0, 10, new Color8Bit(Color.kBlue));
   }
 
   @Override
@@ -277,9 +269,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   private void simulationOutputToDashboard() {
     SmartDashboard.putNumber(
         "Arm angle position ground relative", Units.radiansToDegrees(getArmAngleGroundRelative()));
-    SmartDashboard.putNumber(
-        "Arm angle position elevator relative",
-        Units.radiansToDegrees(getArmAngleElevatorRelative()));
     SmartDashboard.putNumber("Current Draw", armSim.getCurrentDrawAmps());
     SmartDashboard.putNumber("Arm Sim Voltage", armMotor.getMotorOutputPercent() * 12);
   }
