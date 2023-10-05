@@ -65,8 +65,8 @@ public final class ElevatorConstants {
   public static final double kElevatorGearing = 25.0 / 3;
   public static final double kCarriageMass = 9; // kg
 
-  public static final double kTolerancePosition = Units.inchesToMeters(2); // used to be 2.5
-  public static final double kToleranceVelocity = Units.inchesToMeters(2); // used to be 2.5
+  public static final double kTolerancePosition = Units.inchesToMeters(2.5); // used to be 2.5
+  public static final double kToleranceVelocity = Units.inchesToMeters(2.5); // used to be 2.5
   public static final double kRateLimiting = 0.05;
 
   public static class ElevatorPreferencesKeys {

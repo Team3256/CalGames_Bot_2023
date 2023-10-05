@@ -14,9 +14,9 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
-import frc.robot.helpers.SpawnCommand;
+import frc.robot.helpers.ParentCommand;
 
-public class SetEndEffectorState extends SpawnCommand {
+public class SetEndEffectorState extends ParentCommand {
   private Arm armSubsystem;
   private Elevator elevatorSubsystem;
   private Rotation2d armAngle;
@@ -77,14 +77,14 @@ public class SetEndEffectorState extends SpawnCommand {
   @Override
   public void initialize() {
     if (moveArmFirst) {
-      setChildCommand(
+      addChildCommands(
           Commands.sequence(
               new SetArmAngle(armSubsystem, armAngle).asProxy(),
               Commands.parallel(
                   new InstantCommand(() -> new KeepArm(armSubsystem).schedule()),
                   new SetElevatorExtension(elevatorSubsystem, elevatorExtension))));
     } else {
-      setChildCommand(
+      addChildCommands(
           Commands.sequence(
               new SetElevatorExtension(elevatorSubsystem, elevatorExtension),
               new SetArmAngle(armSubsystem, armAngle).asProxy(),

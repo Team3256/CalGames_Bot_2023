@@ -9,33 +9,27 @@ package frc.robot.elevator.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.Arm;
+import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
-import frc.robot.elevator.commands.SetEndEffectorState.EndEffectorPreset;
-import frc.robot.helpers.DebugCommandBase;
+import frc.robot.helpers.ParentCommand;
 
-public class StowEndEffector extends DebugCommandBase {
-  private Elevator elevatorSubsystem;
-  private Arm armSubsystem;
+public class StowEndEffector extends ParentCommand {
+  private final Elevator elevatorSubsystem;
+  private final Arm armSubsystem;
 
   public StowEndEffector(Elevator elevatorSubsystem, Arm armSubsystem) {
+    super();
     this.armSubsystem = armSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
-
-    addRequirements(elevatorSubsystem, armSubsystem);
   }
 
   @Override
   public void initialize() {
-    Commands.sequence(
-            new SetEndEffectorState(elevatorSubsystem, armSubsystem, EndEffectorPreset.STOW, true),
-            new ZeroElevator(elevatorSubsystem))
-        .schedule();
+    addChildCommands(
+        Commands.sequence(
+            new SetArmAngle(armSubsystem, Arm.ArmPreset.STOW),
+            new ZeroElevator(elevatorSubsystem)));
 
     super.initialize();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return true;
   }
 }

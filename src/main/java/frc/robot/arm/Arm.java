@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FeatureFlags;
-import frc.robot.arm.commands.SetArmAngle;
+import frc.robot.Robot;
 import frc.robot.arm.commands.ZeroArm;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   private void configureRealHardware() {
     armMotor = TalonFXFactory.createDefaultTalon(kArmCANDevice);
-    armMotor.setInverted(TalonFXInvertType.Clockwise);
+    armMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
     if (FeatureFlags.kCalibrationMode) {
       armMotor.setNeutralMode(NeutralMode.Coast);
@@ -124,7 +124,11 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   }
 
   public boolean isMotorCurrentSpiking() {
-    return armMotor.getSupplyCurrent() > kArmCurrentThreshold;
+    if (Robot.isReal()) {
+      return armMotor.getSupplyCurrent() > kArmCurrentThreshold;
+    } else {
+      return armSim.getCurrentDrawAmps() > kArmCurrentThreshold;
+    }
   }
 
   public void setNeutral() {
@@ -177,7 +181,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
         .add(
             "Angle", new DoubleSendable(() -> Math.toDegrees(getArmAngleGroundRelative()), "Gyro"));
     getLayout(kDriverTabName).add(armMotor);
-    getLayout(kDriverTabName).add(new SetArmAngle(this, ArmPreset.STANDING_CONE_GROUND_INTAKE));
   }
 
   @Override
@@ -239,8 +242,8 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
           kArmGearing,
           kArmInertia,
           kArmLength,
-          kArmAngleMinConstraint.getRadians() + kElevatorAngleOffset,
-          kArmAngleMaxConstraint.getRadians() + kElevatorAngleOffset,
+          kArmAngleMinConstraint.getRadians(),
+          kArmAngleMaxConstraint.getRadians(),
           true);
 
   private MechanismLigament2d armLigament;
@@ -251,7 +254,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   private void configureSimHardware() {
     armMotor = new WPI_TalonFX(kArmSimulationID);
-    armMotor.setInverted(true);
+    armMotor.setInverted(TalonFXInvertType.CounterClockwise);
     armMotor.setNeutralMode(NeutralMode.Brake);
 
     armLigament = new MechanismLigament2d("Arm", kArmLength, 0, 10, new Color8Bit(Color.kBlue));

@@ -20,7 +20,7 @@ public class KeepArm extends ParentCommand {
 
   @Override
   public void initialize() {
-    addChildCommands(new KeepArmAtPosition(armSubsystem));
+    addChildCommands(new KeepArmAtAngle(armSubsystem));
     super.initialize();
   }
 

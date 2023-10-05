@@ -23,7 +23,6 @@ import frc.robot.arm.Arm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
-import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation;
 import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
@@ -347,7 +346,7 @@ public class RobotContainer implements CANTestable, Loggable {
     //                    armSubsystem,
     //                    SetEndEffectorState.EndEffectorPreset.SCORE_CONE_MID),
     //                new OuttakeCube(intakeSubsystem)));
-    //    tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
+    tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
     //    tester
     //        .y()
     //        .onTrue(
@@ -362,18 +361,18 @@ public class RobotContainer implements CANTestable, Loggable {
     //                elevatorSubsystem,
     //                armSubsystem,
     //                SetEndEffectorState.EndEffectorPreset.CUBE_GROUND_INTAKE));
-    tester
-        .x()
-        .onTrue(
-            new AutoIntakeAtDoubleSubstation(
-                swerveSubsystem,
-                intakeSubsystem,
-                elevatorSubsystem,
-                armSubsystem,
-                ledSubsystem,
-                () -> isMovingJoystick(driver),
-                () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
-                this::isCurrentPieceCone));
+    //    tester
+    //        .x()
+    //        .onTrue(
+    //            new AutoIntakeAtDoubleSubstation(
+    //                swerveSubsystem,
+    //                intakeSubsystem,
+    //                elevatorSubsystem,
+    //                armSubsystem,
+    //                ledSubsystem,
+    //                () -> isMovingJoystick(driver),
+    //                () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
+    //                this::isCurrentPieceCone));
 
     //    if (kIntakeEnabled && FeatureFlags.kOperatorManualArmControlEnabled) {
     //      operator.povUp().whileTrue(new SetArmVoltage(armSubsystem,

@@ -21,7 +21,7 @@ public class ZeroArm extends DebugCommandBase {
   @Override
   public void initialize() {
     super.initialize();
-    armSubsystem.setInputVoltage(-4);
+    armSubsystem.setInputVoltage(4);
   }
 
   @Override
@@ -33,6 +33,7 @@ public class ZeroArm extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
+
     return armSubsystem.isMotorCurrentSpiking();
   }
 }

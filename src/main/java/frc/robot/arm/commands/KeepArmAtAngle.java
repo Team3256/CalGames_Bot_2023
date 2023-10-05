@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.arm.Arm;
 
-public class KeepArmAtPosition extends ProfiledPIDCommand {
+public class KeepArmAtAngle extends ProfiledPIDCommand {
   private Arm armSubsystem;
-  private double armPosition;
+  private double armAngle;
 
   /**
    * Constructor for setting arm to arbitrary angle in radians. This command is RELATIVE to the
@@ -25,7 +25,7 @@ public class KeepArmAtPosition extends ProfiledPIDCommand {
    *
    * @param armSubsystem
    */
-  public KeepArmAtPosition(Arm armSubsystem) {
+  public KeepArmAtAngle(Arm armSubsystem) {
     super(
         new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
         armSubsystem::getArmAngleGroundRelative,
@@ -40,12 +40,12 @@ public class KeepArmAtPosition extends ProfiledPIDCommand {
   @Override
   public void initialize() {
     super.initialize();
-    armPosition = armSubsystem.getArmAngleGroundRelative();
-    getController().setGoal(armPosition);
+    armAngle = armSubsystem.getArmAngleGroundRelative();
+    getController().setGoal(armAngle);
 
     if (Constants.kDebugEnabled) {
       System.out.println(
-          "Keeping arm at position (position: " + Units.radiansToDegrees(armPosition) + " deg)");
+          "Keeping arm at position (position: " + Units.radiansToDegrees(armAngle) + " deg)");
     }
   }
 
@@ -53,9 +53,7 @@ public class KeepArmAtPosition extends ProfiledPIDCommand {
   public void end(boolean interrupted) {
     if (Constants.kDebugEnabled) {
       System.out.println(
-          "Keeping arm at position ended (position: "
-              + Units.radiansToDegrees(armPosition)
-              + " deg)");
+          "Keeping arm at position ended (position: " + Units.radiansToDegrees(armAngle) + " deg)");
     }
     super.end(interrupted);
     armSubsystem.off();
