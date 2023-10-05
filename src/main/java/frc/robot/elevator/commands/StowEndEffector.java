@@ -30,9 +30,9 @@ public class StowEndEffector extends ParentCommand {
     addChildCommands(
         Commands.sequence(
             new SetArmAngle(armSubsystem, Arm.ArmPreset.STOW),
-            Commands.race(
-                new KeepArmAtAngle(armSubsystem, Arm.ArmPreset.STOW.rotation.getRadians()),
-                new ZeroElevator(elevatorSubsystem))));
+            Commands.deadline(
+                new ZeroElevator(elevatorSubsystem),
+                new KeepArmAtAngle(armSubsystem, Arm.ArmPreset.STOW.rotation.getRadians()))));
 
     super.initialize();
   }

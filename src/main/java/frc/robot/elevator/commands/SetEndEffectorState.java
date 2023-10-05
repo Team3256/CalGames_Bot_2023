@@ -68,9 +68,9 @@ public class SetEndEffectorState extends ParentCommand {
     addChildCommands(
         Commands.sequence(
             new SetElevatorPosition(elevatorSubsystem, elevatorExtension),
-            Commands.race(
-                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension),
-                new SetArmAngle(armSubsystem, armAngle))));
+            Commands.deadline(
+                new SetArmAngle(armSubsystem, armAngle),
+                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension))));
 
     super.initialize();
   }
