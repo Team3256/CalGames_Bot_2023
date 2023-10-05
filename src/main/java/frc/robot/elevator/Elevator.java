@@ -37,7 +37,7 @@ import frc.robot.Constants.FeatureFlags;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
 import frc.robot.drivers.TalonFXFactory;
-import frc.robot.elevator.commands.SetElevatorExtension;
+import frc.robot.elevator.commands.SetElevatorPosition;
 import frc.robot.elevator.commands.ZeroElevator;
 import frc.robot.logging.DoubleSendable;
 import frc.robot.logging.Loggable;
@@ -155,7 +155,7 @@ public class Elevator extends SubsystemBase implements CANTestable, Loggable {
     getLayout(kDriverTabName).add("Position", new DoubleSendable(this::getElevatorPosition));
     getLayout(kDriverTabName).add("Encoder", new DoubleSendable(this::getElevatorRaw));
     getLayout(kDriverTabName).add(new ZeroElevator(this));
-    getLayout(kDriverTabName).add(new SetElevatorExtension(this, 1));
+    getLayout(kDriverTabName).add(new SetElevatorPosition(this, 1));
     // getLayout(kDriverTabName).add(new SetElevatorExtension(this, 0));
 
   }

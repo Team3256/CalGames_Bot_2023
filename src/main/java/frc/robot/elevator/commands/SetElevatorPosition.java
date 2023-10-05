@@ -9,49 +9,20 @@ package frc.robot.elevator.commands;
 
 import static frc.robot.elevator.ElevatorConstants.*;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorPreset;
-import frc.robot.elevator.ElevatorConstants;
 
-public class SetElevatorExtension extends ProfiledPIDCommand {
+public class SetElevatorPosition extends ProfiledPIDCommand {
   private double setpointPosition;
-  private Elevator elevatorSubsystem;
+  private final Elevator elevatorSubsystem;
   private ElevatorPreset elevatorPreset;
 
-  public SetElevatorExtension(Elevator elevatorSubsystem, boolean rUSure) {
-    super(
-        new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
-        elevatorSubsystem::getElevatorPosition,
-        () -> {
-          if (!rUSure) return 0;
-          return MathUtil.clamp(
-              SmartDashboard.getNumber("Elevator testing setpoint position", 0),
-              ElevatorConstants.kMinExtension,
-              ElevatorConstants.kMaxExtension);
-        },
-        (output, setpoint) ->
-            elevatorSubsystem.setInputVoltage(
-                output + elevatorSubsystem.calculateFeedForward(setpoint.velocity)),
-        elevatorSubsystem);
-
-    this.elevatorSubsystem = elevatorSubsystem;
-
-    getController().setTolerance(kTolerancePosition, kToleranceVelocity);
-    addRequirements(elevatorSubsystem);
-  }
-
-  /**
-   * Constructor for setting the elevator to a setpoint in the parameters
-   *
-   * @param elevatorSubsystem
-   * @param setpointPosition
-   */
-  public SetElevatorExtension(Elevator elevatorSubsystem, double setpointPosition) {
+  /** Constructor for setting the elevator to a setpoint in the parameters */
+  public SetElevatorPosition(Elevator elevatorSubsystem, double setpointPosition) {
     super(
         new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
         elevatorSubsystem::getElevatorPosition,
@@ -75,7 +46,7 @@ public class SetElevatorExtension extends ProfiledPIDCommand {
    * @param elevatorSubsystem
    * @param elevatorPreset
    */
-  public SetElevatorExtension(Elevator elevatorSubsystem, ElevatorPreset elevatorPreset) {
+  public SetElevatorPosition(Elevator elevatorSubsystem, ElevatorPreset elevatorPreset) {
     this(elevatorSubsystem, elevatorSubsystem.getElevatorSetpoint(elevatorPreset));
     this.elevatorPreset = elevatorPreset;
   }

@@ -9,9 +9,7 @@ package frc.robot.elevator.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.arm.Arm;
-import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
 import frc.robot.helpers.ParentCommand;
@@ -21,7 +19,6 @@ public class SetEndEffectorState extends ParentCommand {
   private Elevator elevatorSubsystem;
   private Rotation2d armAngle;
   private double elevatorExtension;
-  private boolean moveArmFirst;
 
   public enum EndEffectorPreset {
     // scoring
@@ -57,39 +54,21 @@ public class SetEndEffectorState extends ParentCommand {
   }
 
   public SetEndEffectorState(
-      Elevator elevatorSubsystem,
-      Arm armSubsystem,
-      EndEffectorPreset endEffectorPreset,
-      boolean moveArmFirst) {
+      Elevator elevatorSubsystem, Arm armSubsystem, EndEffectorPreset endEffectorPreset) {
     super();
     this.armSubsystem = armSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
     this.elevatorExtension = endEffectorPreset.elevatorPreset.position;
     this.armAngle = endEffectorPreset.armPreset.rotation;
-    this.moveArmFirst = moveArmFirst;
-  }
-
-  public SetEndEffectorState(
-      Elevator elevatorSubsystem, Arm armSubsystem, EndEffectorPreset endEffectorPreset) {
-    this(elevatorSubsystem, armSubsystem, endEffectorPreset, false);
   }
 
   @Override
   public void initialize() {
-    if (moveArmFirst) {
-      addChildCommands(
-          Commands.sequence(
-              new SetArmAngle(armSubsystem, armAngle).asProxy(),
-              Commands.parallel(
-                  new InstantCommand(() -> new KeepArm(armSubsystem).schedule()),
-                  new SetElevatorExtension(elevatorSubsystem, elevatorExtension))));
-    } else {
-      addChildCommands(
-          Commands.sequence(
-              new SetElevatorExtension(elevatorSubsystem, elevatorExtension),
-              new SetArmAngle(armSubsystem, armAngle).asProxy(),
-              new InstantCommand(() -> new KeepArm(armSubsystem).schedule())));
-    }
+    addChildCommands(
+        Commands.sequence(
+            new SetElevatorPosition(elevatorSubsystem, elevatorExtension).asProxy(),
+            new SetArmAngle(armSubsystem, armAngle).asProxy()));
+
     super.initialize();
   }
 }

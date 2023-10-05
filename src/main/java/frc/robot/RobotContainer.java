@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
+import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
@@ -27,7 +28,9 @@ import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.Subst
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.commands.KeepElevator;
 import frc.robot.elevator.commands.SetElevatorVolts;
+import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
@@ -322,6 +325,8 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   private void configureArm() {
+    armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
+    elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
     // operator.start().onTrue(new ZeroArm(armSubsystem).withTimeout(4));
     tester.povUp().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
     tester.povDown().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
@@ -347,13 +352,13 @@ public class RobotContainer implements CANTestable, Loggable {
     //                    SetEndEffectorState.EndEffectorPreset.SCORE_CONE_MID),
     //                new OuttakeCube(intakeSubsystem)));
     tester.x().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
-    //    tester
-    //        .y()
-    //        .onTrue(
-    //            new SetEndEffectorState(
-    //                elevatorSubsystem,
-    //                armSubsystem,
-    //                SetEndEffectorState.EndEffectorPreset.SCORE_CONE_HIGH));
+    tester
+        .y()
+        .onTrue(
+            new SetEndEffectorState(
+                elevatorSubsystem,
+                armSubsystem,
+                SetEndEffectorState.EndEffectorPreset.SCORE_CONE_HIGH));
     //    tester
     //        .b()
     //        .onTrue(

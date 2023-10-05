@@ -7,13 +7,26 @@
 
 package frc.robot.elevator.commands;
 
-import frc.robot.elevator.Elevator;
-import frc.robot.helpers.DebugCommandBase;
+import static frc.robot.elevator.ElevatorConstants.*;
 
-public class KeepElevatorAtPosition extends DebugCommandBase {
-  private Elevator elevatorSubsystem;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import frc.robot.Constants;
+import frc.robot.elevator.Elevator;
+
+public class KeepElevatorAtPosition extends ProfiledPIDCommand {
+  private final Elevator elevatorSubsystem;
+  private double elevatorPosition;
 
   public KeepElevatorAtPosition(Elevator elevatorSubsystem) {
+    super(
+        new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
+        elevatorSubsystem::getElevatorPosition,
+        elevatorSubsystem.getElevatorPosition(),
+        (output, setpoint) ->
+            elevatorSubsystem.setInputVoltage(
+                output + elevatorSubsystem.calculateFeedForward(setpoint.velocity)));
+
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
   }
@@ -21,13 +34,29 @@ public class KeepElevatorAtPosition extends DebugCommandBase {
   @Override
   public void initialize() {
     super.initialize();
-    new SetElevatorExtension(elevatorSubsystem, elevatorSubsystem.getElevatorPosition())
-        .repeatedly()
-        .schedule();
+    elevatorPosition = elevatorSubsystem.getElevatorPosition();
+    getController().setGoal(elevatorPosition);
+
+    if (Constants.kDebugEnabled) {
+      System.out.println(
+          "Keeping elevator at position (position: " + elevatorPosition + " meters)");
+    }
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    if (Constants.kDebugEnabled) {
+      System.out.println(
+          "Keeping elevator at position ended (position: "
+              + elevatorSubsystem.getElevatorPosition()
+              + " meters)");
+    }
+    super.end(interrupted);
+    elevatorSubsystem.off();
   }
 
   @Override
   public boolean isFinished() {
-    return true;
+    return getController().atGoal();
   }
 }

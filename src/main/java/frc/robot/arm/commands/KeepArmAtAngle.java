@@ -35,6 +35,7 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
                 output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
 
     this.armSubsystem = armSubsystem;
+    addRequirements(armSubsystem);
   }
 
   @Override

@@ -44,7 +44,7 @@ public final class ElevatorConstants {
   public static final double kElevatorS = -0.84907;
   public static final double kElevatorV = 8.869;
   public static final double kElevatorA = 21.64;
-  public static final double kElevatorG = -0.13231;
+  public static final double kElevatorG = 0;
   public static final double kElevatorP = 11.399;
   public static final double kElevatorI = 0;
   public static final double kElevatorD = 0;
@@ -60,8 +60,8 @@ public final class ElevatorConstants {
   public static final double kElevatorUpCurrentThreshold = 40; // amps
 
   public static final double kDrumRadius = Units.inchesToMeters(0.75);
-  public static final double kMinExtension = Units.inchesToMeters(0);
-  public static final double kMaxExtension = Units.inchesToMeters(59);
+  public static final double kMinExtension = 0;
+  public static final double kMaxExtension = 1.5;
   public static final double kElevatorGearing = 25.0 / 3;
   public static final double kCarriageMass = 9; // kg
 

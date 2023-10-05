@@ -27,8 +27,8 @@ public class StowEndEffector extends ParentCommand {
   public void initialize() {
     addChildCommands(
         Commands.sequence(
-            new SetArmAngle(armSubsystem, Arm.ArmPreset.STOW),
-            new ZeroElevator(elevatorSubsystem)));
+            new SetArmAngle(armSubsystem, Arm.ArmPreset.STOW).asProxy(),
+            new ZeroElevator(elevatorSubsystem).asProxy()));
 
     super.initialize();
   }

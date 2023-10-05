@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.UnitTestBase;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.ElevatorConstants;
-import frc.robot.elevator.commands.SetElevatorExtension;
+import frc.robot.elevator.commands.SetElevatorPosition;
 import frc.robot.elevator.commands.ZeroElevator;
 
 public class ElevatorTests extends UnitTestBase {
@@ -46,7 +46,7 @@ public class ElevatorTests extends UnitTestBase {
   }
 
   public void testElevatorHeight(double heightSetpointMeters) { // 1 meter
-    Command command = new SetElevatorExtension(elevatorSubsystem, heightSetpointMeters);
+    Command command = new SetElevatorPosition(elevatorSubsystem, heightSetpointMeters);
 
     runScheduler(2, command, elevatorSubsystem);
     double height = elevatorSubsystem.getElevatorPosition();
