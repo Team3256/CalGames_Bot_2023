@@ -25,6 +25,19 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
    *
    * @param armSubsystem
    */
+  public KeepArmAtAngle(Arm armSubsystem, double angle) {
+    super(
+        new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
+        armSubsystem::getArmAngleGroundRelative,
+        angle,
+        (output, setpoint) ->
+            armSubsystem.setInputVoltage(
+                output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
+
+    this.armSubsystem = armSubsystem;
+    addRequirements(armSubsystem);
+  }
+
   public KeepArmAtAngle(Arm armSubsystem) {
     super(
         new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),

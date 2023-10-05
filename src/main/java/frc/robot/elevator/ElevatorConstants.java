@@ -41,7 +41,7 @@ public final class ElevatorConstants {
   // stow
   public static final double kStowPosition = 0;
 
-  public static final double kElevatorS = -0.84907;
+  public static final double kElevatorS = 0;
   public static final double kElevatorV = 8.869;
   public static final double kElevatorA = 21.64;
   public static final double kElevatorG = 0;

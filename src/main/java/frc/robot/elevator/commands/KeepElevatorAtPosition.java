@@ -18,6 +18,19 @@ public class KeepElevatorAtPosition extends ProfiledPIDCommand {
   private final Elevator elevatorSubsystem;
   private double elevatorPosition;
 
+  public KeepElevatorAtPosition(Elevator elevatorSubsystem, double position) {
+    super(
+        new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
+        elevatorSubsystem::getElevatorPosition,
+        position,
+        (output, setpoint) ->
+            elevatorSubsystem.setInputVoltage(
+                output + elevatorSubsystem.calculateFeedForward(setpoint.velocity)));
+
+    this.elevatorSubsystem = elevatorSubsystem;
+    addRequirements(elevatorSubsystem);
+  }
+
   public KeepElevatorAtPosition(Elevator elevatorSubsystem) {
     super(
         new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
@@ -57,6 +70,6 @@ public class KeepElevatorAtPosition extends ProfiledPIDCommand {
 
   @Override
   public boolean isFinished() {
-    return getController().atGoal();
+    return false;
   }
 }

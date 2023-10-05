@@ -54,13 +54,13 @@ public final class ArmConstants {
   // Stow
   public static final Rotation2d kStowRotation = Rotation2d.fromDegrees(60);
   // DoubleSub
-  public static final Rotation2d kDoubleSubstationRotationCube = new Rotation2d(22.3);
-  public static final Rotation2d kDoubleSubstationRotationCone = new Rotation2d(22.3);
+  public static final Rotation2d kDoubleSubstationRotationCube = Rotation2d.fromDegrees(22.3);
+  public static final Rotation2d kDoubleSubstationRotationCone = Rotation2d.fromDegrees(22.3);
   // Score
-  public static final Rotation2d kCubeMidRotation = new Rotation2d(22.3);
-  public static final Rotation2d kConeMidRotation = new Rotation2d(22.3);
-  public static final Rotation2d kCubeHighRotation = new Rotation2d(22.3);
-  public static final Rotation2d kConeHighRotation = new Rotation2d(22.3);
+  public static final Rotation2d kCubeMidRotation = Rotation2d.fromDegrees(22.3);
+  public static final Rotation2d kConeMidRotation = Rotation2d.fromDegrees(22.3);
+  public static final Rotation2d kCubeHighRotation = Rotation2d.fromDegrees(22.3);
+  public static final Rotation2d kConeHighRotation = Rotation2d.fromDegrees(22.3);
   public static final Rotation2d kAnyPieceLowBackRotation = Rotation2d.fromDegrees(180);
   public static final Rotation2d kAnyPieceLowFrontRotation = Rotation2d.fromDegrees(22.3);
   // Ground

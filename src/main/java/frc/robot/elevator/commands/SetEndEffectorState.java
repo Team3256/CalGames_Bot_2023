@@ -60,14 +60,17 @@ public class SetEndEffectorState extends ParentCommand {
     this.elevatorSubsystem = elevatorSubsystem;
     this.elevatorExtension = endEffectorPreset.elevatorPreset.position;
     this.armAngle = endEffectorPreset.armPreset.rotation;
+    addRequirements(armSubsystem, elevatorSubsystem);
   }
 
   @Override
   public void initialize() {
     addChildCommands(
         Commands.sequence(
-            new SetElevatorPosition(elevatorSubsystem, elevatorExtension).asProxy(),
-            new SetArmAngle(armSubsystem, armAngle).asProxy()));
+            new SetElevatorPosition(elevatorSubsystem, elevatorExtension),
+            Commands.race(
+                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension),
+                new SetArmAngle(armSubsystem, armAngle))));
 
     super.initialize();
   }
