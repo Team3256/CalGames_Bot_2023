@@ -39,6 +39,7 @@ import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
 import frc.robot.led.LED;
 import frc.robot.led.commands.ColorFlowPattern;
+import frc.robot.led.commands.LimitedSwervePattern;
 import frc.robot.led.commands.SetAllColor;
 import frc.robot.logging.Loggable;
 import frc.robot.simulation.RobotSimulation;
@@ -67,11 +68,11 @@ public class RobotContainer implements CANTestable, Loggable {
   private final CommandXboxController operator = new CommandXboxController(1);
   private final CommandXboxController tester = new CommandXboxController(2);
 
-  private SwerveDrive swerveSubsystem;
-  private Intake intakeSubsystem;
-  private Elevator elevatorSubsystem;
-  private Arm armSubsystem;
-  private LED ledSubsystem;
+  private final SwerveDrive swerveSubsystem;
+  private final Intake intakeSubsystem;
+  private final Elevator elevatorSubsystem;
+  private final Arm armSubsystem;
+  private final LED ledSubsystem;
 
   private GamePiece currentPiece = GamePiece.CONE;
   private GridScoreHeight currentScoringPreset = GridScoreHeight.LOW;
@@ -224,19 +225,17 @@ public class RobotContainer implements CANTestable, Loggable {
 
     driver.a().onTrue(new InstantCommand(swerveSubsystem::zeroGyroYaw));
 
-    //
-    //    driver
-    //        .leftBumper()
-    //        .toggleOnTrue(
-    //            new TeleopSwerveLimited(
-    //                    swerveSubsystem,
-    //                    driver::getLeftY,
-    //                    driver::getLeftX,
-    //                    driver::getRightX,
-    //                    kFieldRelative,
-    //                    kOpenLoop)
-    //                .deadlineWith(new LimitedSwervePattern(ledSubsystem,
-    // this::isCurrentPieceCone)));
+    driver
+        .leftBumper()
+        .toggleOnTrue(
+            new TeleopSwerveLimited(
+                    swerveSubsystem,
+                    driver::getLeftY,
+                    driver::getLeftX,
+                    driver::getRightX,
+                    kFieldRelative,
+                    kOpenLoop)
+                .deadlineWith(new LimitedSwervePattern(ledSubsystem, this::isCurrentPieceCone)));
 
     driver
         .x()
@@ -280,13 +279,23 @@ public class RobotContainer implements CANTestable, Loggable {
   private void configureIntake() {
     if (kArmEnabled && kElevatorEnabled) {
       operator
-          .rightTrigger()
+          .leftBumper()
+          .onTrue(
+              new ConditionalCommand(
+                      new OuttakeCone(intakeSubsystem),
+                      new OuttakeCube(intakeSubsystem),
+                      this::isCurrentPieceCone)
+                  .andThen(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy()));
+      operator
+          .rightBumper()
           .whileTrue(
               new ConditionalCommand(
                   new OuttakeCone(intakeSubsystem),
                   new OuttakeCube(intakeSubsystem),
                   this::isCurrentPieceCone))
           .onFalse(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy());
+      operator.leftTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CUBE)));
+      operator.rightTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CONE)));
       //            operator
       //                .rightTrigger()
       //                .onTrue(
@@ -427,6 +436,8 @@ public class RobotContainer implements CANTestable, Loggable {
   // --GamePiece?--
   public void setGamePiece(GamePiece piece) {
     currentPiece = piece;
+    if (piece.equals(GamePiece.CUBE)) new SetAllColor(ledSubsystem, kCube).schedule();
+    else new SetAllColor(ledSubsystem, kCone).schedule();
   }
 
   public boolean isCurrentPieceCone() {
