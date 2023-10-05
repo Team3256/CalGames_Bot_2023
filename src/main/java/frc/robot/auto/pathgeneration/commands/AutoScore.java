@@ -12,17 +12,11 @@ import static frc.robot.Constants.FeatureFlags.kDynamicPathGenEnabled;
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
 import static frc.robot.led.LEDConstants.*;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.Constants.FeatureFlags;
 import frc.robot.RobotContainer.GamePiece;
 import frc.robot.arm.Arm;
 import frc.robot.auto.dynamicpathgeneration.DynamicPathGenerator;
@@ -207,19 +201,6 @@ public class AutoScore extends ParentCommand {
           break;
         default:
           scoringLocation = kBottomBlueScoringPoses[guiColumn];
-      }
-
-      if (FeatureFlags.kIntakeAutoScoreDistanceSensorOffset && isSelectedNodeCone.getAsBoolean()) {
-        double offset =
-            isRedAlliance
-                ? intakeSubsystem.getGamePieceOffset()
-                : -intakeSubsystem.getGamePieceOffset();
-        offset = MathUtil.clamp(offset, -Units.inchesToMeters(7), Units.inchesToMeters(7));
-        System.out.println(
-            "AUTO SCORE: Offsetting cone by " + offset + " meters based on distance sensors!");
-
-        scoringLocation =
-            scoringLocation.plus(new Transform2d(new Translation2d(0, offset), new Rotation2d()));
       }
 
       if (isRedAlliance) {

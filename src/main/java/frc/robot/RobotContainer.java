@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.commands.KeepArm;
@@ -25,7 +26,9 @@ import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
 import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
+import frc.robot.auto.pathgeneration.commands.AutoIntakePrep;
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
+import frc.robot.auto.pathgeneration.commands.AutoScorePrep;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.commands.KeepElevator;
@@ -242,32 +245,28 @@ public class RobotContainer implements CANTestable, Loggable {
                 .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
                 .until(() -> isMovingJoystick(driver)));
 
-    //    if (kElevatorEnabled && kArmEnabled && kLedStripEnabled) {
-    //      new Trigger(this::scoreTriggered)
-    //          .onTrue(
-    //              new AutoScore(
-    //                  swerveSubsystem,
-    //                  intakeSubsystem,
-    //                  elevatorSubsystem,
-    //                  armSubsystem,
-    //                  ledSubsystem,
-    //                  this::isCurrentPieceCone,
-    //                  () -> true,
-    //                  () -> isMovingJoystick(driver),
-    //                  true));
-    //
-    //      new Trigger(this::intakeTriggered)
-    //          .onTrue(
-    //              new AutoIntakeAtDoubleSubstation(
-    //                  swerveSubsystem,
-    //                  intakeSubsystem,
-    //                  elevatorSubsystem,
-    //                  armSubsystem,
-    //                  ledSubsystem,
-    //                  () -> isMovingJoystick(driver),
-    //                  () -> modeChooser.getSelected().equals(Mode.AUTO_SCORE),
-    //                  this::isCurrentPieceCone));
-    //    }
+    if (kElevatorEnabled && kArmEnabled && kLedStripEnabled && kIntakeEnabled) {
+      new Trigger(this::scoreTriggered)
+          .onTrue(
+              new AutoScorePrep(
+                  swerveSubsystem,
+                  elevatorSubsystem,
+                  armSubsystem,
+                  ledSubsystem,
+                  this::isCurrentPieceCone,
+                  () -> isMovingJoystick(driver)));
+
+      new Trigger(this::intakeTriggered)
+          .onTrue(
+              new AutoIntakePrep(
+                  swerveSubsystem,
+                  intakeSubsystem,
+                  elevatorSubsystem,
+                  armSubsystem,
+                  ledSubsystem,
+                  this::isCurrentPieceCone,
+                  () -> isMovingJoystick(driver)));
+    }
   }
 
   // Checks if Button Board sent an intake command
