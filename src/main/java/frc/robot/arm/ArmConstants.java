@@ -14,23 +14,20 @@ import frc.robot.drivers.CanDeviceId;
 import java.util.Map;
 
 public final class ArmConstants {
-  // CAN
+  //--CAN--
   public static final int kArmMotorID = 6;
   public static final String kArmCanBus = "rio";
   public static final CanDeviceId kArmCANDevice = new CanDeviceId(kArmMotorID, kArmCanBus);
   public static final int kArmSimulationID = 16;
 
-  // Init
-  public static final double kArmAngleInit = Units.degreesToRadians(217);
-
-  // Character
+  //--Character--
   public static final double kArmGearing = 80;
   public static final double kArmLength = 0.569075;
   public static final double kArmInertia = 0.410;
   public static final double kArmMassKg = 7.5;
   public static final int kNumArmMotors = 1;
 
-  // SysID
+  //--SysID--
   public static final double kArmS = 1.0785;
   public static final double kArmV = 0.65977;
   public static final double kArmA = 0.023807;
@@ -39,18 +36,20 @@ public final class ArmConstants {
   public static final double kArmI = 0;
   public static final double kArmD = 0;
 
-  // Constraints
+  //--Constraints--
   public static final TrapezoidProfile.Constraints kArmProfileContraints =
       new TrapezoidProfile.Constraints(16, 16);
   public static final Rotation2d kArmAngleMinConstraint = Rotation2d.fromDegrees(22.3);
   public static final Rotation2d kArmAngleMaxConstraint = Rotation2d.fromDegrees(217);
+  public static final double kArmCurrentThreshold = 30.0; // change as necessary
 
-  // Tolerance
+  //--Tolerance--
   public static final Rotation2d kArmToleranceAngle = Rotation2d.fromDegrees(5); // used to be 5
   public static final Rotation2d kArmToleranceAngularVelocity =
       Rotation2d.fromDegrees(5); // used to be 5
 
-  // Presets
+  //--Presets--
+  public static final double kArmAngleInit = Units.degreesToRadians(217);
   // Stow
   public static final Rotation2d kStowRotation = Rotation2d.fromDegrees(60);
   // DoubleSub
@@ -68,7 +67,7 @@ public final class ArmConstants {
   public static final Rotation2d kTippedConeGroundIntakeRotation = Rotation2d.fromDegrees(180);
   public static final Rotation2d kCubeGroundIntakeRotation = Rotation2d.fromDegrees(217);
 
-  // Preferences
+  //--Preferences--
   public static class ArmPreferencesKeys {
     public static final Map<Arm.ArmPreset, String> kArmPositionKeys =
         Map.ofEntries(
@@ -104,7 +103,4 @@ public final class ArmConstants {
     public static final String kIKey = "ArmkI";
     public static final String kDKey = "ArmkD";
   }
-
-  // Zero Arm
-  public static final double kArmCurrentThreshold = 30.0;
 }
