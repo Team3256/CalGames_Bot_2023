@@ -374,11 +374,10 @@ public class RobotContainer implements CANTestable, Loggable {
     Command autoPath = autoPaths.getSelectedPath();
     if (kElevatorEnabled && kArmEnabled) {
       return Commands.sequence(
-          new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone),
+          new StowEndEffector(elevatorSubsystem, armSubsystem),
           autoPath,
           Commands.parallel(
-              new StowEndEffector(elevatorSubsystem, armSubsystem, this::isCurrentPieceCone)
-                  .asProxy(),
+              new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
               new LockSwerveX(swerveSubsystem)
                   .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
                   .until(() -> isMovingJoystick(driver))));

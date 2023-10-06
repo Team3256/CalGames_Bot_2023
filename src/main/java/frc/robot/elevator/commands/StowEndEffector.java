@@ -19,8 +19,7 @@ public class StowEndEffector extends DebugCommandBase {
   private Arm armSubsystem;
   private BooleanSupplier isCurrentPieceCone;
 
-  public StowEndEffector(
-      Elevator elevatorSubsystem, Arm armSubsystem, BooleanSupplier isCurrentPieceCone) {
+  public StowEndEffector(Elevator elevatorSubsystem, Arm armSubsystem) {
     this.armSubsystem = armSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
     this.isCurrentPieceCone = isCurrentPieceCone;
