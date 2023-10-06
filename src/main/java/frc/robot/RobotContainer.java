@@ -296,8 +296,8 @@ public class RobotContainer implements CANTestable, Loggable {
       //                      new IntakeCube(intakeSubsystem),
       //                      this::isCurrentPieceCone)));
 
-      tester.povUp().onTrue(new SetArmVoltage(armSubsystem, 6));
-      tester.povDown().onTrue(new SetArmVoltage(armSubsystem, -6));
+      tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 6));
+      tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -6));
 
       driver
           .rightBumper()
@@ -348,23 +348,21 @@ public class RobotContainer implements CANTestable, Loggable {
                   new OuttakeCube(intakeSubsystem),
                   this::isCurrentPieceCone))
           .onFalse(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy());
-      operator.leftTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CUBE)));
-      operator.rightTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CONE)));
     }
   }
 
   private void configureArm() {
     armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
 
-    operator.leftBumper().onTrue(new SetArmVoltage(armSubsystem, 3));
-    operator.rightBumper().onTrue(new SetArmVoltage(armSubsystem, -3));
+    operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, 3));
+    operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, -3));
   }
 
   public void configureElevator() {
     elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
 
-    operator.rightTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, 6));
-    operator.leftTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, -6));
+    operator.rightTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
+    operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
     if (kArmEnabled) {
       driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
       operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));

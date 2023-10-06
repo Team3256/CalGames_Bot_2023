@@ -106,5 +106,5 @@ public final class ArmConstants {
   }
 
   // Zero Arm
-  public static final double kArmCurrentThreshold = 20.0;
+  public static final double kArmCurrentThreshold = 30.0;
 }
