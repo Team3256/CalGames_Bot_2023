@@ -89,15 +89,6 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
     } else {
       armMotor.setNeutralMode(NeutralMode.Brake);
     }
-
-    //    if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
-    //      double absoluteEncoderRadians =
-    //          getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
-    //      armMotor.setSelectedSensorPosition(
-    //          Conversions.radiansToFalcon(absoluteEncoderRadians, kArmGearing));
-    //    } else {
-    //      armMotor.setSelectedSensorPosition(0);
-    //    }
   }
 
   public double calculateFeedForward(double angleRadians, double velocity) {
@@ -141,26 +132,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   @Override
   public void periodic() {
-    if (Constants.kDebugEnabled) {
-      // SmartDashboard.putNumber(
-      // "Arm Raw Relative Encoder value", armMotor.getSelectedSensorPosition());
-      // SmartDashboard.putNumber("Arm Raw Absolute Encoder value",
-      // armEncoder.getAbsolutePosition());
-      // SmartDashboard.putNumber(
-      // "Arm Raw Absolute Encoder distance", getAbsoluteEncoderDistanceRad());
-      //      SmartDashboard.putNumber("Arm angle ground relative rad",
-      // getArmPositionGroundRelative());
-      //      SmartDashboard.putNumber("Arm angle elevator relative rad",
-      // getArmPositionElevatorRelative());
-      //      SmartDashboard.putNumber("Arm Current Draw", armMotor.getSupplyCurrent());
-      //      SmartDashboard.putNumber(
-      //          "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
-      //      SmartDashboard.putNumber(
-      //          "Arm angle position ground relative",
-      //          Units.radiansToDegrees(getArmPositionGroundRelative()));
-      //      SmartDashboard.putNumber(
-      //          "Arm angle position elevator relative",
-      //          Units.radiansToDegrees(getArmPositionElevatorRelative()));
+    if (Constants.kDebugEnabled){
     }
   }
 
