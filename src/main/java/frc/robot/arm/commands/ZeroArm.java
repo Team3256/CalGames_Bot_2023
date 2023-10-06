@@ -33,7 +33,6 @@ public class ZeroArm extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-
     return armSubsystem.isMotorCurrentSpiking();
   }
 }

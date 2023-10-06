@@ -63,7 +63,6 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
-  private final CommandXboxController tester = new CommandXboxController(2);
 
   private final SwerveDrive swerveSubsystem;
   private final Intake intakeSubsystem;
@@ -72,8 +71,6 @@ public class RobotContainer implements CANTestable, Loggable {
   private final LED ledSubsystem;
 
   private GamePiece currentPiece = GamePiece.CONE;
-  private GridScoreHeight currentScoringPreset = GridScoreHeight.LOW;
-  private SubstationLocation doubleSubstationLocation = SubstationLocation.RIGHT_SIDE;
 
   private RobotSimulation robotSimulation;
   private SendableChooser<Mode> modeChooser;
@@ -127,8 +124,6 @@ public class RobotContainer implements CANTestable, Loggable {
       modeChooser.addOption("Auto Score", Mode.AUTO_SCORE);
     }
     SmartDashboard.putData("Auto Score Toggle", modeChooser);
-    SmartDashboard.putString(
-        "Current Double Substation Location", doubleSubstationLocation.toString());
 
     autoPaths =
         new AutoPaths(
@@ -310,7 +305,7 @@ public class RobotContainer implements CANTestable, Loggable {
                               armSubsystem,
                               SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
                           .asProxy(),
-                      new ZeroEndEffector(elevatorSubsystem, armSubsystem),
+                      new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
                       this::isCurrentPieceCone),
                   new ConditionalCommand(
                       new IntakeCone(intakeSubsystem),
@@ -327,7 +322,7 @@ public class RobotContainer implements CANTestable, Loggable {
                               armSubsystem,
                               SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
                           .asProxy(),
-                      new ZeroEndEffector(elevatorSubsystem, armSubsystem),
+                      new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
                       this::isCurrentPieceCone),
                   new ConditionalCommand(
                       new IntakeCone(intakeSubsystem),
@@ -382,8 +377,8 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureElevator() {
     elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
-    operator.leftTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, 6));
-    operator.rightTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, -6));
+    operator.rightTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, 6));
+    operator.leftTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, -6));
     if (kArmEnabled) {
       driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
       operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));

@@ -13,10 +13,7 @@ import static frc.robot.Constants.kDebugEnabled;
 import static frc.robot.intake.IntakeConstants.*;
 import static frc.robot.simulation.SimulationConstants.*;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -54,6 +51,7 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
   private void configureRealHardware() {
     intakeMotor = TalonFXFactory.createDefaultTalon(kIntakeCANDevice);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
+    intakeMotor.setInverted(TalonFXInvertType.Clockwise);
     configIntakeCurrentLimit();
   }
 
@@ -145,6 +143,7 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
   private void configureSimHardware() {
     intakeMotor = new WPI_TalonFX(kIntakeMotorID);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
+    intakeMotor.setInverted(TalonFXInvertType.Clockwise);
 
     intakePivot =
         new MechanismLigament2d(
