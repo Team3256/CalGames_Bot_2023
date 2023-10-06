@@ -296,9 +296,6 @@ public class RobotContainer implements CANTestable, Loggable {
       //                      new IntakeCube(intakeSubsystem),
       //                      this::isCurrentPieceCone)));
 
-      tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 6));
-      tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -6));
-
       driver
           .rightBumper()
           .onTrue(
@@ -356,6 +353,8 @@ public class RobotContainer implements CANTestable, Loggable {
 
     operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, 3));
     operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, -3));
+    tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 6));
+    tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -6));
   }
 
   public void configureElevator() {
@@ -363,6 +362,8 @@ public class RobotContainer implements CANTestable, Loggable {
 
     operator.rightTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
     operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
+    tester.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
+    tester.povLeft().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
     if (kArmEnabled) {
       driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
       operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));

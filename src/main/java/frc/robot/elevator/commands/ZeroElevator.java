@@ -35,6 +35,6 @@ public class ZeroElevator extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.isMotorCurrentSpiking(-1);
+    return elevatorSubsystem.isMotorCurrentSpiking(1);
   }
 }
