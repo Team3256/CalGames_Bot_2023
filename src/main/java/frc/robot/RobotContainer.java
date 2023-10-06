@@ -25,7 +25,6 @@ import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
-import frc.robot.auto.pathgeneration.commands.AutoIntakeAtDoubleSubstation.SubstationLocation;
 import frc.robot.auto.pathgeneration.commands.AutoIntakePrep;
 import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.auto.pathgeneration.commands.AutoScorePrep;
@@ -63,6 +62,7 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandXboxController tester = new CommandXboxController(2);
 
   private final SwerveDrive swerveSubsystem;
   private final Intake intakeSubsystem;
@@ -286,15 +286,19 @@ public class RobotContainer implements CANTestable, Loggable {
                       new IntakeCone(intakeSubsystem),
                       new IntakeCube(intakeSubsystem),
                       this::isCurrentPieceCone)));
-      operator
-          .x()
-          .onTrue(
-              Commands.sequence(
-                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-                  new ConditionalCommand(
-                      new IntakeCone(intakeSubsystem),
-                      new IntakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)));
+      //      tester
+      //          .povUp()
+      //          .onTrue(
+      //              Commands.sequence(
+      //                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+      //                  new ConditionalCommand(
+      //                      new IntakeCone(intakeSubsystem),
+      //                      new IntakeCube(intakeSubsystem),
+      //                      this::isCurrentPieceCone)));
+
+      tester.povUp().onTrue(new SetArmVoltage(armSubsystem, 6));
+      tester.povDown().onTrue(new SetArmVoltage(armSubsystem, -6));
+
       driver
           .rightBumper()
           .onTrue(
@@ -346,25 +350,6 @@ public class RobotContainer implements CANTestable, Loggable {
           .onFalse(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy());
       operator.leftTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CUBE)));
       operator.rightTrigger().onTrue(new InstantCommand(() -> this.setGamePiece(GamePiece.CONE)));
-      //            operator
-      //                .rightTrigger()
-      //                .onTrue(
-      //                    new GroundIntake(
-      //                        elevatorSubsystem,
-      //                        armSubsystem,
-      //                        intakeSubsystem,
-      //                        ConeOrientation.STANDING_CONE,
-      //                        this::isCurrentPieceCone));
-
-      //      driver
-      //          .rightBumper()
-      //          .onTrue(
-      //              new GroundIntake(
-      //                  elevatorSubsystem,
-      //                  armSubsystem,
-      //                  intakeSubsystem,
-      //                  ConeOrientation.SITTING_CONE,
-      //                  this::isCurrentPieceCone));
     }
   }
 
@@ -377,6 +362,7 @@ public class RobotContainer implements CANTestable, Loggable {
 
   public void configureElevator() {
     elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
+
     operator.rightTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, 6));
     operator.leftTrigger().onTrue(new SetElevatorVolts(elevatorSubsystem, -6));
     if (kArmEnabled) {
