@@ -132,8 +132,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
 
   @Override
   public void periodic() {
-    if (Constants.kDebugEnabled){
-    }
+    if (Constants.kDebugEnabled) {}
   }
 
   @Override

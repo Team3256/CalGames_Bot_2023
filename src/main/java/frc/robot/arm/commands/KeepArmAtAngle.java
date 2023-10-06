@@ -9,30 +9,22 @@ package frc.robot.arm.commands;
 
 import static frc.robot.arm.ArmConstants.*;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
 import frc.robot.arm.Arm;
 
-public class KeepArmAtAngle extends ProfiledPIDCommand {
-  private Arm armSubsystem;
-  private double armAngle;
+public class KeepArmAtAngle extends PIDCommand {
+  private final Arm armSubsystem;
 
-  /**
-   * Constructor for setting arm to arbitrary angle in radians. This command is RELATIVE to the
-   * Elevator Angle!
-   *
-   * @param armSubsystem
-   */
   public KeepArmAtAngle(Arm armSubsystem, double angle) {
     super(
-        new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
+        new PIDController(kArmP, kArmI, kArmD),
         armSubsystem::getArmAngleGroundRelative,
         angle,
-        (output, setpoint) ->
-            armSubsystem.setInputVoltage(
-                output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
+        output ->
+            armSubsystem.setInputVoltage(output + armSubsystem.calculateFeedForward(angle, 0)));
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
@@ -40,34 +32,26 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
 
   public KeepArmAtAngle(Arm armSubsystem) {
     super(
-        new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
+        new PIDController(kArmP, kArmI, kArmD),
         armSubsystem::getArmAngleGroundRelative,
         armSubsystem.getArmAngleGroundRelative(),
-        (output, setpoint) ->
+        output ->
             armSubsystem.setInputVoltage(
-                output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
+                output
+                    + armSubsystem.calculateFeedForward(
+                        armSubsystem.getArmAngleElevatorRelative(), 0)));
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
   }
 
   @Override
-  public void initialize() {
-    super.initialize();
-    armAngle = armSubsystem.getArmAngleGroundRelative();
-    getController().setGoal(armAngle);
-
-    if (Constants.kDebugEnabled) {
-      System.out.println(
-          "Keeping arm at position (position: " + Units.radiansToDegrees(armAngle) + " deg)");
-    }
-  }
-
-  @Override
   public void end(boolean interrupted) {
     if (Constants.kDebugEnabled) {
       System.out.println(
-          "Keeping arm at position ended (position: " + Units.radiansToDegrees(armAngle) + " deg)");
+          "Keeping arm at position ended (position: "
+              + Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative())
+              + " deg)");
     }
     super.end(interrupted);
     armSubsystem.off();

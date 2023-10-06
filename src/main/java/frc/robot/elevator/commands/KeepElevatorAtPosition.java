@@ -9,23 +9,21 @@ package frc.robot.elevator.commands;
 
 import static frc.robot.elevator.ElevatorConstants.*;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
 import frc.robot.elevator.Elevator;
 
-public class KeepElevatorAtPosition extends ProfiledPIDCommand {
+public class KeepElevatorAtPosition extends PIDCommand {
   private final Elevator elevatorSubsystem;
-  private double elevatorPosition;
 
   public KeepElevatorAtPosition(Elevator elevatorSubsystem, double position) {
     super(
-        new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
+        new PIDController(kElevatorP, kElevatorI, kElevatorD),
         elevatorSubsystem::getElevatorPosition,
         position,
-        (output, setpoint) ->
-            elevatorSubsystem.setInputVoltage(
-                output + elevatorSubsystem.calculateFeedForward(setpoint.velocity)));
+        output ->
+            elevatorSubsystem.setInputVoltage(output + elevatorSubsystem.calculateFeedForward(0)));
 
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
@@ -33,27 +31,14 @@ public class KeepElevatorAtPosition extends ProfiledPIDCommand {
 
   public KeepElevatorAtPosition(Elevator elevatorSubsystem) {
     super(
-        new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
+        new PIDController(kElevatorP, kElevatorI, kElevatorD),
         elevatorSubsystem::getElevatorPosition,
         elevatorSubsystem.getElevatorPosition(),
-        (output, setpoint) ->
-            elevatorSubsystem.setInputVoltage(
-                output + elevatorSubsystem.calculateFeedForward(setpoint.velocity)));
+        output ->
+            elevatorSubsystem.setInputVoltage(output + elevatorSubsystem.calculateFeedForward(0)));
 
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
-  }
-
-  @Override
-  public void initialize() {
-    super.initialize();
-    elevatorPosition = elevatorSubsystem.getElevatorPosition();
-    getController().setGoal(elevatorPosition);
-
-    if (Constants.kDebugEnabled) {
-      System.out.println(
-          "Keeping elevator at position (position: " + elevatorPosition + " meters)");
-    }
   }
 
   @Override
