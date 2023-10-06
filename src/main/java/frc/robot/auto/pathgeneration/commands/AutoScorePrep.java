@@ -132,9 +132,11 @@ public class AutoScorePrep extends ParentCommand {
     // Fin
     System.out.println("Running: Go to grid (id: " + guiColumn + ") from " + start);
     Command autoScore =
-        Commands.sequence(
-                moveToScoringWaypoint, moveToScoringLocation, moveArmElevatorToPreset.asProxy())
-            .until(cancelCommand);
+        // Commands.sequence(
+        // moveToScoringWaypoint, moveToScoringLocation,
+        // moveArmElevatorToPreset.asProxy())
+        // .until(cancelCommand);
+        Commands.sequence(moveArmElevatorToPreset.asProxy()).until(cancelCommand);
     addChildCommands(autoScore);
     super.initialize();
   }

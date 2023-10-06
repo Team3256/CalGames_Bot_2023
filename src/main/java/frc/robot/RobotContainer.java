@@ -286,15 +286,15 @@ public class RobotContainer implements CANTestable, Loggable {
                       new IntakeCone(intakeSubsystem),
                       new IntakeCube(intakeSubsystem),
                       this::isCurrentPieceCone)));
-      //      tester
-      //          .povUp()
-      //          .onTrue(
-      //              Commands.sequence(
-      //                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-      //                  new ConditionalCommand(
-      //                      new IntakeCone(intakeSubsystem),
-      //                      new IntakeCube(intakeSubsystem),
-      //                      this::isCurrentPieceCone)));
+      // tester
+      // .povUp()
+      // .onTrue(
+      // Commands.sequence(
+      // new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+      // new ConditionalCommand(
+      // new IntakeCone(intakeSubsystem),
+      // new IntakeCube(intakeSubsystem),
+      // this::isCurrentPieceCone)));
 
       driver
           .rightBumper()
@@ -322,6 +322,22 @@ public class RobotContainer implements CANTestable, Loggable {
                               elevatorSubsystem,
                               armSubsystem,
                               SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
+                          .asProxy(),
+                      new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+                      this::isCurrentPieceCone),
+                  new ConditionalCommand(
+                      new IntakeCone(intakeSubsystem),
+                      new IntakeCube(intakeSubsystem),
+                      this::isCurrentPieceCone)));
+      operator
+          .x()
+          .onTrue(
+              Commands.sequence(
+                  new ConditionalCommand(
+                      new SetEndEffectorState(
+                              elevatorSubsystem,
+                              armSubsystem,
+                              SetEndEffectorState.EndEffectorPreset.SITTING_CONE_GROUND_INTAKE)
                           .asProxy(),
                       new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
                       this::isCurrentPieceCone),
