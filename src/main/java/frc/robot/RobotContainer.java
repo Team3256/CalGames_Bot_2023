@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
-import frc.robot.arm.commands.KeepArm;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
@@ -285,6 +284,55 @@ public class RobotContainer implements CANTestable, Loggable {
     operator.povDown().onTrue(new InstantCommand(this::toggleGamePiece)); // toggle
 
     if (kArmEnabled && kElevatorEnabled) {
+      driver // intake
+          .leftBumper()
+          .whileTrue(
+              new ConditionalCommand(
+                  new IntakeConeOrCube(intakeSubsystem, true, true),
+                  new IntakeConeOrCube(intakeSubsystem, true, false),
+                  this::isCurrentPieceCone));
+      driver // outtake
+          .rightBumper()
+          .whileTrue(
+              new ConditionalCommand(
+                  new OuttakeConeOrCube(intakeSubsystem, true, true),
+                  new OuttakeConeOrCube(intakeSubsystem, true, false),
+                  this::isCurrentPieceCone));
+    }
+  }
+
+  private void configureArm() {
+    //    armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
+    operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, 3));
+    operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -3));
+    tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 3));
+    tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -3));
+  }
+
+  public void configureElevator() {
+    //    elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
+    operator.rightTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6)); // manual +
+    operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6)); // manual -
+    tester.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6)); // manual +
+    tester.povLeft().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6)); // manual -
+    if (kArmEnabled) {
+      driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
+      operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
+      tester.leftBumper().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
+      operator // double sub preset
+          .povUp()
+          .onTrue(
+              new ConditionalCommand(
+                  new SetEndEffectorState(
+                      elevatorSubsystem,
+                      armSubsystem,
+                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CONE),
+                  new SetEndEffectorState(
+                      elevatorSubsystem,
+                      armSubsystem,
+                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CUBE),
+                  this::isCurrentPieceCone));
+      operator.a().onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem)); // zero
       driver // zero/cube/fallen cone
           .leftBumper()
           .onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem));
@@ -310,54 +358,6 @@ public class RobotContainer implements CANTestable, Loggable {
                       SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE),
                   new ZeroEndEffector(elevatorSubsystem, armSubsystem),
                   this::isCurrentPieceCone));
-      driver // intake
-          .leftBumper()
-          .whileTrue(
-              new ConditionalCommand(
-                  new IntakeConeOrCube(intakeSubsystem, true, true),
-                  new IntakeConeOrCube(intakeSubsystem, true, false),
-                  this::isCurrentPieceCone));
-      driver // outtake
-          .rightBumper()
-          .whileTrue(
-              new ConditionalCommand(
-                  new OuttakeConeOrCube(intakeSubsystem, true, true),
-                  new OuttakeConeOrCube(intakeSubsystem, true, false),
-                  this::isCurrentPieceCone));
-    }
-  }
-
-  private void configureArm() {
-    armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
-    operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, 3));
-    operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -3));
-    tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 3));
-    tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -3));
-  }
-
-  public void configureElevator() {
-    elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
-    operator.rightTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
-    operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
-    tester.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6));
-    tester.povLeft().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6));
-    if (kArmEnabled) {
-      driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
-      operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem));
-      operator
-          .povUp()
-          .onTrue(
-              new ConditionalCommand(
-                  new SetEndEffectorState(
-                      elevatorSubsystem,
-                      armSubsystem,
-                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CONE),
-                  new SetEndEffectorState(
-                      elevatorSubsystem,
-                      armSubsystem,
-                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CUBE),
-                  this::isCurrentPieceCone));
-      operator.a().onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem));
     }
   }
 
