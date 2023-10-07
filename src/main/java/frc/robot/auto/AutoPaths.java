@@ -22,6 +22,7 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeOff;
+import frc.robot.intake.commands.OuttakeConeOrCube;
 import frc.robot.swerve.SwerveDrive;
 import frc.robot.swerve.commands.AutoBalance;
 import frc.robot.swerve.commands.LockSwerveX;
@@ -188,6 +189,11 @@ public class AutoPaths {
                         // .asProxy()
                         // .withName("intakeCube"));
 
+                        autoEventMap.put(
+                                        "outtakeCube",
+                                        () -> new OuttakeConeOrCube(intakeSubsystem, false, false)
+                                                        .asProxy()
+                                                        .withName("outtakeCube"));
                         // AutoChooser.createSinglePath(
                         // "Score Preload Cube Mid",
                         // autoEventMap.get("cubeMid").get().andThen(new OuttakeCube(intakeSubsystem)));
@@ -245,6 +251,11 @@ public class AutoPaths {
                 // cube
                 // auto
                 AutoChooser.createSinglePath("Node5-Mobility-Engage", node5MobilityEngage);
+
+                Command node8Mobility = autoBuilder.createPath("Node8-Mobility", kEngagePathConstraints, true); // funny
+                // cube
+                // auto
+                AutoChooser.createSinglePath("Node8-Mobility", node8Mobility);
 
                 AutoChooser.sendChooserToDashboard("Auto Chooser");
         }
