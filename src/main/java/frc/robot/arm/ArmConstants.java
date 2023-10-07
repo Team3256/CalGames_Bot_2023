@@ -41,7 +41,7 @@ public final class ArmConstants {
       new TrapezoidProfile.Constraints(16, 16);
   public static final Rotation2d kArmAngleMinConstraint = Rotation2d.fromDegrees(22.3);
   public static final Rotation2d kArmAngleMaxConstraint = Rotation2d.fromDegrees(217);
-  public static final double kArmCurrentThreshold = 17.5; // change as necessary 30
+  public static final double kArmCurrentThreshold = 15; // change as necessary 30
 
   // --Tolerance--
   public static final Rotation2d kArmToleranceAngle = Rotation2d.fromDegrees(5); // used to be 5
