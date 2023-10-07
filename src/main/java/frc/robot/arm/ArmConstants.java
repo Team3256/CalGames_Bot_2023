@@ -35,7 +35,7 @@ public final class ArmConstants {
   public static final double kArmV = 0.65977;
   public static final double kArmA = 0.023807;
   public static final double kArmG = 0.52783;
-  public static final double kArmP = 3.5;
+  public static final double kArmP = 4;
   public static final double kArmI = 0;
   public static final double kArmD = 0;
 

@@ -9,14 +9,14 @@ package frc.robot.arm.commands;
 
 import static frc.robot.arm.ArmConstants.*;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.arm.Arm;
 
-public class KeepArmAtAngle extends PIDCommand {
+public class KeepArmAtAngle extends ProfiledPIDCommand {
   private Arm armSubsystem;
   private double armAngle;
 
@@ -28,11 +28,12 @@ public class KeepArmAtAngle extends PIDCommand {
    */
   public KeepArmAtAngle(Arm armSubsystem, double angle) {
     super(
-        new PIDController(kArmP, kArmI, kArmD),
+        new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
         armSubsystem::getArmAngleGroundRelative,
         angle,
-        output ->
-            armSubsystem.setInputVoltage(output + armSubsystem.calculateFeedForward(angle, 0)));
+        (output, setpoint) ->
+            armSubsystem.setInputVoltage(
+                output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
@@ -43,14 +44,12 @@ public class KeepArmAtAngle extends PIDCommand {
 
   public KeepArmAtAngle(Arm armSubsystem) {
     super(
-        new PIDController(kArmP, kArmI, kArmD),
+        new ProfiledPIDController(kArmP, kArmI, kArmD, kArmProfileContraints),
         armSubsystem::getArmAngleGroundRelative,
         armSubsystem.getArmAngleGroundRelative(),
-        output ->
+        (output, setpoint) ->
             armSubsystem.setInputVoltage(
-                output
-                    + armSubsystem.calculateFeedForward(
-                        armSubsystem.getArmAngleElevatorRelative(), 0)));
+                output + armSubsystem.calculateFeedForward(setpoint.position, setpoint.velocity)));
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
@@ -63,7 +62,7 @@ public class KeepArmAtAngle extends PIDCommand {
   public void initialize() {
     super.initialize();
     armAngle = armSubsystem.getArmAngleGroundRelative();
-    // getController().setGoal(armAngle);
+    getController().setGoal(armAngle);
 
     if (Constants.kDebugEnabled) {
       System.out.println(
@@ -71,7 +70,7 @@ public class KeepArmAtAngle extends PIDCommand {
     }
 
     SmartDashboard.putNumber(
-        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint()));
+        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint().position));
     SmartDashboard.putNumber(
         "KeepArm position", Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()));
   }
@@ -95,7 +94,7 @@ public class KeepArmAtAngle extends PIDCommand {
   public void execute() {
     // System.out.println("keepArmAtAngle::execute func");
     SmartDashboard.putNumber(
-        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint()));
+        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint().position));
     SmartDashboard.putNumber(
         "KeepArm position", Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()));
 
