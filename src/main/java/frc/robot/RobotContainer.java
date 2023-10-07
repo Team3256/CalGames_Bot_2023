@@ -267,14 +267,14 @@ public class RobotContainer implements CANTestable, Loggable {
   private void configureIntake() {
     operator
         .povLeft()
-        .onTrue(
+        .whileTrue(
             new ConditionalCommand(
                 new OuttakeConeOrCube(intakeSubsystem, true, true),
                 new OuttakeConeOrCube(intakeSubsystem, true, false),
                 this::isCurrentPieceCone));
     operator
         .povRight()
-        .onTrue(
+        .whileTrue(
             new ConditionalCommand(
                 new IntakeConeOrCube(intakeSubsystem, true, true),
                 new IntakeConeOrCube(intakeSubsystem, true, false),
