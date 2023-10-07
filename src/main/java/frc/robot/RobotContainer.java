@@ -26,7 +26,6 @@ import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
 import frc.robot.auto.pathgeneration.commands.AutoIntakePrep;
-import frc.robot.auto.pathgeneration.commands.AutoScore.*;
 import frc.robot.auto.pathgeneration.commands.AutoScorePrep;
 import frc.robot.drivers.CANTestable;
 import frc.robot.elevator.Elevator;
@@ -271,80 +270,61 @@ public class RobotContainer implements CANTestable, Loggable {
   private void configureIntake() {
     operator
         .povLeft()
-        .onTrue(new IntakeOrOuttakeConeOrCube(intakeSubsystem, false, this::isCurrentPieceCone));
+        .onTrue(
+            new ConditionalCommand(
+                new OuttakeConeOrCube(intakeSubsystem, true, true),
+                new OuttakeConeOrCube(intakeSubsystem, true, false),
+                this::isCurrentPieceCone));
     operator
         .povRight()
-        .onTrue(new IntakeOrOuttakeConeOrCube(intakeSubsystem, true, this::isCurrentPieceCone));
+        .onTrue(
+            new ConditionalCommand(
+                new IntakeConeOrCube(intakeSubsystem, true, true),
+                new IntakeConeOrCube(intakeSubsystem, true, false),
+                this::isCurrentPieceCone));
     operator.povDown().onTrue(new InstantCommand(this::toggleGamePiece));
-    if (kArmEnabled && kElevatorEnabled) {
-      driver
-          .leftBumper()
-          .onTrue(
-              Commands.sequence(
-                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-                  new ConditionalCommand(
-                      new IntakeCone(intakeSubsystem),
-                      new IntakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)));
-      //      tester
-      //          .povUp()
-      //          .onTrue(
-      //              Commands.sequence(
-      //                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-      //                  new ConditionalCommand(
-      //                      new IntakeCone(intakeSubsystem),
-      //                      new IntakeCube(intakeSubsystem),
-      //                      this::isCurrentPieceCone)));
 
-      driver
+    if (kArmEnabled && kElevatorEnabled) {
+      driver // zero/cube/fallen cone
+          .leftBumper()
+          .onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem));
+
+      driver // zero/cube/standing cone
           .rightBumper()
           .onTrue(
-              Commands.sequence(
-                  new ConditionalCommand(
-                      new SetEndEffectorState(
-                              elevatorSubsystem,
-                              armSubsystem,
-                              SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
-                          .asProxy(),
-                      new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-                      this::isCurrentPieceCone),
-                  new ConditionalCommand(
-                      new IntakeCone(intakeSubsystem),
-                      new IntakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)));
+              new ConditionalCommand(
+                  new SetEndEffectorState(
+                      elevatorSubsystem,
+                      armSubsystem,
+                      SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE),
+                  new ZeroEndEffector(elevatorSubsystem, armSubsystem),
+                  this::isCurrentPieceCone));
 
-      operator
+      operator // zero/cube/standing cone
           .b()
           .onTrue(
-              Commands.sequence(
-                  new ConditionalCommand(
-                      new SetEndEffectorState(
-                              elevatorSubsystem,
-                              armSubsystem,
-                              SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
-                          .asProxy(),
-                      new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-                      this::isCurrentPieceCone),
-                  new ConditionalCommand(
-                      new IntakeCone(intakeSubsystem),
-                      new IntakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)));
-      driver
-          .leftBumper()
-          .onTrue(
               new ConditionalCommand(
-                      new OuttakeCone(intakeSubsystem),
-                      new OuttakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)
-                  .andThen(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy()));
-      driver
+                  new SetEndEffectorState(
+                          elevatorSubsystem,
+                          armSubsystem,
+                          SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
+                      .asProxy(),
+                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+                  this::isCurrentPieceCone));
+      driver // intake
+          .leftBumper()
+          .whileTrue(
+              new ConditionalCommand(
+                  new IntakeConeOrCube(intakeSubsystem, true, true),
+                  new IntakeConeOrCube(intakeSubsystem, true, false),
+                  this::isCurrentPieceCone));
+      driver // outtake
           .rightBumper()
           .whileTrue(
               new ConditionalCommand(
-                  new OuttakeCone(intakeSubsystem),
-                  new OuttakeCube(intakeSubsystem),
-                  this::isCurrentPieceCone))
-          .onFalse(new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy());
+                  new OuttakeConeOrCube(intakeSubsystem, true, true),
+                  new OuttakeConeOrCube(intakeSubsystem, true, false),
+                  this::isCurrentPieceCone));
     }
   }
 

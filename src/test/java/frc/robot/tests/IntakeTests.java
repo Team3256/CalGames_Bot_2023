@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import frc.robot.UnitTestBase;
 import frc.robot.intake.Intake;
-import frc.robot.intake.commands.IntakeCone;
-import frc.robot.intake.commands.IntakeCube;
+import frc.robot.intake.commands.IntakeConeOrCube;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -40,7 +39,7 @@ public class IntakeTests extends UnitTestBase {
 
   @Test
   public void testIntakeCone() {
-    IntakeCone command = new IntakeCone(intakeSubsystem);
+    IntakeConeOrCube command = new IntakeConeOrCube(intakeSubsystem, true);
     command.initialize();
     runScheduler(1, command, intakeSubsystem);
 

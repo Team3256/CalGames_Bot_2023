@@ -27,8 +27,7 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.helpers.ParentCommand;
 import frc.robot.intake.Intake;
-import frc.robot.intake.commands.OuttakeCone;
-import frc.robot.intake.commands.OuttakeCube;
+import frc.robot.intake.commands.OuttakeConeOrCube;
 import frc.robot.led.LED;
 import frc.robot.led.commands.SetAllBlink;
 import frc.robot.led.commands.SetAllColor;
@@ -185,7 +184,7 @@ public class AutoScore extends ParentCommand {
       BooleanSupplier isSelectedNodeCone = () -> scoringGamePiece.equals(GamePiece.CONE);
       Command runOuttake =
           new ConditionalCommand(
-              new OuttakeCone(intakeSubsystem),
+              new OuttakeConeOrCube(intakeSubsystem),
               new OuttakeCube(intakeSubsystem),
               isSelectedNodeCone);
       // Command stow = new StowArmElevator(elevatorSubsystem, armSubsystem);

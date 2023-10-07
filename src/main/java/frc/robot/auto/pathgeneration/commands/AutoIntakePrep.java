@@ -8,14 +8,12 @@
 package frc.robot.auto.pathgeneration.commands;
 
 import static frc.robot.auto.dynamicpathgeneration.DynamicPathConstants.*;
-import static frc.robot.led.LEDConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.arm.Arm;
@@ -27,8 +25,7 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.helpers.ParentCommand;
 import frc.robot.intake.Intake;
-import frc.robot.intake.commands.IntakeCone;
-import frc.robot.intake.commands.IntakeCube;
+import frc.robot.intake.commands.IntakeConeOrCube;
 import frc.robot.swerve.SwerveDrive;
 import java.util.function.BooleanSupplier;
 
@@ -113,7 +110,9 @@ public class AutoIntakePrep extends ParentCommand {
     // Intake
     Command runIntake =
         new ConditionalCommand(
-            new IntakeCone(intakeSubsystem), new IntakeCube(intakeSubsystem), isCurrentPieceCone);
+            new IntakeConeOrCube(intakeSubsystem),
+            new IntakeCube(intakeSubsystem),
+            isCurrentPieceCone);
 
     // preset
     Command moveArmElevatorToPreset =
@@ -133,14 +132,15 @@ public class AutoIntakePrep extends ParentCommand {
     Command stowArmElevator = new StowEndEffector(elevatorSubsystem, armSubsystem);
 
     // fin
-    Command cmd =
-        Commands.sequence(
-                moveToWaypoint,
-                Commands.deadline(
-                    runIntake.withTimeout(6), moveArmElevatorToPreset.asProxy(), moveToSubstation),
-                stowArmElevator.asProxy())
-            .until(cancelCommand);
-
+    //    Command cmd =
+    //        Commands.sequence(
+    //                moveToWaypoint,
+    //                Commands.deadline(
+    //                    runIntake.withTimeout(6), moveArmElevatorToPreset.asProxy(),
+    // moveToSubstation),
+    //                stowArmElevator.asProxy())
+    //            .until(cancelCommand);
+    Command cmd = moveArmElevatorToPreset;
     addChildCommands(cmd);
     super.initialize();
   }

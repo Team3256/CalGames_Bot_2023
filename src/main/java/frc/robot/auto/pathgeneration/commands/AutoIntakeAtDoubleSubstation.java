@@ -27,8 +27,7 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.helpers.ParentCommand;
 import frc.robot.intake.Intake;
-import frc.robot.intake.commands.IntakeCone;
-import frc.robot.intake.commands.IntakeCube;
+import frc.robot.intake.commands.IntakeConeOrCube;
 import frc.robot.led.LED;
 import frc.robot.led.commands.SetAllBlink;
 import frc.robot.led.commands.SetAllColor;
@@ -104,7 +103,9 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
 
     Command runIntake =
         new ConditionalCommand(
-            new IntakeCone(intakeSubsystem), new IntakeCube(intakeSubsystem), isCurrentPieceCone);
+            new IntakeConeOrCube(intakeSubsystem),
+            new IntakeCube(intakeSubsystem),
+            isCurrentPieceCone);
 
     Command stowArmElevator = new StowEndEffector(elevatorSubsystem, armSubsystem);
 

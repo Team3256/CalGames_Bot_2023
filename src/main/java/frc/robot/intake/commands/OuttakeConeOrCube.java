@@ -10,29 +10,29 @@ package frc.robot.intake.commands;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.helpers.DebugCommandBase;
 import frc.robot.intake.Intake;
-import frc.robot.led.LED;
 
-public class OuttakeCube extends DebugCommandBase {
-  private Intake intakeSubsystem;
-  private LED ledSubsystem;
-  private double outtakeTime = 1;
-  private Timer timer;
+public class OuttakeConeOrCube extends DebugCommandBase {
+  private final Intake intakeSubsystem;
+  private final Timer timer;
+  private final boolean manual;
+  private final boolean isCone;
 
-  public OuttakeCube(Intake intakeSubsystem) {
+  public OuttakeConeOrCube(Intake intakeSubsystem, boolean manual, boolean isCone) {
     this.intakeSubsystem = intakeSubsystem;
     this.timer = new Timer();
     addRequirements(intakeSubsystem);
-  }
-
-  public OuttakeCube(Intake intakeSubsystem, double outtakeTime) {
-    this(intakeSubsystem);
-    this.outtakeTime = outtakeTime;
+    this.manual = manual;
+    this.isCone = isCone;
   }
 
   @Override
   public void initialize() {
     super.initialize();
-    intakeSubsystem.outtakeCube();
+    if (isCone) {
+      intakeSubsystem.outtakeCone();
+    } else {
+      intakeSubsystem.outtakeCube();
+    }
     timer.restart();
   }
 
@@ -44,6 +44,11 @@ public class OuttakeCube extends DebugCommandBase {
 
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(outtakeTime);
+    if (!manual) {
+      double outtakeTime = 1;
+      return timer.hasElapsed(outtakeTime);
+    } else {
+      return false;
+    }
   }
 }

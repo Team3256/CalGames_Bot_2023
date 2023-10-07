@@ -31,8 +31,6 @@ import frc.robot.Constants;
 import frc.robot.drivers.CANDeviceTester;
 import frc.robot.drivers.CANTestable;
 import frc.robot.drivers.TalonFXFactory;
-import frc.robot.intake.commands.IntakeCone;
-import frc.robot.intake.commands.IntakeCube;
 import frc.robot.logging.Loggable;
 
 public class Intake extends SubsystemBase implements Loggable, CANTestable {
@@ -114,8 +112,6 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
 
   public void logInit() {
     getLayout(kDriverTabName).add(this);
-    getLayout(kDriverTabName).add(new IntakeCube(this));
-    getLayout(kDriverTabName).add(new IntakeCone(this));
     getLayout(kDriverTabName).add(intakeMotor);
   }
 
