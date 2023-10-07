@@ -24,6 +24,7 @@ import frc.robot.elevator.commands.SetElevatorPosition;
 import frc.robot.elevator.commands.ZeroElevator;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeConeOrCube;
+import frc.robot.intake.commands.OuttakeConeOrCube;
 import frc.robot.swerve.SwerveDrive;
 import frc.robot.swerve.commands.LockSwerveX;
 import frc.robot.swerve.commands.TeleopSwerve;
@@ -99,10 +100,10 @@ public class PitTestRoutine {
   }
 
   public Command intakeCommands() {
-    Command intakeCone = new IntakeConeOrCube(intakeSubsystem, true).until(driver.b());
-    Command outtakeCone = new IntakeCube(intakeSubsystem, true).until(driver.b());
-    Command intakeCube = new IntakeCube(intakeSubsystem).until(driver.b());
-    Command outtakeCube = new IntakeConeOrCube(intakeSubsystem, true).until(driver.b());
+    Command intakeCone = new IntakeConeOrCube(intakeSubsystem, true, true).until(driver.b());
+    Command outtakeCone = new IntakeConeOrCube(intakeSubsystem, true, false).until(driver.b());
+    Command intakeCube = new OuttakeConeOrCube(intakeSubsystem, true, true).until(driver.b());
+    Command outtakeCube = new OuttakeConeOrCube(intakeSubsystem, true, false).until(driver.b());
 
     return new SequentialCommandGroup(intakeCone, outtakeCone, intakeCube, outtakeCube);
   }

@@ -282,7 +282,7 @@ public class RobotContainer implements CANTestable, Loggable {
                 new IntakeConeOrCube(intakeSubsystem, true, true),
                 new IntakeConeOrCube(intakeSubsystem, true, false),
                 this::isCurrentPieceCone));
-    operator.povDown().onTrue(new InstantCommand(this::toggleGamePiece));
+    operator.povDown().onTrue(new InstantCommand(this::toggleGamePiece)); //toggle
 
     if (kArmEnabled && kElevatorEnabled) {
       driver // zero/cube/fallen cone
@@ -308,8 +308,8 @@ public class RobotContainer implements CANTestable, Loggable {
                           elevatorSubsystem,
                           armSubsystem,
                           SetEndEffectorState.EndEffectorPreset.STANDING_CONE_GROUND_INTAKE)
-                      .asProxy(),
-                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+                      ,
+                  new ZeroEndEffector(elevatorSubsystem, armSubsystem),
                   this::isCurrentPieceCone));
       driver // intake
           .leftBumper()
@@ -371,18 +371,18 @@ public class RobotContainer implements CANTestable, Loggable {
   // --MISC--
   public Command getAutonomousCommand() {
     Command autoPath = autoPaths.getSelectedPath();
-    if (kElevatorEnabled && kArmEnabled) {
-      return Commands.sequence(
-          new StowEndEffector(elevatorSubsystem, armSubsystem),
-          autoPath,
-          Commands.parallel(
-              new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-              new LockSwerveX(swerveSubsystem)
-                  .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
-                  .until(() -> isMovingJoystick(driver))));
-    } else {
+//    if (kElevatorEnabled && kArmEnabled) {
+//      return Commands.sequence(
+//          new StowEndEffector(elevatorSubsystem, armSubsystem),
+//          autoPath,
+//          Commands.parallel(
+//              new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+//              new LockSwerveX(swerveSubsystem)
+//                  .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
+//                  .until(() -> isMovingJoystick(driver))));
+//    } else {
       return autoPath;
-    }
+//    }
   }
 
   public boolean isMovingJoystick(CommandXboxController controller) {

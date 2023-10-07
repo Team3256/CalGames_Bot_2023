@@ -110,8 +110,8 @@ public class AutoIntakePrep extends ParentCommand {
     // Intake
     Command runIntake =
         new ConditionalCommand(
-            new IntakeConeOrCube(intakeSubsystem),
-            new IntakeCube(intakeSubsystem),
+            new IntakeConeOrCube(intakeSubsystem, false, true),
+            new IntakeConeOrCube(intakeSubsystem, false, false),
             isCurrentPieceCone);
 
     // preset

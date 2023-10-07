@@ -22,7 +22,6 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeOff;
-import frc.robot.intake.commands.OuttakeConeOrCube;
 import frc.robot.swerve.SwerveDrive;
 import frc.robot.swerve.commands.AutoBalance;
 import frc.robot.swerve.commands.LockSwerveX;
@@ -76,9 +75,11 @@ public class AutoPaths {
         && armSubsystem != null
         && elevatorSubsystem != null) {
 
-//      autoEventMap.put("outtakeCube", () -> new OuttakeConeOrCube(intakeSubsystem, false,true).asProxy());
-//
-//      autoEventMap.put("outtakeCone", () -> new OuttakeConeOrCube(intakeSubsystem, false,false).asProxy());
+      //      autoEventMap.put("outtakeCube", () -> new OuttakeConeOrCube(intakeSubsystem,
+      // false,true).asProxy());
+      //
+      //      autoEventMap.put("outtakeCone", () -> new OuttakeConeOrCube(intakeSubsystem,
+      // false,false).asProxy());
 
       autoEventMap.put(
           "coneHigh",
@@ -171,36 +172,37 @@ public class AutoPaths {
                   .asProxy()
                   .withName("stow"));
 
-//      autoEventMap.put(
-//          "intakeCone",
-//          () ->
-//              runParallelWithPath(
-//                      setPieceToCone(),
-//                      new GroundIntake(
-//                          elevatorSubsystem,
-//                          armSubsystem,
-//                          intakeSubsystem,
-//                          ConeOrientation.STANDING_CONE,
-//                          () -> true))
-//                  .asProxy()
-//                  .withName("intakeCone"));
+      //      autoEventMap.put(
+      //          "intakeCone",
+      //          () ->
+      //              runParallelWithPath(
+      //                      setPieceToCone(),
+      //                      new GroundIntake(
+      //                          elevatorSubsystem,
+      //                          armSubsystem,
+      //                          intakeSubsystem,
+      //                          ConeOrientation.STANDING_CONE,
+      //                          () -> true))
+      //                  .asProxy()
+      //                  .withName("intakeCone"));
 
-//      autoEventMap.put(
-//          "intakeCube",
-//          () ->
-//              runParallelWithPath(
-//                      setPieceToCube(),
-//                      new GroundIntake(
-//                          elevatorSubsystem, armSubsystem, intakeSubsystem, () -> false))
-//                  .asProxy()
-//                  .withName("intakeCube"));
+      //      autoEventMap.put(
+      //          "intakeCube",
+      //          () ->
+      //              runParallelWithPath(
+      //                      setPieceToCube(),
+      //                      new GroundIntake(
+      //                          elevatorSubsystem, armSubsystem, intakeSubsystem, () -> false))
+      //                  .asProxy()
+      //                  .withName("intakeCube"));
 
-//      AutoChooser.createSinglePath(
-//          "Score Preload Cube Mid",
-//          autoEventMap.get("cubeMid").get().andThen(new OuttakeCube(intakeSubsystem)));
-//      AutoChooser.createSinglePath(
-//          "Score Preload Cone Mid",
-//          autoEventMap.get("coneMid").get().andThen(new OuttakeConeOrCube(intakeSubsystem)));
+      //      AutoChooser.createSinglePath(
+      //          "Score Preload Cube Mid",
+      //          autoEventMap.get("cubeMid").get().andThen(new OuttakeCube(intakeSubsystem)));
+      //      AutoChooser.createSinglePath(
+      //          "Score Preload Cone Mid",
+      //          autoEventMap.get("coneMid").get().andThen(new
+      // OuttakeConeOrCube(intakeSubsystem)));
     }
 
     AutoBuilder autoBuilder = new AutoBuilder(swerveSubsystem, autoEventMap);

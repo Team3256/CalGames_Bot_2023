@@ -184,8 +184,8 @@ public class AutoScore extends ParentCommand {
       BooleanSupplier isSelectedNodeCone = () -> scoringGamePiece.equals(GamePiece.CONE);
       Command runOuttake =
           new ConditionalCommand(
-              new OuttakeConeOrCube(intakeSubsystem),
-              new OuttakeCube(intakeSubsystem),
+              new OuttakeConeOrCube(intakeSubsystem, false, true),
+              new OuttakeConeOrCube(intakeSubsystem, false, false),
               isSelectedNodeCone);
       // Command stow = new StowArmElevator(elevatorSubsystem, armSubsystem);
       // Set arm and elevator command and end pose based on node type and height

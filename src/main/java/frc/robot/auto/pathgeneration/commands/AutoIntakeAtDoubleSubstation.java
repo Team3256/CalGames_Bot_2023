@@ -103,8 +103,8 @@ public class AutoIntakeAtDoubleSubstation extends ParentCommand {
 
     Command runIntake =
         new ConditionalCommand(
-            new IntakeConeOrCube(intakeSubsystem),
-            new IntakeCube(intakeSubsystem),
+            new IntakeConeOrCube(intakeSubsystem, false, true),
+            new IntakeConeOrCube(intakeSubsystem, false, false),
             isCurrentPieceCone);
 
     Command stowArmElevator = new StowEndEffector(elevatorSubsystem, armSubsystem);
