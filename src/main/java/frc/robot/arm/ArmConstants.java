@@ -66,7 +66,11 @@ public final class ArmConstants {
   // Ground
   public static final Rotation2d kStandingConeGroundIntakeRotation = Rotation2d.fromDegrees(172.5);
   public static final Rotation2d kTippedConeGroundIntakeRotation = Rotation2d.fromDegrees(200);
+  // public static final Rotation2d kTippedConeGroundIntakeRotation =
+  // Rotation2d.fromDegrees(205);
   public static final Rotation2d kCubeGroundIntakeRotation = Rotation2d.fromDegrees(217);
+  // public static final Rotation2d kCubeGroundIntakeRotation =
+  // Rotation2d.fromDegrees(200);
 
   // Preferences
   public static class ArmPreferencesKeys {
