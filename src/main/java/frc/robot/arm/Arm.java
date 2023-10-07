@@ -90,14 +90,14 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
       armMotor.setNeutralMode(NeutralMode.Brake);
     }
 
-    //    if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
-    //      double absoluteEncoderRadians =
-    //          getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
-    //      armMotor.setSelectedSensorPosition(
-    //          Conversions.radiansToFalcon(absoluteEncoderRadians, kArmGearing));
-    //    } else {
-    //      armMotor.setSelectedSensorPosition(0);
-    //    }
+    // if (FeatureFlags.kUseAbsoluteEncoderToInitializeRelative) {
+    // double absoluteEncoderRadians =
+    // getAbsoluteEncoderDistanceRad() + kAbsoluteEncoderOffsetRadians;
+    // armMotor.setSelectedSensorPosition(
+    // Conversions.radiansToFalcon(absoluteEncoderRadians, kArmGearing));
+    // } else {
+    // armMotor.setSelectedSensorPosition(0);
+    // }
   }
 
   public double calculateFeedForward(double angleRadians, double velocity) {
@@ -148,19 +148,19 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
       // armEncoder.getAbsolutePosition());
       // SmartDashboard.putNumber(
       // "Arm Raw Absolute Encoder distance", getAbsoluteEncoderDistanceRad());
-      //      SmartDashboard.putNumber("Arm angle ground relative rad",
+      // SmartDashboard.putNumber("Arm angle ground relative rad",
       // getArmPositionGroundRelative());
-      //      SmartDashboard.putNumber("Arm angle elevator relative rad",
+      // SmartDashboard.putNumber("Arm angle elevator relative rad",
       // getArmPositionElevatorRelative());
-      //      SmartDashboard.putNumber("Arm Current Draw", armMotor.getSupplyCurrent());
-      //      SmartDashboard.putNumber(
-      //          "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
-      //      SmartDashboard.putNumber(
-      //          "Arm angle position ground relative",
-      //          Units.radiansToDegrees(getArmPositionGroundRelative()));
-      //      SmartDashboard.putNumber(
-      //          "Arm angle position elevator relative",
-      //          Units.radiansToDegrees(getArmPositionElevatorRelative()));
+      // SmartDashboard.putNumber("Arm Current Draw", armMotor.getSupplyCurrent());
+      // SmartDashboard.putNumber(
+      // "Arm motor open loop voltage", armMotor.getMotorOutputPercent() * 12);
+      // SmartDashboard.putNumber(
+      // "Arm angle position ground relative",
+      // Units.radiansToDegrees(getArmPositionGroundRelative()));
+      // SmartDashboard.putNumber(
+      // "Arm angle position elevator relative",
+      // Units.radiansToDegrees(getArmPositionElevatorRelative()));
     }
   }
 
@@ -270,6 +270,7 @@ public class Arm extends SubsystemBase implements CANTestable, Loggable {
   }
 
   private void simulationOutputToDashboard() {
+    // System.out.println("this is printing simOutToDash");
     SmartDashboard.putNumber(
         "Arm angle position ground relative", Units.radiansToDegrees(getArmAngleGroundRelative()));
     SmartDashboard.putNumber("Current Draw", armSim.getCurrentDrawAmps());
