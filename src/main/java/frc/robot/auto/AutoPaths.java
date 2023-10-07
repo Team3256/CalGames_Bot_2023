@@ -257,6 +257,11 @@ public class AutoPaths {
                 // auto
                 AutoChooser.createSinglePath("Node8-Mobility", node8Mobility);
 
+                Command node2Mobility = autoBuilder.createPath("Node2-Mobility", kEngagePathConstraints, true); // funny
+                // cube
+                // auto
+                AutoChooser.createSinglePath("Node2-Mobility", node2Mobility);
+
                 AutoChooser.sendChooserToDashboard("Auto Chooser");
         }
 
