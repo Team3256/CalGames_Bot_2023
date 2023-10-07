@@ -54,7 +54,7 @@ public final class ArmConstants {
   public static final Rotation2d kStowRotation = Rotation2d.fromDegrees(60);
   // DoubleSub
   public static final Rotation2d kDoubleSubstationRotationCube = Rotation2d.fromDegrees(22.3);
-  public static final Rotation2d kDoubleSubstationRotationCone = Rotation2d.fromDegrees(22.3);
+  public static final Rotation2d kDoubleSubstationRotationCone = Rotation2d.fromDegrees(17.94);
   // Score
   public static final Rotation2d kCubeMidRotation = Rotation2d.fromDegrees(22.3);
   public static final Rotation2d kConeMidRotation = Rotation2d.fromDegrees(22.3);

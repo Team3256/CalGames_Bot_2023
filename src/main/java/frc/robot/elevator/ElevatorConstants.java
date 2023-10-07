@@ -35,7 +35,7 @@ public final class ElevatorConstants {
   public static final double kAnyPieceLowFrontPosition = 0.39; // needs tuning
   // substation
   public static final double kCubeDoubleSubstationPosition = 1.12;
-  public static final double kConeDoubleSubstationPosition = 1.1;
+  public static final double kConeDoubleSubstationPosition = 1.22366303;
   // ground intake
   public static final double kGroundIntakePosition = 0;
   // stow
