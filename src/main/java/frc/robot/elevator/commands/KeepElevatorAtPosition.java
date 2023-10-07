@@ -23,8 +23,8 @@ public class KeepElevatorAtPosition extends PIDCommand {
         new PIDController(kElevatorP, kElevatorI, kElevatorD),
         elevatorSubsystem::getElevatorPosition,
         position,
-        output -> elevatorSubsystem.setInputVoltage(
-            output + elevatorSubsystem.calculateFeedForward(0)));
+        output ->
+            elevatorSubsystem.setInputVoltage(output + elevatorSubsystem.calculateFeedForward(0)));
 
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
@@ -35,8 +35,8 @@ public class KeepElevatorAtPosition extends PIDCommand {
         new PIDController(kElevatorP, kElevatorI, kElevatorD),
         elevatorSubsystem::getElevatorPosition,
         elevatorSubsystem.getElevatorPosition(),
-        output -> elevatorSubsystem.setInputVoltage(
-            output + elevatorSubsystem.calculateFeedForward(0)));
+        output ->
+            elevatorSubsystem.setInputVoltage(output + elevatorSubsystem.calculateFeedForward(0)));
 
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
