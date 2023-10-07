@@ -11,6 +11,7 @@ import static frc.robot.arm.ArmConstants.*;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.arm.Arm;
@@ -36,6 +37,9 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
+
+    SmartDashboard.putNumber("armAngleGroundRelative", armSubsystem.getArmAngleGroundRelative());
+    SmartDashboard.putNumber("arm angle goal", angle);
   }
 
   public KeepArmAtAngle(Arm armSubsystem) {
@@ -49,6 +53,9 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);
+
+    SmartDashboard.putNumber("armAngleGroundRelative", armSubsystem.getArmAngleGroundRelative());
+    SmartDashboard.putNumber("arm angle goal", armSubsystem.getArmAngleGroundRelative());
   }
 
   @Override
@@ -61,6 +68,11 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
       System.out.println(
           "Keeping arm at position (position: " + Units.radiansToDegrees(armAngle) + " deg)");
     }
+
+    SmartDashboard.putNumber(
+        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint().position));
+    SmartDashboard.putNumber(
+        "KeepArm position", Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()));
   }
 
   @Override
@@ -76,5 +88,14 @@ public class KeepArmAtAngle extends ProfiledPIDCommand {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  @Override
+  public void execute() {
+    // System.out.println("keepArmAtAngle::execute func");
+    SmartDashboard.putNumber(
+        "KeepArm setpoint", Units.radiansToDegrees(getController().getSetpoint().position));
+    SmartDashboard.putNumber(
+        "KeepArm position", Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()));
   }
 }
