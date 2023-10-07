@@ -119,6 +119,8 @@ public class RobotSimulation {
                     152.3,
                     kIntakeLineWidth,
                     new Color8Bit(Color.kYellow)));
+
+        intakeSubsystem.getWrist().append(intakeSubsystem.getIntakeWheel());
       }
     }
   }
@@ -141,6 +143,7 @@ public class RobotSimulation {
           .setAngle(
               Units.radiansToDegrees(armSubsystem.getArmAngleGroundRelative()) * kIntakeWristRatio
                   - 90);
+      intakeSubsystem.getIntakeWheel().setAngle(intakeSubsystem.getSimIntakePosition());
     }
   }
 
