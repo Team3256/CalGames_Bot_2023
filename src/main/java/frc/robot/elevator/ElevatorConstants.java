@@ -28,8 +28,8 @@ public final class ElevatorConstants {
   public static final int kNumElevatorMotors = 2;
 
   // scoring
-  public static final double kConeHighPosition = 1.38;
-  public static final double kCubeHighPosition = 1.38;
+  public static final double kConeHighPosition = 1.36;
+  public static final double kCubeHighPosition = 1.36;
   public static final double kAnyPieceMidPosition = 0.89;
   public static final double kAnyPieceLowBackPosition = 0;
   public static final double kAnyPieceLowFrontPosition = 0.39; // needs tuning

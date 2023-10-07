@@ -27,10 +27,7 @@ public class ZeroEndEffector extends ParentCommand {
   @Override
   public void initialize() {
     addChildCommands(
-        Commands.sequence(
-            new ZeroElevator(elevatorSubsystem),
-            Commands.deadline(
-                new ZeroArm(armSubsystem), new KeepElevatorAtPosition(elevatorSubsystem, 0))));
+        Commands.sequence(new ZeroElevator(elevatorSubsystem), new ZeroArm(armSubsystem)));
 
     super.initialize();
   }
