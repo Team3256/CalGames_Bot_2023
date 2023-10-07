@@ -277,15 +277,15 @@ public class RobotContainer implements CANTestable, Loggable {
         .onTrue(new IntakeOrOuttakeConeOrCube(intakeSubsystem, true, this::isCurrentPieceCone));
     operator.povDown().onTrue(new InstantCommand(this::toggleGamePiece));
     if (kArmEnabled && kElevatorEnabled) {
-      driver
-          .leftBumper()
-          .onTrue(
-              Commands.sequence(
-                  new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-                  new ConditionalCommand(
-                      new IntakeCone(intakeSubsystem),
-                      new IntakeCube(intakeSubsystem),
-                      this::isCurrentPieceCone)));
+      // driver
+      // .leftBumper()
+      // .onTrue(
+      // Commands.sequence(
+      // new ZeroEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+      // new ConditionalCommand(
+      // new IntakeCone(intakeSubsystem),
+      // new IntakeCube(intakeSubsystem),
+      // this::isCurrentPieceCone)));
       // tester
       // .povUp()
       // .onTrue(
