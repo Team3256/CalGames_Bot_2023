@@ -7,8 +7,6 @@
 
 package frc.robot.elevator.commands;
 
-import static frc.robot.elevator.ElevatorConstants.kTolerancePosition;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.Arm;
@@ -73,8 +71,7 @@ public class SetEndEffectorState extends ParentCommand {
             Commands.deadline(
                 new SetArmAngle(armSubsystem, armAngle),
                 new KeepElevatorAtPosition(
-                    elevatorSubsystem,
-                    elevatorExtension)))); // may not work to add like this
+                    elevatorSubsystem, elevatorExtension)))); // may not work to add like this
 
     super.initialize();
   }

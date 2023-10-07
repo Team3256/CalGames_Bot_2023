@@ -9,7 +9,6 @@ package frc.robot.elevator.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.Arm;
-import frc.robot.arm.commands.KeepArmAtAngle;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
 import frc.robot.helpers.ParentCommand;
@@ -30,9 +29,7 @@ public class StowEndEffector extends ParentCommand {
     addChildCommands(
         Commands.sequence(
             new SetArmAngle(armSubsystem, Arm.ArmPreset.STOW),
-            Commands.deadline(
-                new ZeroElevator(elevatorSubsystem),
-                new KeepArmAtAngle(armSubsystem, Arm.ArmPreset.STOW.rotation.getRadians()))));
+            new ZeroElevator(elevatorSubsystem)));
 
     super.initialize();
   }
