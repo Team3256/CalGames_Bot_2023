@@ -7,14 +7,14 @@
 
 package frc.robot.elevator.commands;
 
+import static frc.robot.elevator.ElevatorConstants.kTolerancePosition;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.arm.Arm;
 import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
 import frc.robot.helpers.ParentCommand;
-
-import static frc.robot.elevator.ElevatorConstants.kTolerancePosition;
 
 public class SetEndEffectorState extends ParentCommand {
   private Arm armSubsystem;
@@ -70,9 +70,11 @@ public class SetEndEffectorState extends ParentCommand {
     addChildCommands(
         Commands.sequence(
             new SetElevatorPosition(elevatorSubsystem, elevatorExtension),
-            Commands.parallel(
+            Commands.deadline(
                 new SetArmAngle(armSubsystem, armAngle),
-                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension+kTolerancePosition)))); //may not work to add like this
+                new KeepElevatorAtPosition(
+                    elevatorSubsystem,
+                    elevatorExtension)))); // may not work to add like this
 
     super.initialize();
   }
