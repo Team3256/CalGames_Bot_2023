@@ -33,7 +33,6 @@ import frc.robot.intake.Intake;
 import frc.robot.intake.commands.*;
 import frc.robot.led.LED;
 import frc.robot.led.commands.ColorFlowPattern;
-import frc.robot.led.commands.LimitedSwervePattern;
 import frc.robot.led.commands.SetAllColor;
 import frc.robot.logging.Loggable;
 import frc.robot.simulation.RobotSimulation;
@@ -219,13 +218,12 @@ public class RobotContainer implements CANTestable, Loggable {
         .leftTrigger()
         .toggleOnTrue(
             new TeleopSwerveLimited(
-                    swerveSubsystem,
-                    driver::getLeftY,
-                    driver::getLeftX,
-                    driver::getRightX,
-                    kFieldRelative,
-                    kOpenLoop)
-                .deadlineWith(new LimitedSwervePattern(ledSubsystem, this::isCurrentPieceCone)));
+                swerveSubsystem,
+                driver::getLeftY,
+                driver::getLeftX,
+                driver::getRightX,
+                kFieldRelative,
+                kOpenLoop));
 
     driver
         .x()
