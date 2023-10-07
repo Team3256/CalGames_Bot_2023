@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.8926344972325837,
-        "y": 3.2689200651483223
+        "y": 2.75
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.892634497232588,
-        "y": 3.2689200651483223
+        "y": 2.75
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -17,8 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "coneMid",
-          "intakeCube"
+          "cubeMid",
+          "intakeCone"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "deadline",
@@ -28,15 +28,15 @@
     {
       "anchorPoint": {
         "x": 6.35,
-        "y": 3.27
+        "y": 2.75
       },
       "prevControl": {
         "x": 5.639346638263588,
-        "y": 3.249460482222831
+        "y": 2.729460482222831
       },
       "nextControl": {
         "x": 5.639346638263588,
-        "y": 3.249460482222831
+        "y": 2.729460482222831
       },
       "holonomicAngle": 180.0,
       "isReversal": true,
@@ -53,11 +53,11 @@
     {
       "anchorPoint": {
         "x": 3.7217966831767,
-        "y": 3.263504580828606
+        "y": 2.75
       },
       "prevControl": {
         "x": 4.203395778156576,
-        "y": 3.2409816934976745
+        "y": 2.7274771126690687
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
