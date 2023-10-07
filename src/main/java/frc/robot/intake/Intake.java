@@ -15,7 +15,6 @@ import static frc.robot.simulation.SimulationConstants.*;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -35,6 +34,7 @@ import frc.robot.logging.Loggable;
 
 public class Intake extends SubsystemBase implements Loggable, CANTestable {
   private WPI_TalonFX intakeMotor;
+  private double simIntakeAngle = 0;
 
   public Intake() {
     if (RobotBase.isReal()) {
@@ -59,6 +59,14 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
 
   public double getIntakeSpeed() {
     return intakeMotor.getMotorOutputPercent();
+  }
+
+  public void updateSimIntakePosition() {
+    simIntakeAngle += Math.signum(getIntakeSpeed()) * 3;
+  }
+
+  public double getSimIntakePosition() {
+    return simIntakeAngle;
   }
 
   public void latchCone() {
@@ -129,11 +137,15 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
     return result;
   }
 
-  private final DCMotorSim intakeSim = new DCMotorSim(DCMotor.getFalcon500(1), 1, 1);
   private MechanismLigament2d intakePivot;
+  private MechanismLigament2d intakeWheel;
 
   public MechanismLigament2d getWrist() {
     return intakePivot;
+  }
+
+  public MechanismLigament2d getIntakeWheel() {
+    return intakeWheel;
   }
 
   private void configureSimHardware() {
@@ -144,20 +156,16 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
     intakePivot =
         new MechanismLigament2d(
             "Intake Wrist", Units.inchesToMeters(2.059), -90, 0, new Color8Bit(Color.kBlack));
+    intakeWheel = new MechanismLigament2d("Intake Wheel", 0.1, 0, 10, new Color8Bit(Color.kViolet));
   }
 
   @Override
   public void simulationPeriodic() {
-    intakeSim.setInput(intakeMotor.getMotorOutputPercent() * kVoltage);
-    intakeSim.update(kSimulateDelta);
-    RoboRioSim.setVInVoltage(
-        BatterySim.calculateDefaultBatteryLoadedVoltage(intakeSim.getCurrentDrawAmps()));
+    updateSimIntakePosition();
     simulationOutputToDashboard();
   }
 
   private void simulationOutputToDashboard() {
-    SmartDashboard.putNumber(
-        "Intake angle deg", Units.radiansToDegrees(intakeSim.getAngularPositionRad()));
     SmartDashboard.putNumber("Intake current draw", intakeMotor.getStatorCurrent());
     SmartDashboard.putNumber("Intake sim voltage", intakeMotor.getMotorOutputPercent());
   }
