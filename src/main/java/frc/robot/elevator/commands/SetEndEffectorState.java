@@ -14,6 +14,8 @@ import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.elevator.Elevator;
 import frc.robot.helpers.ParentCommand;
 
+import static frc.robot.elevator.ElevatorConstants.kTolerancePosition;
+
 public class SetEndEffectorState extends ParentCommand {
   private Arm armSubsystem;
   private Elevator elevatorSubsystem;
@@ -68,9 +70,9 @@ public class SetEndEffectorState extends ParentCommand {
     addChildCommands(
         Commands.sequence(
             new SetElevatorPosition(elevatorSubsystem, elevatorExtension),
-            Commands.deadline(
+            Commands.parallel(
                 new SetArmAngle(armSubsystem, armAngle),
-                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension))));
+                new KeepElevatorAtPosition(elevatorSubsystem, elevatorExtension+kTolerancePosition)))); //may not work to add like this
 
     super.initialize();
   }
