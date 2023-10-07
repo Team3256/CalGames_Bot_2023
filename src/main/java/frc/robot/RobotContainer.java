@@ -301,10 +301,10 @@ public class RobotContainer implements CANTestable, Loggable {
 
   private void configureArm() {
     //    armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
-    operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, 3));
-    operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -3));
-    tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 3));
-    tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -3));
+    operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, 4.5));
+    operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -4.5));
+    tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 4.5));
+    tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -4.5));
   }
 
   public void configureElevator() {
