@@ -40,7 +40,9 @@ public class SetElevatorPosition extends ProfiledPIDCommand {
     this.setpointPosition = setpointPosition;
     this.elevatorSubsystem = elevatorSubsystem;
 
-    getController().setTolerance(accurate?kAccurateTolerancePosition:kTolerancePosition, kToleranceVelocity);
+    getController()
+        .setTolerance(
+            accurate ? kAccurateTolerancePosition : kTolerancePosition, kToleranceVelocity);
 
     addRequirements(elevatorSubsystem);
   }
@@ -48,7 +50,6 @@ public class SetElevatorPosition extends ProfiledPIDCommand {
   /**
    * Constructor for setting elevator height for the levels specified in the elevator preferences
    * hash map
-   *
    */
   public SetElevatorPosition(Elevator elevatorSubsystem, ElevatorPreset elevatorPreset) {
     this(elevatorSubsystem, elevatorSubsystem.getElevatorSetpoint(elevatorPreset));

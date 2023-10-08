@@ -75,13 +75,13 @@ public class SetEndEffectorState extends ParentCommand {
 
   @Override
   public void initialize() {
-      addChildCommands(
-          Commands.sequence(
-              new SetElevatorPosition(elevatorSubsystem, elevatorExtension, accurate),
-              Commands.deadline(
-                  new SetArmAngle(armSubsystem, armAngle),
-                  new KeepElevatorAtPosition(
-                      elevatorSubsystem, elevatorExtension)))); // may not work to add like this
+    addChildCommands(
+        Commands.sequence(
+            new SetElevatorPosition(elevatorSubsystem, elevatorExtension, accurate),
+            Commands.deadline(
+                new SetArmAngle(armSubsystem, armAngle),
+                new KeepElevatorAtPosition(
+                    elevatorSubsystem, elevatorExtension)))); // may not work to add like this
 
     super.initialize();
   }
