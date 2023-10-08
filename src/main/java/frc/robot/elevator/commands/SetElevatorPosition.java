@@ -22,7 +22,10 @@ public class SetElevatorPosition extends ProfiledPIDCommand {
   private ElevatorPreset elevatorPreset;
 
   /** Constructor for setting the elevator to a setpoint in the parameters */
-  public SetElevatorPosition(Elevator elevatorSubsystem, double setpointPosition) {
+  public SetElevatorPosition(Elevator elevatorSubsystem, double setpointPosition){
+    this(elevatorSubsystem,setpointPosition,false);
+  }
+  public SetElevatorPosition(Elevator elevatorSubsystem, double setpointPosition, boolean accurate) {
     super(
         new ProfiledPIDController(kElevatorP, kElevatorI, kElevatorD, kElevatorConstraints),
         elevatorSubsystem::getElevatorPosition,
@@ -35,7 +38,12 @@ public class SetElevatorPosition extends ProfiledPIDCommand {
     this.setpointPosition = setpointPosition;
     this.elevatorSubsystem = elevatorSubsystem;
 
-    getController().setTolerance(kTolerancePosition, kToleranceVelocity);
+    if (!accurate){
+      getController().setTolerance(kTolerancePosition, kToleranceVelocity);
+    } else {
+      getController().setTolerance(kAccurateTolerancePosition, kToleranceVelocity);
+    }
+
     addRequirements(elevatorSubsystem);
   }
 
