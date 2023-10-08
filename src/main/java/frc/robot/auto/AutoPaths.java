@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer.GamePiece;
 import frc.robot.arm.Arm;
 import frc.robot.auto.helpers.AutoBuilder;
@@ -22,6 +23,7 @@ import frc.robot.elevator.commands.SetEndEffectorState;
 import frc.robot.elevator.commands.StowEndEffector;
 import frc.robot.intake.Intake;
 import frc.robot.intake.commands.IntakeOff;
+import frc.robot.intake.commands.LatchCube;
 import frc.robot.intake.commands.OuttakeConeOrCube;
 import frc.robot.swerve.SwerveDrive;
 import frc.robot.swerve.commands.AutoBalance;
@@ -203,6 +205,17 @@ public class AutoPaths {
               new OuttakeConeOrCube(intakeSubsystem, false, false)
                   .asProxy()
                   .withName("outtakeCube"));
+
+      autoEventMap.put(
+          "stereoHearts",
+          () ->
+              Commands.sequence(
+                  new WaitCommand(2),
+                  new OuttakeConeOrCube(intakeSubsystem, false, false)
+                      .asProxy()
+                      .withName("stereoHearts")));
+
+      autoEventMap.put("latch", () -> new LatchCube(intakeSubsystem).asProxy().withName("latch"));
       // AutoChooser.createSinglePath(
       // "Score Preload Cube Mid",
       // autoEventMap.get("cubeMid").get().andThen(new OuttakeCube(intakeSubsystem)));
@@ -214,12 +227,14 @@ public class AutoPaths {
 
     AutoBuilder autoBuilder = new AutoBuilder(swerveSubsystem, autoEventMap);
 
-    // NODE 1
-    Command node1x3 = autoBuilder.createPath("Node1x3", kFastPathConstraints, true);
-    AutoChooser.createSinglePath("Node1x3", node1x3);
+    // // NODE 1
+    // Command node1x3 = autoBuilder.createPath("Node1x3", kFastPathConstraints,
+    // true);
+    // AutoChooser.createSinglePath("Node1x3", node1x3);
 
-    Command node1x25Engage = autoBuilder.createPath("Node1x2.5-Engage", kFastPathConstraints, true);
-    AutoChooser.createSinglePath("Node1x2.5-Engage", node1x25Engage);
+    // Command node1x25Engage = autoBuilder.createPath("Node1x2.5-Engage",
+    // kFastPathConstraints, true);
+    // AutoChooser.createSinglePath("Node1x2.5-Engage", node1x25Engage);
 
     Command node1x2 = autoBuilder.createPath("Node1x2", kFastPathConstraints, true);
     AutoChooser.createSinglePath("Node1x2", node1x2);
@@ -273,6 +288,26 @@ public class AutoPaths {
     // cube
     // auto
     AutoChooser.createSinglePath("Node2-Mobility", node2Mobility);
+
+    Command node5MobilityFar =
+        autoBuilder.createPath("Node5-Mobility-far", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("Node5-Mobility-far", node5MobilityFar);
+
+    Command node5Mobilitylatch =
+        autoBuilder.createPath(
+            "Node5-Mobility-Engage-latch", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("Node5-Mobility-Engage-latch", node5Mobilitylatch);
+
+    Command node5MobilitylatchActual =
+        autoBuilder.createPath(
+            "Node5-Mobility-Engage-latch Copy", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("Node5-Mobility-Engage-latch Copy", node5MobilitylatchActual);
 
     AutoChooser.sendChooserToDashboard("Auto Chooser");
   }

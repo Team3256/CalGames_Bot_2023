@@ -46,10 +46,15 @@ public class AutoBuilder {
 
   public Command createPath(String path, PathConstraints constraints, boolean isFirstSegment) {
     PathPlannerTrajectory trajectory = PathPlanner.loadPath(path, constraints);
-    Command startCommand = createCommandFromStopEvent(trajectory.getStartStopEvent());
-    Command pathCommand = createPathPlannerCommand(trajectory, isFirstSegment);
-    Command endCommand = createCommandFromStopEvent(trajectory.getEndStopEvent());
-
+    Command startCommand =
+        createCommandFromStopEvent(trajectory.getStartStopEvent())
+            .andThen(() -> System.out.println("Running start command for path: " + path));
+    Command pathCommand =
+        createPathPlannerCommand(trajectory, isFirstSegment)
+            .andThen(() -> System.out.println("Running path command for path: " + path));
+    Command endCommand =
+        createCommandFromStopEvent(trajectory.getEndStopEvent())
+            .andThen(() -> System.out.println("Running end command for path: " + path));
     return Commands.sequence(startCommand, pathCommand, endCommand);
   }
 
@@ -121,10 +126,16 @@ public class AutoBuilder {
 
   public Command createCommandFromStopEvent(StopEvent stopEvent) {
     if (stopEvent.names.isEmpty()) {
-      return Commands.waitSeconds(stopEvent.waitTime);
+      return Commands.waitSeconds(stopEvent.waitTime)
+          .andThen(
+              () -> System.out.println("[STOP EVENT] Waiting for time: " + stopEvent.waitTime));
     }
-
-    Command eventCommands = getStopEventCommands(stopEvent);
+    Command eventCommands =
+        getStopEventCommands(stopEvent)
+            .andThen(
+                () ->
+                    System.out.println(
+                        "Running stop event commands for event: " + stopEvent.names));
 
     switch (stopEvent.waitBehavior) {
       case BEFORE:
@@ -154,15 +165,28 @@ public class AutoBuilder {
 
     switch (stopEvent.executionBehavior) {
       case SEQUENTIAL:
-        return Commands.sequence(commands.toArray(Command[]::new));
+        return Commands.sequence(commands.toArray(Command[]::new))
+            .andThen(
+                () ->
+                    System.out.println(
+                        "Running stop event commands in sequence for event: " + stopEvent.names));
       case PARALLEL:
-        return Commands.parallel(commands.toArray(Command[]::new));
+        return Commands.parallel(commands.toArray(Command[]::new))
+            .andThen(
+                () ->
+                    System.out.println(
+                        "Running stop event commands in parallel for event: " + stopEvent.names));
       case PARALLEL_DEADLINE:
         Command deadline =
             eventMap.containsKey(stopEvent.names.get(0))
                 ? eventMap.get(stopEvent.names.get(0)).get()
                 : Commands.none();
-        return Commands.deadline(deadline, commands.toArray(Command[]::new));
+        return Commands.deadline(deadline, commands.toArray(Command[]::new))
+            .andThen(
+                () ->
+                    System.out.println(
+                        "Running stop event commands in parallel deadline for event: "
+                            + stopEvent.names));
       default:
         throw new IllegalArgumentException(
             "Invalid stop event execution behavior: " + stopEvent.executionBehavior);

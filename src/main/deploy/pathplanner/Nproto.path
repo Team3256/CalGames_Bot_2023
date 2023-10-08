@@ -1,0 +1,130 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8926344972325837,
+        "y": 2.75
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.892634497232588,
+        "y": 2.75
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "latch",
+          "cubeMid"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "minimum",
+        "waitTime": 2.5
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.35,
+        "y": 2.75
+      },
+      "prevControl": {
+        "x": 5.639346638263588,
+        "y": 2.729460482222831
+      },
+      "nextControl": {
+        "x": 5.639346638263588,
+        "y": 2.729460482222831
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.40222259263963,
+        "y": 1.3796496204103514
+      },
+      "prevControl": {
+        "x": 3.043784315831524,
+        "y": 1.350297238641932
+      },
+      "nextControl": {
+        "x": 1.7606608694477233,
+        "y": 1.4090020021787701
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "outtakeCube"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.8,
+        "y": 2.75
+      },
+      "prevControl": {
+        "x": 6.791600048550453,
+        "y": 2.609966293648381
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "engage"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "maxVelocity": 3.0,
+  "maxAcceleration": null,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.8633522727272728,
+      "names": [
+        "stow"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "event",
+        "outtakeCube"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "event",
+        "engage"
+      ]
+    }
+  ]
+}

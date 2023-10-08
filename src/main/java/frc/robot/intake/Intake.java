@@ -98,6 +98,11 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
     intakeMotor.getSimCollection().setBusVoltage(kIntakeCubeSpeed);
   }
 
+  public void intakeCube(double factor) {
+    intakeMotor.set(ControlMode.PercentOutput, kIntakeCubeSpeed * factor);
+    intakeMotor.getSimCollection().setBusVoltage(kIntakeCubeSpeed);
+  }
+
   public void outtakeCube() {
     intakeMotor.set(ControlMode.PercentOutput, kOuttakeCubeSpeed);
   }
