@@ -301,7 +301,7 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   private void configureArm() {
-    //    armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
+    // armSubsystem.setDefaultCommand(new KeepArm(armSubsystem));
     operator.rightBumper().whileTrue(new SetArmVoltage(armSubsystem, 4.5));
     operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -4.5));
     tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 4.5));
@@ -309,7 +309,7 @@ public class RobotContainer implements CANTestable, Loggable {
   }
 
   public void configureElevator() {
-    //    elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
+    // elevatorSubsystem.setDefaultCommand(new KeepElevator(elevatorSubsystem));
     operator.rightTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6)); // manual +
     operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6)); // manual -
     tester.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6)); // manual +
@@ -369,18 +369,18 @@ public class RobotContainer implements CANTestable, Loggable {
   // --MISC--
   public Command getAutonomousCommand() {
     Command autoPath = autoPaths.getSelectedPath();
-    //    if (kElevatorEnabled && kArmEnabled) {
-    //      return Commands.sequence(
-    //          new StowEndEffector(elevatorSubsystem, armSubsystem),
-    //          autoPath,
-    //          Commands.parallel(
-    //              new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
-    //              new LockSwerveX(swerveSubsystem)
-    //                  .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
-    //                  .until(() -> isMovingJoystick(driver))));
-    //    } else {
+    // if (kElevatorEnabled && kArmEnabled) {
+    // return Commands.sequence(
+    // new StowEndEffector(elevatorSubsystem, armSubsystem),
+    // autoPath,
+    // Commands.parallel(
+    // new StowEndEffector(elevatorSubsystem, armSubsystem).asProxy(),
+    // new LockSwerveX(swerveSubsystem)
+    // .andThen(new SetAllColor(ledSubsystem, kLockSwerve))
+    // .until(() -> isMovingJoystick(driver))));
+    // } else {
     return autoPath;
-    //    }
+    // }
   }
 
   public boolean isMovingJoystick(CommandXboxController controller) {
@@ -429,8 +429,16 @@ public class RobotContainer implements CANTestable, Loggable {
   public boolean CANTest() {
     System.out.println("Testing CAN connections:");
     boolean result = true;
-    for (CANTestable subsystem : canBusTestables) result &= subsystem.CANTest();
+    for (CANTestable subsystem : canBusTestables) {
+      boolean subsystemResult = subsystem.CANTest();
+      result &= subsystemResult;
+      System.out.println(
+          subsystem.getClass().getSimpleName() + " fully connected: " + subsystemResult);
+      SmartDashboard.putBoolean(
+          subsystem.getClass().getSimpleName() + " CAN Test", subsystemResult);
+    }
     System.out.println("CAN fully connected: " + result);
+
     return result;
   }
 

@@ -333,6 +333,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
       SmartDashboard.putNumber("Std Data points", poseYData.size());
     }
   }
+
   // --SIM
   @Override
   public void simulationPeriodic() {
@@ -343,6 +344,7 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
                     swerveSimTwist.dx * kPeriodicDeltaTime, swerveSimTwist.dy * kPeriodicDeltaTime),
                 new Rotation2d(swerveSimTwist.dtheta * kPeriodicDeltaTime)));
   }
+
   // --LOGGING
   public void setTrajectory(Trajectory trajectory) {
     field.getObject("traj").setTrajectory(trajectory);
@@ -409,7 +411,9 @@ public class SwerveDrive extends SubsystemBase implements Loggable, CANTestable 
   // --GYRO
   public void zeroGyroYaw() {
     gyro.setYaw(0);
-    if (kDebugEnabled) System.out.println("Resetting Gyro");
+    if (kDebugEnabled) {
+      System.out.println("Resetting Gyro");
+    }
   }
 
   public void setGyroYaw(double yawDegrees) {
