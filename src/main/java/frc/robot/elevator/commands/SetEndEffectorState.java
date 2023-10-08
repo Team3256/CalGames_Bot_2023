@@ -19,7 +19,7 @@ public class SetEndEffectorState extends ParentCommand {
   private Elevator elevatorSubsystem;
   private Rotation2d armAngle;
   private double elevatorExtension;
-  boolean accurate = false;
+  boolean accurate;
 
   public enum EndEffectorPreset {
     // scoring
@@ -48,19 +48,22 @@ public class SetEndEffectorState extends ParentCommand {
     public final Arm.ArmPreset armPreset;
     public final Elevator.ElevatorPreset elevatorPreset;
 
-
     EndEffectorPreset(Arm.ArmPreset armPreset, Elevator.ElevatorPreset elevatorPreset) {
       this.armPreset = armPreset;
       this.elevatorPreset = elevatorPreset;
     }
   }
 
-
   public SetEndEffectorState(
       Elevator elevatorSubsystem, Arm armSubsystem, EndEffectorPreset endEffectorPreset) {
     this(elevatorSubsystem, armSubsystem, endEffectorPreset, false);
   }
-  public SetEndEffectorState( Elevator elevatorSubsystem, Arm armSubsystem, EndEffectorPreset endEffectorPreset, boolean accurate){
+
+  public SetEndEffectorState(
+      Elevator elevatorSubsystem,
+      Arm armSubsystem,
+      EndEffectorPreset endEffectorPreset,
+      boolean accurate) {
     super();
     this.armSubsystem = armSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
@@ -72,23 +75,13 @@ public class SetEndEffectorState extends ParentCommand {
 
   @Override
   public void initialize() {
-    if (!accurate){
       addChildCommands(
-              Commands.sequence(
-                      new SetElevatorPosition(elevatorSubsystem,elevatorExtension),
-                      Commands.deadline(
-                              new SetArmAngle(armSubsystem,armAngle),
-                              new KeepElevatorAtPosition(
-                                      elevatorSubsystem,elevatorExtension)))); // may not work to add like this
-    } else {
-      addChildCommands(
-              Commands.sequence(
-                      new SetElevatorPosition(elevatorSubsystem,elevatorExtension,true),
-                      Commands.deadline(
-                              new SetArmAngle(armSubsystem,armAngle),
-                              new KeepElevatorAtPosition(
-                                      elevatorSubsystem,elevatorExtension)))); // may not work to add like this
-    }
+          Commands.sequence(
+              new SetElevatorPosition(elevatorSubsystem, elevatorExtension, accurate),
+              Commands.deadline(
+                  new SetArmAngle(armSubsystem, armAngle),
+                  new KeepElevatorAtPosition(
+                      elevatorSubsystem, elevatorExtension)))); // may not work to add like this
 
     super.initialize();
   }

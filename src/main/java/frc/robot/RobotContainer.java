@@ -325,11 +325,11 @@ public class RobotContainer implements CANTestable, Loggable {
                   new SetEndEffectorState(
                       elevatorSubsystem,
                       armSubsystem,
-                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CONE),
+                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CONE,false),
                   new SetEndEffectorState(
                       elevatorSubsystem,
                       armSubsystem,
-                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CUBE),
+                      SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CUBE, false),
                   this::isCurrentPieceCone));
       operator.a().onTrue(new ZeroArmSensor(armSubsystem)); // zero
       driver // zero/cube/fallen cone
