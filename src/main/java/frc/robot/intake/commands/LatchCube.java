@@ -7,11 +7,13 @@
 
 package frc.robot.intake.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.intake.Intake;
 
 public class LatchCube extends CommandBase {
   private final Intake intakeSubsystem;
+  private double startTime;
 
   public LatchCube(Intake intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
@@ -20,12 +22,25 @@ public class LatchCube extends CommandBase {
 
   @Override
   public void initialize() {
+    startTime = Timer.getFPGATimestamp() * 1000;
+    System.out.println("LatchCube init @ " + startTime + "ms. (" + (startTime / 1000) + "s)");
     super.initialize();
     intakeSubsystem.intakeCube(0.2);
   }
 
   @Override
   public void end(boolean interrupted) {
+    double endTime = Timer.getFPGATimestamp() * 1000;
+    System.out.println(
+        "LatchCube end. Interrupted: "
+            + interrupted
+            + " @ "
+            + endTime
+            + " (duration: "
+            + (endTime - startTime)
+            + "ms) [took "
+            + (endTime - startTime) / 1000
+            + "s]");
     super.end(interrupted);
     intakeSubsystem.off();
   }
