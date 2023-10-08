@@ -35,6 +35,7 @@ import frc.robot.logging.Loggable;
 public class Intake extends SubsystemBase implements Loggable, CANTestable {
   private WPI_TalonFX intakeMotor;
   private double simIntakeAngle = 0;
+  private int dir = 0;
 
   public Intake() {
     if (RobotBase.isReal()) {
@@ -62,7 +63,7 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
   }
 
   public void updateSimIntakePosition() {
-    simIntakeAngle += Math.signum(getIntakeSpeed()) * 3;
+    simIntakeAngle += dir * 15;
   }
 
   public double getSimIntakePosition() {
@@ -86,20 +87,22 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
 
   public void intakeCone() {
     intakeMotor.set(ControlMode.PercentOutput, kIntakeConeSpeed);
-    intakeMotor.getSimCollection().setBusVoltage(kIntakeConeSpeed);
+    dir = 1;
   }
 
   public void outtakeCone() {
     intakeMotor.set(ControlMode.PercentOutput, kOuttakeConeSpeed);
+    dir = -1;
   }
 
   public void intakeCube() {
     intakeMotor.set(ControlMode.PercentOutput, kIntakeCubeSpeed);
-    intakeMotor.getSimCollection().setBusVoltage(kIntakeCubeSpeed);
+    dir = -1;
   }
 
   public void outtakeCube() {
     intakeMotor.set(ControlMode.PercentOutput, kOuttakeCubeSpeed);
+    dir = 1;
   }
 
   public boolean isCurrentSpiking() {
@@ -108,6 +111,7 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
 
   public void off() {
     intakeMotor.neutralOutput();
+    dir = 0;
   }
 
   @Override
@@ -147,7 +151,7 @@ public class Intake extends SubsystemBase implements Loggable, CANTestable {
   public MechanismLigament2d getIntakeWheel() {
     return intakeWheel;
   }
-
+  // --SIM--
   private void configureSimHardware() {
     intakeMotor = new WPI_TalonFX(kIntakeMotorID);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
