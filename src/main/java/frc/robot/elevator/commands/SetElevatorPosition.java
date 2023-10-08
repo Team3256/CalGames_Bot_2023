@@ -40,12 +40,8 @@ public class SetElevatorPosition extends ProfiledPIDCommand {
     this.setpointPosition = setpointPosition;
     this.elevatorSubsystem = elevatorSubsystem;
 
-    if (!accurate) {
-      getController().setTolerance(kTolerancePosition, kToleranceVelocity);
-    } else {
-      getController().setTolerance(kAccurateTolerancePosition, kToleranceVelocity);
-    }
-
+    getController().setTolerance(accurate?kAccurateTolerancePosition:kTolerancePosition, kToleranceVelocity);
+    
     addRequirements(elevatorSubsystem);
   }
 
