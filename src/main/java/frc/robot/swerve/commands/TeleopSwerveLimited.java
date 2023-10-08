@@ -45,9 +45,9 @@ public class TeleopSwerveLimited extends DebugCommandBase {
 
   @Override
   public void execute() {
-    double yAxis = -translationAxis.getAsDouble() * kSensitivityScale;
-    double xAxis = -strafeAxis.getAsDouble() * kSensitivityScale;
-    double rAxis = -rotationAxis.getAsDouble() * kSensitivityScale;
+    double yAxis = -translationAxis.getAsDouble() * 0.3;
+    double xAxis = -strafeAxis.getAsDouble() * 0.3;
+    double rAxis = -rotationAxis.getAsDouble() * 0.25;
 
     /* No deadbands since sensitivity is so low */
     translation = new Translation2d(yAxis, xAxis).times(kMaxSpeed);

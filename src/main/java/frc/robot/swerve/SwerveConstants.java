@@ -209,8 +209,6 @@ public final class SwerveConstants {
         new SwerveModuleConstants(kDriveMotorID, kAngleMotorID, kCanCoderID, angleOffset);
   }
 
-  public static final double kSensitivityScale = 0.25;
-
   /* AutoBalance */
   public static double kXAutoBalanceVelocity = -0.7;
   public static final Rotation2d kAutoBalanceMaxError = new Rotation2d(Units.degreesToRadians(10));
