@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.commands.SetArmVoltage;
+import frc.robot.arm.commands.ZeroArmSensor;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.AutoPaths;
 import frc.robot.auto.pathgeneration.commands.AutoIntakePrep;
@@ -330,7 +331,7 @@ public class RobotContainer implements CANTestable, Loggable {
                       armSubsystem,
                       SetEndEffectorState.EndEffectorPreset.DOUBLE_SUBSTATION_CUBE),
                   this::isCurrentPieceCone));
-      operator.a().onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem)); // zero
+      operator.a().onTrue(new ZeroArmSensor(armSubsystem)); // zero
       driver // zero/cube/fallen cone
           .leftBumper()
           .onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem));
