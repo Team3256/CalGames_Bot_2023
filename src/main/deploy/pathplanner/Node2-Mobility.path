@@ -17,10 +17,11 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
+          "latch",
           "cubeMid",
-          "outtakeCube"
+          "stereoHearts"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "minimum",
         "waitTime": 2.5
       }
