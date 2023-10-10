@@ -309,6 +309,11 @@ public class AutoPaths {
     // auto
     AutoChooser.createSinglePath("Node5-Mobility-Engage-latch Copy", node5MobilitylatchActual);
 
+    Command wheewhoo = autoBuilder.createPath("openHouse", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("openHouse", wheewhoo);
+
     AutoChooser.sendChooserToDashboard("Auto Chooser");
   }
 
