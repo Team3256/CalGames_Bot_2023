@@ -205,7 +205,13 @@ public class AutoPaths {
               new OuttakeConeOrCube(intakeSubsystem, false, false)
                   .asProxy()
                   .withName("outtakeCube"));
-
+      autoEventMap.put(
+          "intakeCube",
+          () ->
+              new OuttakeConeOrCube(intakeSubsystem, false, true).asProxy().withName("intakeCube"));
+      autoEventMap.put("metalBoxSit", () -> new WaitCommand(3).asProxy().withName("metalBoxSit"));
+      autoEventMap.put(
+          "funnyStop", () -> new LockSwerveX(swerveSubsystem).asProxy().withName("funnyStop"));
       autoEventMap.put(
           "stereoHearts",
           () ->

@@ -20,11 +20,11 @@
           "cubeLow",
           "cubeMid",
           "cubeHigh",
-          "outtakeCube"
+          "intakeCube"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "minimum",
-        "waitTime": 10.0
+        "waitTime": 5.0
       }
     },
     {
@@ -69,12 +69,16 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "metalBoxSit",
+          "funnyStop",
+          "cubeHigh"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "minimum",
+        "waitTime": 2.5
       }
     },
     {
