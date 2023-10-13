@@ -283,6 +283,11 @@ public class AutoPaths {
     // auto
     AutoChooser.createSinglePath("Node8-Mobility", node8Mobility);
 
+    Command tres = autoBuilder.createPath("tres", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("tres", tres);
+
     Command node2Mobility =
         autoBuilder.createPath("Node2-Mobility", kEngagePathConstraints, true); // funny
     // cube
