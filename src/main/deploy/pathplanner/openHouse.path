@@ -13,17 +13,16 @@
       "holonomicAngle": 135.0,
       "isReversal": false,
       "velOverride": null,
-      "isLocked": false,
+      "isLocked": true,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "cubeLow",
-          "cubeMid",
-          "cubeHigh",
-          "intakeCube"
+          "stow",
+          "quickWait",
+          "cubeHigh"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "minimum",
+        "waitBehavior": "deadline",
         "waitTime": 5.0
       }
     },
@@ -76,7 +75,7 @@
           "funnyStop",
           "cubeHigh"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "minimum",
         "waitTime": 2.5
       }
@@ -131,7 +130,7 @@
   ],
   "markers": [
     {
-      "position": 0.01,
+      "position": 1.2727272727272727,
       "names": [
         "safety",
         "stow"

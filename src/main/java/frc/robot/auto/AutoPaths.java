@@ -222,6 +222,7 @@ public class AutoPaths {
                       .withName("stereoHearts")));
 
       autoEventMap.put("latch", () -> new LatchCube(intakeSubsystem).asProxy().withName("latch"));
+      autoEventMap.put("quickWait", () -> new WaitCommand(2).asProxy().withName("quickWait"));
       // AutoChooser.createSinglePath(
       // "Score Preload Cube Mid",
       // autoEventMap.get("cubeMid").get().andThen(new OuttakeCube(intakeSubsystem)));
@@ -229,6 +230,20 @@ public class AutoPaths {
       // "Score Preload Cone Mid",
       // autoEventMap.get("coneMid").get().andThen(new
       // OuttakeConeOrCube(intakeSubsystem)));
+      autoEventMap.put( // DOESNT WORK
+          "strangerToMe",
+          () ->
+              Commands.sequence(
+                  // new StowEndEffector(elevatorSubsystem, armSubsystem),
+                  setPieceToCube()
+                      .andThen(
+                          new SetEndEffectorState(
+                              elevatorSubsystem,
+                              armSubsystem,
+                              SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_HIGH)),
+                  new OuttakeConeOrCube(intakeSubsystem, false, true)
+                      .asProxy()
+                      .withName("strangerToMe")));
     }
 
     AutoBuilder autoBuilder = new AutoBuilder(swerveSubsystem, autoEventMap);
