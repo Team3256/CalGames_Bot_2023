@@ -249,6 +249,9 @@ public class AutoPaths {
     Command node9x25Engage = autoBuilder.createPath("Node9x2.5-Engage", kFastPathConstraints, true);
     AutoChooser.createSinglePath("Node9x2.5-Engage", node9x25Engage);
 
+    Command JoshIsNotCool = autoBuilder.createPath("JoshIsNotCool", kFastPathConstraints, true);
+    AutoChooser.createSinglePath("JoshIsNotCool", JoshIsNotCool);
+
     Command node9x2 = autoBuilder.createPath("Node9x2", kFastPathConstraints, true);
     AutoChooser.createSinglePath("Node9x2", node9x2);
 
