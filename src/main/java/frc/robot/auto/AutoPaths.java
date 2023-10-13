@@ -308,7 +308,8 @@ public class AutoPaths {
     // cube
     // auto
     AutoChooser.createSinglePath("Node5-Mobility-Engage-latch Copy", node5MobilitylatchActual);
-
+    Command bryansAwesome2 = autoBuilder.createPath("draw-a-2", kEngagePathConstraints, true);
+    AutoChooser.createSinglePath("draw-a-2", bryansAwesome2);
     AutoChooser.sendChooserToDashboard("Auto Chooser");
   }
 
