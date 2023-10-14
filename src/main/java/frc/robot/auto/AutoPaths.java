@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer.GamePiece;
 import frc.robot.arm.Arm;
+import frc.robot.arm.commands.ZeroArm;
 import frc.robot.auto.helpers.AutoBuilder;
 import frc.robot.auto.helpers.AutoChooser;
 import frc.robot.elevator.Elevator;
@@ -174,6 +175,12 @@ public class AutoPaths {
                       new IntakeOff(intakeSubsystem))
                   .asProxy()
                   .withName("stow"));
+      autoEventMap.put(
+          "groundIntakeCube",
+          () ->
+              Commands.parallel(new ZeroArm(armSubsystem), new IntakeOff(intakeSubsystem))
+                  .asProxy()
+                  .withName("groundIntakeCube"));
 
       // autoEventMap.put(
       // "intakeCone",
@@ -257,8 +264,8 @@ public class AutoPaths {
     // kFastPathConstraints, true);
     // AutoChooser.createSinglePath("Node1x2.5-Engage", node1x25Engage);
 
-    Command node1x2 = autoBuilder.createPath("Node1x2", kFastPathConstraints, true);
-    AutoChooser.createSinglePath("Node1x2", node1x2);
+    // Command node1x2 = autoBuilder.createPath("Node1x2", kFastPathConstraints, true);
+    // AutoChooser.createSinglePath("Node1x2", node1x2);
 
     Command node1Mobility = autoBuilder.createPath("Node1-Mobility", kFastPathConstraints, true);
     AutoChooser.createSinglePath("Node1-Mobility", node1Mobility);
@@ -334,6 +341,12 @@ public class AutoPaths {
     // cube
     // auto
     AutoChooser.createSinglePath("openHouse", wheewhoo);
+
+    Command outtakeOrphan =
+        autoBuilder.createPath("intakeChildMedia", kEngagePathConstraints, true); // funny
+    // cube
+    // auto
+    AutoChooser.createSinglePath("intakeChildMedia", outtakeOrphan);
 
     AutoChooser.sendChooserToDashboard("Auto Chooser");
   }

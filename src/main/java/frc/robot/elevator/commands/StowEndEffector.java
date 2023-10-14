@@ -34,7 +34,7 @@ public class StowEndEffector extends ParentCommand {
 
     super.initialize();
   }
-  
+
   @Override
   public boolean isFinished() {
     return armSubsystem.getArmAngleElevatorRelative() == ArmConstants.kStowRotation.getRadians();
