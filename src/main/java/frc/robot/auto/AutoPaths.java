@@ -309,6 +309,9 @@ public class AutoPaths {
     // auto
     AutoChooser.createSinglePath("Node5-Mobility-Engage-latch Copy", node5MobilitylatchActual);
 
+    Command NumberThing = autoBuilder.createPath("NumberThing", kEngagePathConstraints, true);
+    AutoChooser.createSinglePath("NumberThing", NumberThing);
+
     AutoChooser.sendChooserToDashboard("Auto Chooser");
   }
 
