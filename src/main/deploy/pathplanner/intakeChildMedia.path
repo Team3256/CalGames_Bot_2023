@@ -186,15 +186,18 @@
         "y": 1.8589495073726992
       },
       "prevControl": {
-        "x": 1.904335387618144,
-        "y": 2.21261179364464
+        "x": 1.8541545674084783,
+        "y": 2.207731376437621
       },
-      "nextControl": null,
+      "nextControl": {
+        "x": 1.944037392348289,
+        "y": 1.6786177162097915
+      },
       "holonomicAngle": -90.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
           "funnyStop",
@@ -204,6 +207,30 @@
         "executionBehavior": "sequential",
         "waitBehavior": "minimum",
         "waitTime": 2.5
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.61,
+        "y": 1.86
+      },
+      "prevControl": {
+        "x": 7.278844124013035,
+        "y": 1.9983544240592754
+      },
+      "nextControl": null,
+      "holonomicAngle": -90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "funnyStop"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     }
   ],
@@ -227,6 +254,13 @@
       "names": [
         "ground",
         "groundIntakeCube"
+      ]
+    },
+    {
+      "position": 7.039999999999724,
+      "names": [
+        "event",
+        "stow"
       ]
     }
   ]
