@@ -24,7 +24,7 @@ public class KeepArmAtAngle extends PIDCommand {
         armSubsystem::getArmAngleGroundRelative,
         angle,
         output ->
-            armSubsystem.setInputVoltage(output + armSubsystem.calculateFeedForward(angle, 0)));
+            armSubsystem.setInputVoltage(output + (armSubsystem.calculateFeedForward(angle, 0))*1.2));
 
     this.armSubsystem = armSubsystem;
     addRequirements(armSubsystem);

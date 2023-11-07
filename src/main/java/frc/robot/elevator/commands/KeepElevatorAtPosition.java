@@ -35,7 +35,8 @@ public class KeepElevatorAtPosition extends PIDCommand {
         elevatorSubsystem::getElevatorPosition,
         elevatorSubsystem.getElevatorPosition(),
         output ->
-            elevatorSubsystem.setInputVoltage(output + elevatorSubsystem.calculateFeedForward(0)));
+            elevatorSubsystem.setInputVoltage(
+                output + (elevatorSubsystem.calculateFeedForward(0) * 1.1)));
 
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
