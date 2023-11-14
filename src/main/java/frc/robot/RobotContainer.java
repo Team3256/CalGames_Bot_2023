@@ -12,6 +12,7 @@ import static frc.robot.led.LEDConstants.*;
 import static frc.robot.swerve.SwerveConstants.*;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FeatureFlags;
 import frc.robot.arm.Arm;
 import frc.robot.arm.commands.KeepArm;
+import frc.robot.arm.commands.SetArmAngle;
 import frc.robot.arm.commands.SetArmVoltage;
 import frc.robot.arm.commands.ZeroArmSensor;
 import frc.robot.auto.AutoConstants;
@@ -307,6 +309,8 @@ public class RobotContainer implements CANTestable, Loggable {
     operator.leftBumper().whileTrue(new SetArmVoltage(armSubsystem, -4.5));
     tester.povUp().whileTrue(new SetArmVoltage(armSubsystem, 4.5));
     tester.povDown().whileTrue(new SetArmVoltage(armSubsystem, -4.5));
+    tester.x().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(75)));
+    tester.y().onTrue(new SetArmAngle(armSubsystem, Rotation2d.fromDegrees(100)));
   }
 
   public void configureElevator() {
@@ -316,10 +320,27 @@ public class RobotContainer implements CANTestable, Loggable {
     operator.leftTrigger().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6)); // manual -
     tester.povRight().whileTrue(new SetElevatorVolts(elevatorSubsystem, 6)); // manual +
     tester.povLeft().whileTrue(new SetElevatorVolts(elevatorSubsystem, -6)); // manual -
+    tester.a().onTrue(new SetElevatorPosition(elevatorSubsystem, 0.5));
+    tester.b().onTrue(new SetElevatorPosition(elevatorSubsystem, 0.1));
     if (kArmEnabled) {
       driver.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
       operator.y().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
       tester.leftBumper().onTrue(new StowEndEffector(elevatorSubsystem, armSubsystem)); // stow
+      tester.leftTrigger().onTrue(new ZeroEndEffector(elevatorSubsystem, armSubsystem));
+      tester
+          .rightBumper()
+          .onTrue(
+              new SetEndEffectorState(
+                  elevatorSubsystem,
+                  armSubsystem,
+                  SetEndEffectorState.EndEffectorPreset.SCORE_CUBE_MID));
+      tester
+          .rightTrigger()
+          .onTrue(
+              new SetEndEffectorState(
+                  elevatorSubsystem,
+                  armSubsystem,
+                  SetEndEffectorState.EndEffectorPreset.SCORE_CONE_HIGH));
       operator // double sub preset
           .povUp()
           .onTrue(
